@@ -1,72 +1,71 @@
-# Putting Rugby Ignite live
+# Putting Rugby Ignite live on Firebase
 
-The app is a Next.js server app that reads/writes Firestore with a
-service-account key. To go live you need a host that runs Next.js on the
-server (not a static-only host) and the key set as an environment variable.
+**Important:** merging to GitHub does **not** deploy anything on its own.
+Something has to connect the repo to Firebase and run the deploy. This is a
+one-time setup in the Firebase Console. Adding a secret to GitHub does nothing
+unless you also add a GitHub Actions workflow that uses it — this project uses
+Firebase App Hosting instead, which connects directly to the repo.
 
-The recommended host is **Vercel** — it's free for this, auto-detects
-Next.js, and redeploys automatically every time you push to GitHub.
+## Why App Hosting (not plain Hosting)
 
-## Option A — Vercel (recommended)
+This app runs **server-side** code (server components, server actions, the
+Firebase Admin SDK). Plain Firebase Hosting only serves static files, so it
+can't run it. **Firebase App Hosting** is the product that builds and runs a
+Next.js server app — it's the right choice here.
 
-**One-time setup (about 3 minutes):**
+> **Billing:** App Hosting (any server-side hosting) requires the **Blaze**
+> pay-as-you-go plan. If your project is on the free Spark plan, upgrade it
+> first (there's still a free monthly allowance). If you'd rather not enable
+> billing at all, Vercel's free tier can run this same app — ask and I'll
+> switch the guide.
 
-1. **Get the app onto `main`.** Merge the open pull request so the app lives
-   on the `main` branch (Vercel deploys `main` as production by default).
+## One-time setup
 
-2. Go to **https://vercel.com** and sign in with your **GitHub** account.
+1. **Firebase Console → Build → App Hosting → Get started.**
 
-3. Click **Add New… → Project**, then **Import** `michaelrobert9/Rugby-Ignite`.
+2. **Connect GitHub.** Authorize Firebase, then pick:
+   - Repository: `michaelrobert9/Rugby-Ignite`
+   - Live branch: `main`
+   - Root directory: `/`
 
-4. Vercel auto-detects **Next.js** — leave the build settings as they are
-   (Root Directory `./`, Build Command `next build`, Output handled
-   automatically).
+   This creates a backend that automatically deploys on every push to `main`.
 
-5. Open **Environment Variables** and add one:
-   - **Name:** `FIREBASE_SERVICE_ACCOUNT_KEY`
-   - **Value:** paste the **entire contents** of your service-account JSON
-     file, exactly as downloaded (no quotes around it — Vercel stores it
-     as-is).
-   - Leave it applied to all environments (Production/Preview/Development).
+3. **Add the service-account key as a secret.** App Hosting reads secrets from
+   Google Cloud Secret Manager, **not** from GitHub. From your machine:
 
-6. Click **Deploy**. After a minute you'll get a live URL like
-   `https://rugby-ignite.vercel.app`.
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY
+   ```
 
-**Load the data (one time).** Hosting and data are separate — the live site
-reads from your Firestore, which needs the historical data loaded once. From
-your own machine, with the key in `.env.local`:
+   Paste the full service-account JSON when prompted. The repo's
+   `apphosting.yaml` already references this secret by name.
+
+   (You can now remove the key you added to GitHub — App Hosting doesn't use
+   it.)
+
+4. **Trigger the first rollout.** Creating the backend kicks off a build; if
+   not, push any commit to `main`. When it finishes, App Hosting shows your
+   live URL.
+
+## Load the data (one time)
+
+Hosting and data are separate. The live site reads from Firestore, which needs
+the historical data loaded once. From your machine, with the key in
+`.env.local`:
 
 ```bash
 npm run seed:firestore
 ```
 
 Then open `/admin` on the live site and click **Rebuild Master + all
-Seasons**. The rankings will populate.
+Seasons** — the rankings will populate.
 
-**After that:** every `git push` to `main` redeploys automatically. No
-further steps.
+## After setup
 
-## Option B — Firebase App Hosting (same vendor as Firestore)
+Every push to `main` redeploys automatically. Deploy the Firestore security
+rules once with `firebase deploy --only firestore:rules`.
 
-If you'd rather keep everything in Firebase:
-
-```bash
-npm install -g firebase-tools
-firebase login
-firebase init apphosting     # connect this GitHub repo
-```
-
-During setup, store the service-account key as a secret
-(`firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY`) and grant the
-backend access to it. App Hosting then builds and deploys on every push, same
-as Vercel. Seeding + Rebuild work exactly as above.
-
-## Notes
-
-- **The service-account key is the only secret.** The Firebase *web* config
-  (apiKey etc.) is not used by this app and does not need to be set anywhere.
-- **Security rules:** deploy `firestore.rules` once with
-  `firebase deploy --only firestore:rules` so all direct client access to
-  Firestore is denied (the app talks to it only from the server).
-- **`/admin` has no login yet** — anyone with the URL can edit data. Add an
-  auth gate before sharing the site publicly.
+**Heads-up:** `/admin` has no login yet — anyone with the URL can edit data.
+Add an auth gate before sharing the site publicly.

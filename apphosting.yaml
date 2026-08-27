@@ -1,0 +1,29 @@
+# Firebase App Hosting configuration.
+# https://firebase.google.com/docs/app-hosting/configure
+#
+# App Hosting builds and runs this Next.js app on every push to the connected
+# branch. You connect the GitHub repo once in the Firebase Console
+# (Build -> App Hosting) — see DEPLOY.md.
+
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  cpu: 1
+  memoryMiB: 512
+
+# The service-account key the app uses to reach Firestore. It lives in Google
+# Cloud Secret Manager (NOT in GitHub). Create it once with:
+#
+#   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY
+#
+# and paste the full service-account JSON when prompted. That command also
+# grants this backend permission to read the secret.
+#
+# (Alternative: delete this env block entirely. App Hosting backends run as a
+# Google service account, and if you grant that account the "Cloud Datastore
+# User" role, the app authenticates automatically with no key at all.)
+env:
+  - variable: FIREBASE_SERVICE_ACCOUNT_KEY
+    secret: FIREBASE_SERVICE_ACCOUNT_KEY
+    availability:
+      - RUNTIME
