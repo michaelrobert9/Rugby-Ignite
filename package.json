@@ -1,20 +1,28 @@
 {
-  "name": "rugby-ignite",
+  "name": "rugby-ignite-web",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "seed:firestore": "node --env-file=.env.local scripts/seed-firestore.mjs"
   },
   "dependencies": {
-    "firebase": "^11.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "firebase-admin": "^13.6.0",
+    "next": "16.3.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.0.5"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

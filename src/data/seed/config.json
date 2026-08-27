@@ -1,0 +1,19 @@
+{
+  "kMaster": 4.0,
+  "masterMarginMultiplier": 1.0,
+  "masterUpsetMultiplier": 1.0,
+  "masterTitle": "Master Ranking",
+  "masterSafetyCap": 20.0,
+  "kSeason": 4.0,
+  "seedFactor": 0.25,
+  "seasonMarginMultiplier": 1.5,
+  "seasonUpsetMultiplier": 1.5,
+  "seasonTitle": "Season Ranking",
+  "seasonSafetyCap": 8.0,
+  "marginThreshold": 15,
+  "upsetThreshold": 10,
+  "homeAdvantage": 3.0,
+  "ratingDivisor": 20.0,
+  "baselineRating": 50.0,
+  "currentSeason": "2026"
+}

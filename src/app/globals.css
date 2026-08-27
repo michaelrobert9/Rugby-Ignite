@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+  --color-navy-950: #0a1a2f;
+  --color-navy-900: #0f2547;
+  --color-navy-800: #163864;
+  --color-navy-700: #1f4a83;
+  --color-pitch-700: #1c6b41;
+  --color-pitch-600: #228750;
+  --color-gold-500: #c9a24b;
+  --color-gold-400: #d9b968;
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-border: #e2e5eb;
+  --color-text: #14213d;
+  --color-text-muted: #5b6478;
+  --color-up: #1c8a4a;
+  --color-down: #c13b3b;
+}
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.rir-container {
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+.rir-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+
+.rir-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: var(--color-surface);
+}
+
+table.rir-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+table.rir-table thead th {
+  background: var(--color-navy-900);
+  color: #fff;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+table.rir-table tbody td {
+  padding: 0.55rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+table.rir-table tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+table.rir-table tbody tr:hover {
+  background: #f0f4f9;
+}
+
+.rir-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.rir-nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.4rem 0.15rem;
+  border-bottom: 2px solid transparent;
+}
+
+.rir-nav-link:hover,
+.rir-nav-link.active {
+  color: #fff;
+  border-bottom-color: var(--color-gold-500);
+}
+
+input.rir-input,
+select.rir-input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.875rem;
+  background: #fff;
+  color: var(--color-text);
+}
+
+input.rir-input:focus,
+select.rir-input:focus {
+  outline: 2px solid var(--color-navy-700);
+  outline-offset: 1px;
+}
+
+.rir-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.rir-btn-primary {
+  background: var(--color-navy-900);
+  color: #fff;
+}
+.rir-btn-primary:hover {
+  background: var(--color-navy-800);
+}
+
+.rir-btn-secondary {
+  background: #fff;
+  color: var(--color-navy-900);
+  border-color: var(--color-border);
+}
+.rir-btn-secondary:hover {
+  background: #f0f4f9;
+}
+
+.rir-btn-danger {
+  background: #fff;
+  color: var(--color-down);
+  border-color: #f1caca;
+}
+.rir-btn-danger:hover {
+  background: #fdf2f2;
+}
