@@ -8,8 +8,12 @@
 // rules can (and do) deny all client access; see firestore.rules.
 //
 // Credentials are read from the environment, never committed:
-//   - FIREBASE_SERVICE_ACCOUNT_KEY : the full service-account JSON, as a
-//     single-line string (see .env.example), OR
+//   - SERVICE_ACCOUNT_KEY : the full service-account JSON, as a single-line
+//     string (see .env.example). This is the name App Hosting exposes the
+//     secret under — Firebase reserves the "FIREBASE_" env-var prefix, so the
+//     variable can't be called FIREBASE_SERVICE_ACCOUNT_KEY even though the
+//     Secret Manager secret is named that. (The old name is still accepted as
+//     a fallback for existing local setups.) OR
 //   - GOOGLE_APPLICATION_CREDENTIALS : a path to the key file (Application
 //     Default Credentials — the default on Google Cloud / Firebase hosting).
 
@@ -22,14 +26,14 @@ function initApp(): App {
   const existing = getApps();
   if (existing.length) return existing[0];
 
-  const rawKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  const rawKey = process.env.SERVICE_ACCOUNT_KEY ?? process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (rawKey) {
     let creds: { project_id?: string };
     try {
       creds = JSON.parse(rawKey);
     } catch {
       throw new Error(
-        'FIREBASE_SERVICE_ACCOUNT_KEY is set but is not valid JSON. Paste the full ' +
+        'SERVICE_ACCOUNT_KEY is set but is not valid JSON. Paste the full ' +
           'service-account key JSON (wrapped in single quotes in .env.local).',
       );
     }

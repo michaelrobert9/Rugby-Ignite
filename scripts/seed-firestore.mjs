@@ -29,7 +29,7 @@ const SEED_DIR = path.join(__dirname, '..', 'src', 'data', 'seed');
 const BATCH_LIMIT = 450;
 
 function initApp() {
-  const rawKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  const rawKey = process.env.SERVICE_ACCOUNT_KEY ?? process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (rawKey) {
     const creds = JSON.parse(rawKey);
     return initializeApp({ credential: cert(creds), projectId: creds.project_id });
@@ -38,7 +38,7 @@ function initApp() {
     return initializeApp({ credential: applicationDefault() });
   }
   throw new Error(
-    'No credentials found. Set FIREBASE_SERVICE_ACCOUNT_KEY (the service-account ' +
+    'No credentials found. Set SERVICE_ACCOUNT_KEY (the service-account ' +
       'JSON) or GOOGLE_APPLICATION_CREDENTIALS in .env.local.',
   );
 }

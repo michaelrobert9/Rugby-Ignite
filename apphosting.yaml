@@ -14,16 +14,21 @@ runConfig:
 # The service-account key the app uses to reach Firestore. It lives in Google
 # Cloud Secret Manager (NOT in GitHub). Create it once with:
 #
-#   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY
+#   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY --project match-pulse-4560e
 #
 # and paste the full service-account JSON when prompted. That command also
 # grants this backend permission to read the secret.
+#
+# Note: the Secret Manager secret is named FIREBASE_SERVICE_ACCOUNT_KEY, but it
+# is exposed to the app under the env var SERVICE_ACCOUNT_KEY — App Hosting
+# reserves the "FIREBASE_" prefix for env-var names, so the variable can't
+# carry that prefix. The app reads process.env.SERVICE_ACCOUNT_KEY.
 #
 # (Alternative: delete this env block entirely. App Hosting backends run as a
 # Google service account, and if you grant that account the "Cloud Datastore
 # User" role, the app authenticates automatically with no key at all.)
 env:
-  - variable: FIREBASE_SERVICE_ACCOUNT_KEY
+  - variable: SERVICE_ACCOUNT_KEY
     secret: FIREBASE_SERVICE_ACCOUNT_KEY
     availability:
       - RUNTIME
