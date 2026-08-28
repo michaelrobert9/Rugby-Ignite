@@ -8,16 +8,33 @@ real fixtures, not fake ones.
 
 ## Running it locally
 
-The app is backed by **Firestore** (the shared "Match Pulse" project) via the
-Firebase Admin SDK. You need a service-account key before it will run.
+### Quick preview (no setup)
+
+To just see the site, with the bundled historical data:
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000. With **no** Firebase credentials configured, the
+app runs against an in-memory copy of the seed data (`src/lib/data/localStore.ts`)
+and computes the rankings on the fly — every page is populated immediately, no
+key and no "Rebuild" needed. Admin edits work but aren't saved (in-memory only).
+This mode is only for local previewing.
+
+### Running against real Firestore
+
+The deployed app is backed by **Firestore** (the shared "Match Pulse" project)
+via the Firebase Admin SDK. As soon as a credential is present, the app uses
+Firestore instead of the demo data. To run that way locally:
 
 ```bash
 npm install
 
 # 1. Configure credentials
 cp .env.example .env.local
-#    then paste your service-account key JSON into FIREBASE_SERVICE_ACCOUNT_KEY
-#    (Firebase console -> Project settings -> Service accounts -> Generate key)
+#    then paste your service-account key JSON into SERVICE_ACCOUNT_KEY
 
 # 2. Load the historical seed data into Firestore (one time)
 npm run seed:firestore
@@ -26,13 +43,11 @@ npm run seed:firestore
 npm run dev
 ```
 
-Then open http://localhost:3000. Edit teams, venues, and matches through the
-admin screens (`/admin`) and they persist directly to Firestore.
-
-The rankings won't show anything until you click **Rebuild Master + all
-Seasons** on the admin dashboard (`/admin`) — same as the "Status & Rebuild"
-step in the current WordPress plugin. Rebuild computes the `rankings`,
-`matchRatings` and `meta` collections from the source data.
+Edit teams, venues, and matches through the admin screens (`/admin`) and they
+persist directly to Firestore. Against Firestore the rankings stay empty until
+you click **Rebuild Master + all Seasons** on the admin dashboard, which
+computes the `rankings`, `matchRatings` and `meta` collections from the source
+data.
 
 ## What's real vs what's a placeholder
 
