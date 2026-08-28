@@ -135,10 +135,10 @@ function StatCard({ title, rating }: { title: string; rating: TeamRating | undef
       </div>
       {rating ? (
         <>
-          <div className="text-3xl font-bold mt-1" style={{ color: 'var(--color-navy-900)' }}>
+          <div className="rir-data text-3xl font-bold mt-1" style={{ color: 'var(--color-navy-900)' }}>
             {rating.rating.toFixed(2)}
           </div>
-          <div className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+          <div className="rir-data text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             {rating.matchesPlayed} played · {rating.wins}W {rating.draws}D {rating.losses}L
           </div>
         </>

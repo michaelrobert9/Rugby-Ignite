@@ -64,8 +64,8 @@ export default function RankingsTable({
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.teamId}>
-              <td className="font-semibold">{r.position}</td>
+            <tr key={r.teamId} className={r.position === 1 ? 'rir-rank-1' : undefined}>
+              <td className="rir-data font-semibold">{r.position}</td>
               <td>
                 <Link href={`/teams/${r.teamId}`} className="font-medium hover:underline" style={{ color: 'var(--color-navy-900)' }}>
                   {r.teamName}
@@ -82,12 +82,14 @@ export default function RankingsTable({
                   )}
                 </td>
               )}
-              <td>{r.played}</td>
-              <td>{r.wins}</td>
-              <td>{r.draws}</td>
-              <td>{r.losses}</td>
-              <td>{r.winPercent.toFixed(1)}%</td>
-              <td className="font-semibold">{r.rating.toFixed(2)}</td>
+              <td className="rir-data">{r.played}</td>
+              <td className="rir-data">{r.wins}</td>
+              <td className="rir-data">{r.draws}</td>
+              <td className="rir-data">{r.losses}</td>
+              <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-data font-semibold" style={{ color: r.position === 1 ? 'var(--gold)' : undefined }}>
+                {r.rating.toFixed(2)}
+              </td>
               <td>
                 <MovementCell movement={r.movement} />
               </td>

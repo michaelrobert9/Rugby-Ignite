@@ -1,21 +1,40 @@
 @import "tailwindcss";
 
+/*
+ * Rugby Ignite brand system (Brand Guidelines v2).
+ * Palette: Night / Ember / Chalk primary; Ash / Flint / Gold / Ember-Tempered secondary.
+ * The Ember rule: full Ember (#E8360A) is reserved for primary CTAs, live
+ * indicators and the #1 row. Inline links use Ember Tempered (#C4401A).
+ * Type: serif headings (authority), sans body, monospace for data.
+ */
 :root {
-  --color-navy-950: #0a1a2f;
-  --color-navy-900: #0f2547;
-  --color-navy-800: #163864;
-  --color-navy-700: #1f4a83;
-  --color-pitch-700: #1c6b41;
-  --color-pitch-600: #228750;
-  --color-gold-500: #c9a24b;
-  --color-gold-400: #d9b968;
-  --color-bg: #f5f6f8;
-  --color-surface: #ffffff;
-  --color-border: #e2e5eb;
-  --color-text: #14213d;
-  --color-text-muted: #5b6478;
+  /* Brand palette */
+  --night: #0f1923;
+  --ember: #e8360a;
+  --chalk: #f4efe6;
+  --ash: #1e2c38;
+  --flint: #4a4a4a;
+  --gold: #c9973a;
+  --ember-tempered: #c4401a;
+
+  /* Mapped onto the app's existing token names so every component inherits the brand */
+  --color-navy-950: #0a1119;
+  --color-navy-900: var(--night);
+  --color-navy-800: #17232f;
+  --color-navy-700: var(--ash);
+  --color-gold-500: var(--gold);
+  --color-gold-400: #d8ad57;
+  --color-bg: var(--chalk);
+  --color-surface: #fcfaf5;
+  --color-border: #e6ddcd;
+  --color-text: var(--night);
+  --color-text-muted: var(--flint);
   --color-up: #1c8a4a;
-  --color-down: #c13b3b;
+  --color-down: var(--ember-tempered);
+  --color-link: var(--ember-tempered);
+
+  --font-serif: "Roboto Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @theme inline {
@@ -27,7 +46,29 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Serif-led headings for authority. */
+h1,
+h2,
+h3,
+.rir-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+/* Monospace for data: ratings, results, win%. */
+.rir-data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Inline links use Ember Tempered, never full Ember. */
+a.rir-link,
+.rir-prose a {
+  color: var(--color-link);
 }
 
 .rir-container {
@@ -58,14 +99,14 @@ table.rir-table {
 }
 
 table.rir-table thead th {
-  background: var(--color-navy-900);
-  color: #fff;
+  background: var(--night);
+  color: var(--chalk);
   text-align: left;
   padding: 0.6rem 0.75rem;
   font-weight: 600;
   white-space: nowrap;
-  font-size: 0.75rem;
-  letter-spacing: 0.03em;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -76,11 +117,21 @@ table.rir-table tbody td {
 }
 
 table.rir-table tbody tr:nth-child(even) {
-  background: #fafbfc;
+  background: #fbf7ee;
 }
 
 table.rir-table tbody tr:hover {
-  background: #f0f4f9;
+  background: #f1e9db;
+}
+
+/* #1 row — the Ember rule: a single restrained ember signal at the top. */
+table.rir-table tbody tr.rir-rank-1 td {
+  background: rgba(232, 54, 10, 0.06);
+}
+table.rir-table tbody tr.rir-rank-1 td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--ember);
+  color: var(--ember);
+  font-weight: 700;
 }
 
 .rir-badge {
@@ -94,7 +145,7 @@ table.rir-table tbody tr:hover {
 }
 
 .rir-nav-link {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(244, 239, 230, 0.82);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.4rem 0.15rem;
@@ -103,8 +154,8 @@ table.rir-table tbody tr:hover {
 
 .rir-nav-link:hover,
 .rir-nav-link.active {
-  color: #fff;
-  border-bottom-color: var(--color-gold-500);
+  color: var(--chalk);
+  border-bottom-color: var(--ember);
 }
 
 input.rir-input,
@@ -120,7 +171,7 @@ select.rir-input {
 
 input.rir-input:focus,
 select.rir-input:focus {
-  outline: 2px solid var(--color-navy-700);
+  outline: 2px solid var(--ember);
   outline-offset: 1px;
 }
 
@@ -136,28 +187,29 @@ select.rir-input:focus {
   cursor: pointer;
 }
 
+/* Primary CTA = full Ember (per the Ember rule). */
 .rir-btn-primary {
-  background: var(--color-navy-900);
-  color: #fff;
+  background: var(--ember);
+  color: var(--chalk);
 }
 .rir-btn-primary:hover {
-  background: var(--color-navy-800);
+  background: #cf300a;
 }
 
 .rir-btn-secondary {
-  background: #fff;
-  color: var(--color-navy-900);
+  background: transparent;
+  color: var(--night);
   border-color: var(--color-border);
 }
 .rir-btn-secondary:hover {
-  background: #f0f4f9;
+  background: #ece3d3;
 }
 
 .rir-btn-danger {
   background: #fff;
   color: var(--color-down);
-  border-color: #f1caca;
+  border-color: #ecccbf;
 }
 .rir-btn-danger:hover {
-  background: #fdf2f2;
+  background: #fbf1ec;
 }
