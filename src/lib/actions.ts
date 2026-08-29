@@ -7,7 +7,8 @@ import { deleteTeam, nextTeamId, saveTeam } from './data/teams';
 import { deleteVenue, nextVenueId, saveVenue } from './data/venues';
 import { getConfig, saveConfig } from './data/config';
 import { rebuildRankings } from './data/rankings';
-import { PROVINCES, type Match, type MatchStatus, type Province, type RankingConfig, type Team, type Venue } from './types';
+import { getPage, savePage } from './data/pages';
+import { PROVINCES, type Match, type MatchStatus, type Page, type Province, type RankingConfig, type Team, type Venue } from './types';
 
 function str(fd: FormData, key: string): string {
   const v = fd.get(key);
@@ -147,4 +148,29 @@ export async function rebuildAction() {
   revalidatePath('/admin');
   revalidatePath('/provinces');
   redirect('/admin?rebuilt=1');
+}
+
+// ---------------- Pages (CMS) ----------------
+
+export async function savePageAction(formData: FormData) {
+  const id = str(formData, 'id');
+  const existing = await getPage(id);
+  if (!existing) redirect('/admin/pages');
+
+  const page: Page = {
+    ...existing,
+    navLabel: str(formData, 'navLabel') || existing.navLabel,
+    navOrder: num(formData, 'navOrder', existing.navOrder),
+    showInNav: formData.get('showInNav') === 'on',
+    title: str(formData, 'title') || existing.title,
+    slug: str(formData, 'slug') || existing.slug,
+    metaTitle: str(formData, 'metaTitle'),
+    metaDescription: str(formData, 'metaDescription'),
+    // Body keeps its formatting (newlines) — don't trim the interior.
+    body: String(formData.get('body') ?? '').replace(/\r\n/g, '\n').replace(/^\n+|\n+$/g, ''),
+  };
+  await savePage(page);
+  // Refresh the whole tree so nav labels/order and page content update.
+  revalidatePath('/', 'layout');
+  redirect(`/admin/pages/${id}?saved=1`);
 }

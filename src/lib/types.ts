@@ -16,6 +16,33 @@ export const PROVINCES = [
 
 export type Province = (typeof PROVINCES)[number];
 
+/** Display order for the province nav tabs. */
+export const PROVINCE_NAV_ORDER: Province[] = [
+  'Gauteng',
+  'Western Cape',
+  'KZN',
+  'Eastern Cape',
+  'Free State',
+];
+
+/**
+ * An editable CMS page (home + each province). Content is authored as text
+ * with [rankings] shortcodes that expand to live ranking tables.
+ */
+export interface Page {
+  id: string; // slug, also the document id: 'home', 'gauteng', 'kzn', ...
+  slug: string; // URL path used for this page (informational + SEO)
+  navLabel: string; // label shown in the top navigation
+  navOrder: number;
+  showInNav: boolean;
+  title: string; // H1 shown on the page
+  metaTitle: string; // <title> / SEO
+  metaDescription: string; // meta description / SEO
+  body: string; // markdown-lite content with [rankings ...] shortcodes
+  /** Default ranking scope for a bare [rankings] shortcode: 'master' or a Province. */
+  rankingScope: string;
+}
+
 export interface Venue {
   id: string;
   name: string;

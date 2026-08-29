@@ -16,7 +16,7 @@ import * as firestore from './firestoreStore';
 import * as local from './localStore';
 
 /** True when no Firebase credential is configured — use the demo backend. */
-function useDemo(): boolean {
+function isDemoMode(): boolean {
   return !(
     process.env.SERVICE_ACCOUNT_KEY ||
     process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
@@ -25,7 +25,7 @@ function useDemo(): boolean {
 }
 
 function backend() {
-  return useDemo() ? local : firestore;
+  return isDemoMode() ? local : firestore;
 }
 
 export function readCollection<T>(name: string): Promise<T> {

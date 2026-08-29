@@ -1,33 +1,44 @@
-import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import RankingsTable from '@/components/RankingsTable';
-import { getConfig } from '@/lib/data/config';
+import { getPage } from '@/lib/data/pages';
+import { pageIdForProvince } from '@/lib/data/defaultPages';
+import { RichText, type ShortcodeRenderer } from '@/lib/content';
+import RankingsBlock from '@/components/RankingsBlock';
 import { PROVINCES, type Province } from '@/lib/types';
-import { getRankingRows } from '@/lib/viewModels';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProvincePage(props: PageProps<'/provinces/[province]'>) {
-  const { province: raw } = await props.params;
-  const province = decodeURIComponent(raw) as Province;
-  if (!PROVINCES.includes(province)) notFound();
+function resolveProvince(raw: string): Province | undefined {
+  const decoded = decodeURIComponent(raw);
+  return (PROVINCES as readonly string[]).includes(decoded) ? (decoded as Province) : undefined;
+}
 
-  const [config, rows] = await Promise.all([getConfig(), getRankingRows('master', province)]);
+export async function generateMetadata(props: PageProps<'/provinces/[province]'>): Promise<Metadata> {
+  const { province } = await props.params;
+  const p = resolveProvince(province);
+  if (!p) return {};
+  const page = await getPage(pageIdForProvince(p));
+  return { title: page?.metaTitle, description: page?.metaDescription };
+}
+
+export default async function ProvincePage(props: PageProps<'/provinces/[province]'>) {
+  const { province } = await props.params;
+  const p = resolveProvince(province);
+  if (!p) notFound();
+  const page = await getPage(pageIdForProvince(p));
+  if (!page) notFound();
+
+  const renderShortcode: ShortcodeRenderer = (name, attrs, key) => {
+    if (name !== 'rankings') return null;
+    return <RankingsBlock key={key} scope={attrs.scope ?? page.rankingScope} province={attrs.province ?? p} />;
+  };
 
   return (
     <div className="rir-container py-8 space-y-6">
-      <div>
-        <Link href="/provinces" className="text-xs hover:underline" style={{ color: 'var(--color-text-muted)' }}>
-          ← All provinces
-        </Link>
-        <h1 className="text-2xl font-bold mt-1" style={{ color: 'var(--color-navy-900)' }}>
-          {province}
-        </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          {config.masterTitle}, filtered to fixtures between two {province} teams only.
-        </p>
-      </div>
-      <RankingsTable rows={rows} ratingLabel="Rating" emptyMessage={`No intra-${province} fixtures recorded yet.`} />
+      <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>
+        {page.title}
+      </h1>
+      <RichText body={page.body} renderShortcode={renderShortcode} />
     </div>
   );
 }

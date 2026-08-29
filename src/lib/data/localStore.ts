@@ -16,6 +16,7 @@ import teamsSeed from '../../data/seed/teams.json';
 import venuesSeed from '../../data/seed/venues.json';
 import matchesSeed from '../../data/seed/matches.json';
 import configSeed from '../../data/seed/config.json';
+import { DEFAULT_PAGES } from './defaultPages';
 
 type Row = Record<string, unknown>;
 
@@ -34,6 +35,7 @@ function ensureSeeded(): void {
   store.venues = clone(venuesSeed);
   store.matches = clone(matchesSeed) as unknown as Match[];
   store.config = clone(configSeed) as unknown as RankingConfig;
+  store.pages = clone(DEFAULT_PAGES);
   seeded = true;
 }
 

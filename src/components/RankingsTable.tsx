@@ -53,10 +53,6 @@ export default function RankingsTable({
             <th>Pos</th>
             <th>Team</th>
             {showProvince && <th>Province</th>}
-            <th>P</th>
-            <th>W</th>
-            <th>D</th>
-            <th>L</th>
             <th>Win%</th>
             <th>{ratingLabel}</th>
             <th>This week</th>
@@ -82,10 +78,6 @@ export default function RankingsTable({
                   )}
                 </td>
               )}
-              <td className="rir-data">{r.played}</td>
-              <td className="rir-data">{r.wins}</td>
-              <td className="rir-data">{r.draws}</td>
-              <td className="rir-data">{r.losses}</td>
               <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
               <td className="rir-data font-semibold" style={{ color: r.position === 1 ? 'var(--gold)' : undefined }}>
                 {r.rating.toFixed(2)}

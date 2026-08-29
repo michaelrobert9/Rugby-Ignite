@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { navPages } from "@/lib/data/pages";
+import { PROVINCES, type Page } from "@/lib/types";
+
+// Route for a nav page: home -> '/', a province page -> /provinces/<Province>,
+// otherwise fall back to its stored slug.
+function pageHref(page: Page): string {
+  if (page.id === "home") return "/";
+  if ((PROVINCES as readonly string[]).includes(page.rankingScope)) {
+    return `/provinces/${encodeURIComponent(page.rankingScope)}`;
+  }
+  return page.slug || "/";
+}
 
 // Deliberately not using next/font/google here: it fetches from Google Fonts
 // at build time, which fails in offline/sandboxed environments. System fonts
@@ -12,12 +24,14 @@ export const metadata: Metadata = {
   icons: { icon: "/logo-icon.png", apple: "/logo-icon.png" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const nav = await navPages();
   return (
     <html lang="en" className="h-full antialiased">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,500;8..144,600;8..144,700;8..144,800&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
@@ -31,12 +45,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 40, width: "auto" }} />
             </Link>
             <nav className="flex items-center gap-5 overflow-x-auto">
-              <Link href="/" className="rir-nav-link">
-                Rankings
-              </Link>
-              <Link href="/provinces" className="rir-nav-link">
-                Provinces
-              </Link>
+              {nav.map((page) => (
+                <Link key={page.id} href={pageHref(page)} className="rir-nav-link whitespace-nowrap">
+                  {page.navLabel}
+                </Link>
+              ))}
               <Link href="/results" className="rir-nav-link">
                 Results
               </Link>
