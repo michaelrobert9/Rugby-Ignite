@@ -65,9 +65,11 @@ h3,
   letter-spacing: -0.02em;
 }
 
-/* Inline links use Ember Tempered, never full Ember. */
+/* Inline links use Ember Tempered, never full Ember. Exclude buttons and
+   badges, which carry their own colours (a [rankings] shortcode can place
+   them inside .rir-prose). */
 a.rir-link,
-.rir-prose a {
+.rir-prose a:not(.rir-btn):not(.rir-badge) {
   color: var(--color-link);
 }
 
