@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import { navPages } from "@/lib/data/pages";
 import { PROVINCES, type Page } from "@/lib/types";
+import SiteNav from "@/components/SiteNav";
 
 // Route for a nav page: home -> '/', a province page -> /provinces/<Province>,
 // otherwise fall back to its stored slug.
@@ -26,6 +27,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const nav = await navPages();
+  const navItems = [
+    ...nav.map((page) => ({ href: pageHref(page), label: page.navLabel })),
+    { href: "/results", label: "Results" },
+    { href: "/admin", label: "Admin" },
+  ];
   return (
     <html lang="en" className="h-full antialiased">
       <head>
@@ -38,25 +44,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <header style={{ background: "var(--night)" }}>
+        <header className="relative" style={{ background: "var(--night)" }}>
           <div className="rir-container flex items-center justify-between h-16 gap-6">
             <Link href="/" className="flex items-center shrink-0" aria-label="Rugby Ignite home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 40, width: "auto" }} />
             </Link>
-            <nav className="flex items-center gap-5 overflow-x-auto">
-              {nav.map((page) => (
-                <Link key={page.id} href={pageHref(page)} className="rir-nav-link whitespace-nowrap">
-                  {page.navLabel}
-                </Link>
-              ))}
-              <Link href="/results" className="rir-nav-link">
-                Results
-              </Link>
-              <Link href="/admin" className="rir-nav-link">
-                Admin
-              </Link>
-            </nav>
+            <SiteNav items={navItems} />
           </div>
         </header>
         <main className="flex-1">{children}</main>
