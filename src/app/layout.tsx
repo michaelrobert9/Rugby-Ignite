@@ -29,6 +29,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const nav = await navPages();
   const navItems = [
     ...nav.map((page) => ({ href: pageHref(page), label: page.navLabel })),
+    { href: "/news", label: "News" },
     { href: "/results", label: "Results" },
     { href: "/admin", label: "Admin" },
   ];
