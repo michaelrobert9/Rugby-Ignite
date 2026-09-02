@@ -133,3 +133,19 @@ export interface RankingConfig {
   masterTitle: string;
   seasonTitle: string;
 }
+
+/**
+ * A News/Post article (ported from the WordPress plugin's News feature).
+ * Body uses the same markdown-lite + [shortcode] format as pages, so a post
+ * can embed a live ranking table with [rankings].
+ */
+export interface Post {
+  id: string; // slug, also the document id
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+  author: string;
+  date: string; // ISO date the post is published/dated
+  status: 'draft' | 'published';
+}

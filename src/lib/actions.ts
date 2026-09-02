@@ -8,7 +8,8 @@ import { deleteVenue, nextVenueId, saveVenue } from './data/venues';
 import { getConfig, saveConfig } from './data/config';
 import { rebuildRankings } from './data/rankings';
 import { getPage, savePage } from './data/pages';
-import { PROVINCES, type Match, type MatchStatus, type Page, type Province, type RankingConfig, type Team, type Venue } from './types';
+import { deletePost, savePost, slugify, uniquePostId } from './data/posts';
+import { PROVINCES, type Match, type MatchStatus, type Page, type Post, type Province, type RankingConfig, type Team, type Venue } from './types';
 
 function str(fd: FormData, key: string): string {
   const v = fd.get(key);
@@ -173,4 +174,34 @@ export async function savePageAction(formData: FormData) {
   // Refresh the whole tree so nav labels/order and page content update.
   revalidatePath('/', 'layout');
   redirect(`/admin/pages/${id}?saved=1`);
+}
+
+// ---------------- News / Posts ----------------
+
+export async function savePostAction(formData: FormData) {
+  const idInput = str(formData, 'id');
+  const title = str(formData, 'title') || 'Untitled';
+  const slugInput = str(formData, 'slug');
+  const id = idInput || (await uniquePostId(slugInput || title));
+
+  const post: Post = {
+    id,
+    slug: slugify(slugInput || id) || id,
+    title,
+    excerpt: str(formData, 'excerpt'),
+    author: str(formData, 'author') || 'Rugby Ignite',
+    date: str(formData, 'date') || new Date().toISOString().slice(0, 10),
+    status: str(formData, 'status') === 'published' ? 'published' : 'draft',
+    body: String(formData.get('body') ?? '').replace(/\r\n/g, '\n').replace(/^\n+|\n+$/g, ''),
+  };
+  await savePost(post);
+  revalidatePath('/', 'layout');
+  redirect(`/admin/news/${id}?saved=1`);
+}
+
+export async function deletePostAction(formData: FormData) {
+  const id = str(formData, 'id');
+  if (id) await deletePost(id);
+  revalidatePath('/', 'layout');
+  redirect('/admin/news');
 }
