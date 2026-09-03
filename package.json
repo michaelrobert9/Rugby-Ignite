@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:firestore": "node --env-file=.env.local scripts/seed-firestore.mjs"
+    "seed:firestore": "node --env-file=.env.local scripts/seed-firestore.mjs",
+    "verify:elo": "node scripts/verify-elo.mjs"
   },
   "dependencies": {
     "firebase-admin": "^13.6.0",
