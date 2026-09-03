@@ -59,13 +59,21 @@ export function expectedScore(ratingA: number, ratingB: number, divisor: number)
   return 1.0 / (1.0 + Math.pow(10, (ratingB - ratingA) / divisor));
 }
 
-/** Master track — World Rugby Points Exchange System. K=4 by default, hard-capped at 12.00. */
+/**
+ * Master track — World Rugby Points Exchange System. K=4 by default, hard-capped
+ * at 12.00. Margin and upset multipliers are configurable but are applied to the
+ * SAME `changeHome`, with `changeAway = -changeHome`, so the exchange stays
+ * zero-sum for every setting: whatever one team gains, the other loses. Master is
+ * therefore always a pure points exchange — the pool is never created/destroyed.
+ */
 function calculateMasterExchange(
   homeRating: number,
   awayRating: number,
   homePoints: number,
   awayPoints: number,
   isHomeAdvantage: boolean,
+  homePosition: number,
+  awayPosition: number,
   config: RankingConfig,
 ): ExchangeResult {
   const k = config.kMaster;
@@ -89,8 +97,25 @@ function calculateMasterExchange(
     changeHome = -P;
   }
 
-  const marginBonus = homeOutcome !== 'draw' && margin >= 16;
-  if (marginBonus) changeHome *= 1.5;
+  const marginBonus = homeOutcome !== 'draw' && margin >= config.masterMarginThreshold;
+  if (marginBonus && config.masterMarginMultiplier > 1.0) changeHome *= config.masterMarginMultiplier;
+
+  // Upset: beating a team ranked well above you. Applied to the same changeHome
+  // (both sides scale together via changeAway = -changeHome), so it never breaks
+  // the exchange — unlike the Season track's deliberately asymmetric upset.
+  let upsetTier = 0;
+  if (
+    config.masterUpsetMultiplier > 1.0 &&
+    homeOutcome !== 'draw' &&
+    homePosition > 0 &&
+    awayPosition > 0
+  ) {
+    const gap = homeOutcome === 'win' ? homePosition - awayPosition : awayPosition - homePosition;
+    if (gap >= config.masterUpsetThreshold) {
+      changeHome *= config.masterUpsetMultiplier;
+      upsetTier = 1;
+    }
+  }
 
   const effectiveCap = Math.min(MASTER_HARD_CAP, config.masterSafetyCap);
   let capped = false;
@@ -110,7 +135,7 @@ function calculateMasterExchange(
     awayOutcome,
     marginBonus,
     margin,
-    upsetTier: 0,
+    upsetTier,
     capped,
   };
 }
@@ -319,7 +344,9 @@ export function runFullRecalculation(
         seasonStats.set(awayId, emptyStats());
       }
 
-      // Master track doesn't use leaderboard position (only Season's upset multiplier does).
+      // Leaderboard positions before this match, per track — used by the upset
+      // multipliers (Master's only matters when masterUpsetMultiplier > 1).
+      const masterPositions = computePositions(masterRatings);
       const seasonPositions = computePositions(seasonRatings);
 
       const homeAdv = isHomeAdvantage(match, teamById.get(homeId));
@@ -334,6 +361,8 @@ export function runFullRecalculation(
         homePoints,
         awayPoints,
         homeAdv,
+        masterPositions.get(homeId) ?? 0,
+        masterPositions.get(awayId) ?? 0,
         config,
       );
       masterRatings.set(homeId, masterHomeBefore + masterResult.homeChange);

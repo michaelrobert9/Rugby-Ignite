@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 import { deleteMatch, nextMatchId, saveMatch } from './data/matches';
 import { deleteTeam, nextTeamId, saveTeam } from './data/teams';
 import { deleteVenue, nextVenueId, saveVenue } from './data/venues';
-import { getConfig, saveConfig } from './data/config';
+import { getSportConfig, saveSportConfig } from './data/config';
+import type { SportKey } from './matchpulse/types';
 import { rebuildRankings } from './data/rankings';
 import { getPage, savePage } from './data/pages';
 import { deletePost, savePost, slugify, uniquePostId } from './data/posts';
@@ -115,12 +116,23 @@ export async function deleteMatchAction(formData: FormData) {
 
 // ---------------- Config ----------------
 
+const SPORT_KEYS: SportKey[] = ['rugby', 'hockey', 'waterpolo', 'netball'];
+
 export async function saveConfigAction(formData: FormData) {
-  const current = await getConfig();
+  const raw = str(formData, 'sport');
+  const sport: SportKey = (SPORT_KEYS as string[]).includes(raw) ? (raw as SportKey) : 'rugby';
+
+  // `current` is the fallback for every field: when the Master formula is left
+  // locked, its inputs aren't submitted, so those values are preserved as-is.
+  const current = await getSportConfig(sport);
   const config: RankingConfig = {
     ...current,
     kMaster: num(formData, 'kMaster', current.kMaster),
     masterSafetyCap: num(formData, 'masterSafetyCap', current.masterSafetyCap),
+    masterMarginMultiplier: num(formData, 'masterMarginMultiplier', current.masterMarginMultiplier),
+    masterMarginThreshold: num(formData, 'masterMarginThreshold', current.masterMarginThreshold),
+    masterUpsetMultiplier: num(formData, 'masterUpsetMultiplier', current.masterUpsetMultiplier),
+    masterUpsetThreshold: num(formData, 'masterUpsetThreshold', current.masterUpsetThreshold),
     kSeason: num(formData, 'kSeason', current.kSeason),
     seedFactor: num(formData, 'seedFactor', current.seedFactor),
     seasonMarginMultiplier: num(formData, 'seasonMarginMultiplier', current.seasonMarginMultiplier),
@@ -135,11 +147,11 @@ export async function saveConfigAction(formData: FormData) {
     masterTitle: str(formData, 'masterTitle') || current.masterTitle,
     seasonTitle: str(formData, 'seasonTitle') || current.seasonTitle,
   };
-  await saveConfig(config);
+  await saveSportConfig(sport, config);
   revalidatePath('/admin/settings');
   revalidatePath('/');
   revalidatePath('/rankings');
-  redirect('/admin/settings?saved=1');
+  redirect(`/admin/settings?sport=${sport}&saved=1`);
 }
 
 // ---------------- Rebuild ----------------

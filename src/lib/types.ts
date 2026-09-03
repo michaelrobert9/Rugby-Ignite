@@ -119,6 +119,14 @@ export interface MatchRating {
 export interface RankingConfig {
   kMaster: number;
   masterSafetyCap: number;
+  /** A winning margin at/above masterMarginThreshold multiplies the exchange. */
+  masterMarginMultiplier: number;
+  masterMarginThreshold: number;
+  /** Beating a team ranked ≥ masterUpsetThreshold places above multiplies the
+   *  exchange. Applied SYMMETRICALLY (winner +x, loser −x) so Master stays a
+   *  pure points exchange — the pool is conserved whatever this is set to. */
+  masterUpsetMultiplier: number;
+  masterUpsetThreshold: number;
   kSeason: number;
   seedFactor: number;
   seasonMarginMultiplier: number;

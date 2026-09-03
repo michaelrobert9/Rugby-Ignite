@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { rankedSports, loadSportData } from '@/lib/matchpulse/source';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
-import { getConfig } from '@/lib/data/config';
+import { getSportConfig } from '@/lib/data/config';
 import type { SportKey, Track } from '@/lib/matchpulse/types';
 
 export const dynamic = 'force-dynamic';
@@ -32,7 +32,7 @@ function Chip({ active, href: h, children }: { active: boolean; href: string; ch
 
 export default async function RankingsPage(props: PageProps<'/rankings'>) {
   const sp = await props.searchParams;
-  const [sports, config] = await Promise.all([rankedSports(), getConfig()]);
+  const sports = await rankedSports();
 
   if (sports.length === 0) {
     return (
@@ -46,7 +46,7 @@ export default async function RankingsPage(props: PageProps<'/rankings'>) {
   const sportKey = (typeof sp.sport === 'string' && sports.some((s) => s.key === sp.sport) ? sp.sport : sports[0].key) as SportKey;
   const sport = sports.find((s) => s.key === sportKey)!;
 
-  const { matches, orgs } = await loadSportData(sportKey);
+  const [{ matches, orgs }, config] = await Promise.all([loadSportData(sportKey), getSportConfig(sportKey)]);
 
   const ages = Array.from(new Set(matches.map((m) => m.ageGroup))).sort();
   const seasons = Array.from(new Set(matches.map((m) => m.season))).sort();
