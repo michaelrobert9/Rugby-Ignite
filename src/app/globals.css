@@ -136,6 +136,14 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
   font-weight: 700;
 }
 
+/* On narrow screens the ranking table drops the W/D/L columns to stay readable;
+   Played, Win% and Rating remain. */
+@media (max-width: 640px) {
+  .rir-col-wdl {
+    display: none;
+  }
+}
+
 .rir-badge {
   display: inline-flex;
   align-items: center;

@@ -68,14 +68,8 @@ export default function RankingsTable({
                 </Link>
               </td>
               {showProvince && (
-                <td>
-                  {r.province ? (
-                    <Link href={`/provinces/${encodeURIComponent(r.province)}`} className="text-xs hover:underline" style={{ color: 'var(--color-text-muted)' }}>
-                      {r.province}
-                    </Link>
-                  ) : (
-                    '—'
-                  )}
+                <td className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  {r.province ? r.province : '—'}
                 </td>
               )}
               <td className="rir-data">{r.winPercent.toFixed(1)}%</td>

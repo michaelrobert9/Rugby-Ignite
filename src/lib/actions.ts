@@ -160,7 +160,6 @@ export async function rebuildAction() {
   await rebuildRankings();
   revalidatePath('/');
   revalidatePath('/admin');
-  revalidatePath('/provinces');
   redirect('/admin?rebuilt=1');
 }
 

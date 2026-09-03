@@ -2,16 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { navPages } from "@/lib/data/pages";
-import { PROVINCES, type Page } from "@/lib/types";
+import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
-// Route for a nav page: home -> '/', a province page -> /provinces/<Province>,
-// otherwise fall back to its stored slug.
+// Route for a nav page: home -> '/', otherwise its stored slug.
 function pageHref(page: Page): string {
   if (page.id === "home") return "/";
-  if ((PROVINCES as readonly string[]).includes(page.rankingScope)) {
-    return `/provinces/${encodeURIComponent(page.rankingScope)}`;
-  }
   return page.slug || "/";
 }
 
@@ -30,7 +26,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const navItems = [
     ...nav.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/news", label: "News" },
-    { href: "/results", label: "Results" },
     { href: "/admin", label: "Admin" },
   ];
   return (

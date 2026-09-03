@@ -1,22 +1,23 @@
 import type { Post } from '../types';
 
-/** Sample news content so the News page isn't empty in preview/demo mode. */
+/** Seed news content. Bodies are evergreen and link to the live rankings on the
+ *  home page, so they stay accurate as new verified results are added. */
 export const DEFAULT_POSTS: Post[] = [
   {
-    id: 'paarl-gimnasium-hold-the-summit',
-    slug: 'paarl-gimnasium-hold-the-summit',
-    title: 'Paarl Gimnasium hold the summit',
+    id: 'the-title-race-takes-shape',
+    slug: 'the-title-race-takes-shape',
+    title: 'The title race takes shape',
     excerpt:
-      'Another unbeaten week keeps Paarl Gimnasium clear at the top of the Master Ranking as the season enters its final stretch.',
+      'As more verified results are logged, the Master Ranking is starting to separate the genuine contenders from the pack.',
     author: 'Rugby Ignite',
-    date: '2026-08-24',
+    date: '2026-09-02',
     status: 'published',
     body: [
-      'Paarl Gimnasium remain the team to beat, holding the number-one spot on the Master Ranking for another week.',
+      'Every verified result nudges the Master Ranking — one continuous rating across every fixture ever played.',
       '',
-      'The current standings across every fixture ever played:',
+      'Because it is a points-exchange system, the only way up the table is to beat teams rated near or above you: points move from the loser to the winner, and a big win or a genuine upset moves a few more.',
       '',
-      '[rankings scope="master"]',
+      'See exactly where every school sits right now on the [live rankings](/).',
     ].join('\n'),
   },
   {
@@ -26,15 +27,17 @@ export const DEFAULT_POSTS: Post[] = [
     excerpt:
       'A quick explainer on the two tracks — the continuous Master Ranking and the season-by-season Season Ranking.',
     author: 'Rugby Ignite',
-    date: '2026-08-01',
+    date: '2026-09-02',
     status: 'published',
     body: [
-      'Rugby Ignite runs **two** ratings from the same results:',
+      'Rugby Ignite runs **two** ratings from the same verified results, both out of 100 with every team starting on 50:',
       '',
-      '- The **Master Ranking** is one continuous rating across every fixture ever played. It never resets.',
-      '- The **Season Ranking** resets each season, seeded from the Master, so every year starts fresh.',
+      '- The **Master Ranking** is one continuous points exchange across every fixture ever played. It never resets, and no points enter or leave the system — each match only moves points between the two teams.',
+      '- The **Season Ranking** takes a snapshot of the Master at the start of each season, re-seeds every team, then re-rates the year with its own settings — a cleaner read of current-season form.',
       '',
-      'Both are built only from real, recorded results — win percentage and ranking points, nothing else.',
+      'Both show win percentage alongside the rating, and both are built only from real, recorded results.',
+      '',
+      'See them live on the [rankings page](/).',
     ].join('\n'),
   },
 ];

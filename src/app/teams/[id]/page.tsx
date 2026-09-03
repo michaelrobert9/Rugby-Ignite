@@ -42,13 +42,7 @@ export default async function TeamPage(props: PageProps<'/teams/[id]'>) {
           )}
         </div>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          {team.province ? (
-            <Link href={`/provinces/${encodeURIComponent(team.province)}`} className="hover:underline">
-              {team.province}
-            </Link>
-          ) : (
-            'No province assigned'
-          )}
+          {team.province ? team.province : 'No province assigned'}
           {venue && <> · Home ground: {venue.name}</>}
         </p>
       </div>

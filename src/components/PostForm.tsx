@@ -50,7 +50,7 @@ export default function PostForm({ post }: { post: Post }) {
                 <code>[rankings scope=&quot;master&quot;]</code> — embed the ranking table in a post.
               </li>
               <li>
-                <code>## Heading</code>, <code>- list item</code>, <code>**bold**</code>, <code>[link](/results)</code>
+                <code>## Heading</code>, <code>- list item</code>, <code>**bold**</code>, <code>[link](/)</code>
               </li>
             </ul>
           </div>

@@ -13,6 +13,23 @@ import type { MPMatch, MPOrg, SportKey } from './types';
 export interface SportData {
   matches: MPMatch[];
   orgs: MPOrg[];
+  /** Most recent time any result was added/edited (ISO), for the "last updated" line. */
+  lastUpdated: string | null;
+}
+
+// Firestore Timestamp | Date | number | string -> epoch ms (or null).
+function toMillis(v: unknown): number | null {
+  if (!v) return null;
+  const maybe = v as { toMillis?: () => number; toDate?: () => Date };
+  if (typeof maybe.toMillis === 'function') return maybe.toMillis();
+  if (typeof maybe.toDate === 'function') return maybe.toDate().getTime();
+  if (v instanceof Date) return v.getTime();
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const t = Date.parse(v);
+    return Number.isNaN(t) ? null : t;
+  }
+  return null;
 }
 
 // Firestore Timestamp | Date | number | 'YYYY-MM-DD' -> 'YYYY-MM-DD'.
@@ -40,12 +57,17 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
 
   const matches: MPMatch[] = [];
   const orgs = new Map<string, string>();
+  let lastUpdatedMs: number | null = null;
 
   for (const doc of snap.docs) {
     const d = doc.data() as Record<string, unknown>;
     const homeOrgId = (d.homeOrgId as string) || '';
     const awayOrgId = (d.awayOrgId as string) || '';
     if (!homeOrgId || !awayOrgId) continue; // need two identified schools to rank
+
+    // Track the freshest result timestamp for the "last updated" line.
+    const stamp = toMillis(d.updatedAt) ?? toMillis(d.createdAt) ?? toMillis(d.matchDate) ?? toMillis(d.scheduledAt);
+    if (stamp !== null && (lastUpdatedMs === null || stamp > lastUpdatedMs)) lastUpdatedMs = stamp;
 
     const date = toDateStr(d.matchDate) ?? toDateStr(d.scheduledAt);
     if (!date) continue; // undated finals can't be replayed chronologically
@@ -69,5 +91,9 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     if (d.awayOrgName) orgs.set(awayOrgId, String(d.awayOrgName));
   }
 
-  return { matches, orgs: Array.from(orgs, ([id, name]) => ({ id, name })) };
+  return {
+    matches,
+    orgs: Array.from(orgs, ([id, name]) => ({ id, name })),
+    lastUpdated: lastUpdatedMs !== null ? new Date(lastUpdatedMs).toISOString() : null,
+  };
 }

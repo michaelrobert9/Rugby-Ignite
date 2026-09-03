@@ -22,7 +22,7 @@ export default async function EditPagePage(props: PageProps<'/admin/pages/[slug]
             Edit “{page.title}”
           </h2>
         </div>
-        <Link href={page.id === 'home' ? '/' : `/provinces/${encodeURIComponent(page.rankingScope)}`} className="rir-btn rir-btn-secondary" target="_blank">
+        <Link href={page.id === 'home' ? '/' : page.slug || '/'} className="rir-btn rir-btn-secondary" target="_blank">
           View page ↗
         </Link>
       </div>

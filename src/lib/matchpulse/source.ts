@@ -34,6 +34,6 @@ export async function loadSportData(sport: SportKey): Promise<SportData> {
     return await loadSportLive(sport);
   } catch (err) {
     console.warn(`[rankings] live read for "${sport}" failed:`, (err as Error).message);
-    return { matches: [], orgs: [] };
+    return { matches: [], orgs: [], lastUpdated: null };
   }
 }
