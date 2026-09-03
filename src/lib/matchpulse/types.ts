@@ -37,15 +37,3 @@ export interface MPMatch {
 }
 
 export type Track = 'master' | 'season';
-
-/** One row in a computed ladder (a school's side for the chosen age group). */
-export interface RatingRow {
-  entityId: string;
-  name: string;
-  rating: number; // 0–100 scale, everyone starts at 50
-  played: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  winPercent: number;
-}
