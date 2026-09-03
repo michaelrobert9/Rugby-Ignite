@@ -21,6 +21,7 @@ import { cert, getApps, initializeApp, applicationDefault, type App } from 'fire
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 
 let cachedDb: Firestore | null = null;
+const cachedSportDbs = new Map<string, Firestore>();
 
 function initApp(): App {
   const existing = getApps();
@@ -48,9 +49,23 @@ function initApp(): App {
   return initializeApp({ credential: applicationDefault() });
 }
 
-/** Lazily-initialized Firestore handle. */
+/** Lazily-initialized Firestore handle for the (default) database. */
 export function getDb(): Firestore {
   if (cachedDb) return cachedDb;
   cachedDb = getFirestore(initApp());
   return cachedDb;
+}
+
+/**
+ * Firestore handle for a NAMED database in the same project — one per Match
+ * Pulse sport (e.g. 'rugby'). The ranking system reads these read-only. Works
+ * automatically on App Hosting inside match-pulse-4560e (Application Default
+ * Credentials); locally it needs SERVICE_ACCOUNT_KEY / GOOGLE_APPLICATION_CREDENTIALS.
+ */
+export function getSportDb(sportKey: string): Firestore {
+  const cached = cachedSportDbs.get(sportKey);
+  if (cached) return cached;
+  const db = getFirestore(initApp(), sportKey);
+  cachedSportDbs.set(sportKey, db);
+  return db;
 }

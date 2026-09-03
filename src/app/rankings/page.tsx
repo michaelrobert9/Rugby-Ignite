@@ -1,18 +1,14 @@
 import Link from 'next/link';
-import {
-  rankedSports,
-  getMatches,
-  listAgeGroups,
-  listSeasons,
-  getOrgs,
-  getTeams,
-} from '@/lib/matchpulse/source';
+import { rankedSports, loadSportData } from '@/lib/matchpulse/source';
 import { computeRatings } from '@/lib/matchpulse/ratingEngine';
 import type { RatingRow, SportKey, Track } from '@/lib/matchpulse/types';
 
 export const dynamic = 'force-dynamic';
 
-const ageLabel = (a: string) => (/^u\d+$/i.test(a) ? a.toUpperCase() : a.charAt(0).toUpperCase() + a.slice(1));
+const ageLabel = (a: string) => {
+  if (a === '1st') return '1st Team';
+  return /^u\d+$/i.test(a) ? a.toUpperCase() : a.charAt(0).toUpperCase() + a.slice(1);
+};
 
 type Sel = { sport: string; age: string; track: Track; season: string };
 
@@ -84,13 +80,9 @@ export default async function RankingsPage(props: PageProps<'/rankings'>) {
   const sportKey = (typeof sp.sport === 'string' && sports.some((s) => s.key === sp.sport) ? sp.sport : sports[0].key) as SportKey;
   const sport = sports.find((s) => s.key === sportKey)!;
 
-  const [ages, seasons, matches, orgs, teams] = await Promise.all([
-    listAgeGroups(sportKey),
-    listSeasons(sportKey),
-    getMatches(sportKey),
-    getOrgs(),
-    getTeams(),
-  ]);
+  const { matches, orgs, teams, live } = await loadSportData(sportKey);
+  const ages = Array.from(new Set(matches.map((m) => m.ageGroup))).sort();
+  const seasons = Array.from(new Set(matches.map((m) => m.season))).sort();
 
   const age = typeof sp.age === 'string' && ages.includes(sp.age) ? sp.age : (ages[0] ?? '');
   const track: Track = sp.track === 'season' ? 'season' : 'master';
@@ -146,7 +138,8 @@ export default async function RankingsPage(props: PageProps<'/rankings'>) {
       </div>
 
       <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-        Test bed · reading Match Pulse–shaped sample data (read-only). School rating is the headline; individual sides are ranked separately.
+        Test bed · {live ? 'reading LIVE Match Pulse data (read-only)' : 'Match Pulse–shaped sample data'} ·
+        {' '}School rating is the headline; individual sides are ranked separately.
       </p>
     </div>
   );
