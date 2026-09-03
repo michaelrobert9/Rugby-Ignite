@@ -29,6 +29,35 @@ function href(base: string, sel: Sel, patch: Partial<Sel>): string {
   return `${base}?sport=${s.sport}&age=${encodeURIComponent(s.age)}&track=${s.track}&season=${s.season}`;
 }
 
+// Rating points gained/lost since the last Thursday 23:59 reset.
+function PointsDelta({ value }: { value: number | null }) {
+  if (value === null) {
+    return <span className="rir-badge" style={{ background: '#eef1f5', color: 'var(--color-text-muted)' }}>NEW</span>;
+  }
+  const rounded = Math.round(value * 10) / 10;
+  if (rounded === 0) return <span style={{ color: 'var(--color-text-muted)' }}>—</span>;
+  const up = rounded > 0;
+  return (
+    <span style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 600 }}>
+      {up ? '+' : '−'}{Math.abs(rounded).toFixed(1)}
+    </span>
+  );
+}
+
+// Leaderboard positions gained/lost since the last Thursday 23:59 reset.
+function PositionDelta({ value }: { value: number | null }) {
+  if (value === null) {
+    return <span className="rir-badge" style={{ background: '#eef1f5', color: 'var(--color-text-muted)' }}>NEW</span>;
+  }
+  if (value === 0) return <span style={{ color: 'var(--color-text-muted)' }}>—</span>;
+  const up = value > 0;
+  return (
+    <span className="rir-badge" style={{ background: up ? '#e9f7ee' : '#fbecec', color: up ? 'var(--color-up)' : 'var(--color-down)' }}>
+      {up ? '▲' : '▼'} {Math.abs(value)}
+    </span>
+  );
+}
+
 function Chip({ active, href: h, children }: { active: boolean; href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -134,6 +163,8 @@ export default async function LiveRankings({ sp, basePath = '/' }: { sp: SP; bas
                   <th className="rir-col-wdl">L</th>
                   <th>Win%</th>
                   <th>Rating</th>
+                  <th>+/- Pts</th>
+                  <th>+/-</th>
                 </tr>
               </thead>
               <tbody>
@@ -147,6 +178,8 @@ export default async function LiveRankings({ sp, basePath = '/' }: { sp: SP; bas
                     <td className="rir-data rir-col-wdl">{r.losses}</td>
                     <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
                     <td className="rir-data font-semibold" style={{ color: i === 0 ? 'var(--gold)' : undefined }}>{r.rating.toFixed(1)}</td>
+                    <td className="rir-data"><PointsDelta value={r.weekPoints} /></td>
+                    <td><PositionDelta value={r.movement} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -159,6 +192,9 @@ export default async function LiveRankings({ sp, basePath = '/' }: { sp: SP; bas
               ? ` Master is a World Rugby points exchange (K=${config.kMaster}) — each match only moves points between the two teams${conserved ? ', pool verified balanced' : ''}.`
               : ` Season is seeded from Master at the season start (seed factor ${config.seedFactor}) and re-rated with its own K=${config.kSeason}.`}
             {' '}The full formula and every setting are on the admin Settings page.
+          </p>
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            <strong>+/- Pts</strong> is the rating gained or lost, and <strong>+/-</strong> the positions moved, since the weekly reset — every Thursday at 23:59 (SA time). Teams new since then show <span className="rir-badge" style={{ background: '#eef1f5', color: 'var(--color-text-muted)' }}>NEW</span>.
           </p>
         </>
       )}
