@@ -17,7 +17,9 @@ export interface SportDef {
 
 export interface MPOrg {
   id: string;
-  name: string; // school / club name
+  name: string; // canonical school / club name from Match Pulse `organizations`
+  logoUrl?: string | null; // organisation crest/logo URL, when set
+  primaryColor?: string | null; // brand colour, for the monogram fallback
 }
 
 /** A finalised result, normalised from a sport DB's `matches` collection. */

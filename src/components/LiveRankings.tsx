@@ -58,6 +58,35 @@ function PositionDelta({ value }: { value: number | null }) {
   );
 }
 
+function monogram(name: string): string {
+  return name.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+}
+
+// Team name matching Match Pulse, with its crest (or a brand-coloured monogram
+// when the organisation has no logo).
+function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUrl: string | null; primaryColor: string | null }) {
+  return (
+    <div className="flex items-center gap-2">
+      {logoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoUrl} alt="" width={24} height={24} style={{ width: 24, height: 24, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
+      ) : (
+        <span
+          aria-hidden
+          style={{
+            width: 24, height: 24, borderRadius: 4, flexShrink: 0,
+            background: primaryColor || 'var(--night)', color: 'var(--chalk)',
+            fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {monogram(name)}
+        </span>
+      )}
+      <span className="font-medium" style={{ color: 'var(--color-navy-900)' }}>{name}</span>
+    </div>
+  );
+}
+
 function Chip({ active, href: h, children }: { active: boolean; href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -171,7 +200,7 @@ export default async function LiveRankings({ sp, basePath = '/' }: { sp: SP; bas
                 {rows.map((r, i) => (
                   <tr key={r.entityId} className={i === 0 ? 'rir-rank-1' : undefined}>
                     <td className="rir-data font-semibold">{i + 1}</td>
-                    <td className="font-medium" style={{ color: 'var(--color-navy-900)' }}>{r.name}</td>
+                    <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
                     <td className="rir-data">{r.played}</td>
                     <td className="rir-data rir-col-wdl">{r.wins}</td>
                     <td className="rir-data rir-col-wdl">{r.draws}</td>
