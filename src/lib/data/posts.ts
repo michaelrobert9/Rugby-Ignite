@@ -10,7 +10,7 @@ function byDateDesc(a: Post, b: Post): number {
 
 /** Every post (all statuses), newest first — merges defaults with stored edits. */
 export async function listPosts(): Promise<Post[]> {
-  const stored = await readCollection<Post[]>(COLLECTION);
+  const stored = await readCollection<Post[]>(COLLECTION).catch(() => [] as Post[]);
   const byId = new Map<string, Post>();
   for (const p of DEFAULT_POSTS) byId.set(p.id, p);
   for (const p of stored) byId.set(p.id, p);

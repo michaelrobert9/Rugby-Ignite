@@ -9,7 +9,7 @@ const COLLECTION = 'pages';
  * extra stored pages). Merging means editing one page never drops the rest.
  */
 export async function listPages(): Promise<Page[]> {
-  const stored = await readCollection<Page[]>(COLLECTION);
+  const stored = await readCollection<Page[]>(COLLECTION).catch(() => [] as Page[]);
   const byId = new Map<string, Page>();
   for (const p of DEFAULT_PAGES) byId.set(p.id, p);
   for (const p of stored) byId.set(p.id, p);

@@ -69,8 +69,14 @@ async function readSportConfigs(): Promise<Partial<Record<SportKey, RankingConfi
 
 export async function getSportConfig(sport: SportKey): Promise<RankingConfig> {
   if (sport === 'rugby') {
-    const raw = await readCollection<Partial<RankingConfig>>(CONFIG);
-    return withDefaults('rugby', raw);
+    try {
+      const raw = await readCollection<Partial<RankingConfig>>(CONFIG);
+      return withDefaults('rugby', raw);
+    } catch {
+      // Fresh database with no config doc yet, or a not-found DB — use defaults.
+      // The first save from the Settings page creates the document.
+      return withDefaults('rugby', null);
+    }
   }
   const map = await readSportConfigs();
   return withDefaults(sport, map[sport]);
