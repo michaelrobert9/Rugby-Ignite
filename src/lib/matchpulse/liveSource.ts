@@ -79,7 +79,11 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
   const matches: MPMatch[] = [];
   const fallbackName = new Map<string, string>();
   const usedOrgIds = new Set<string>();
-  let lastUpdatedMs: number | null = null;
+  // "Last updated" = the freshest time a result was written (added or edited) in
+  // Match Pulse, so the card moves whenever the data behind the table changes.
+  // Fixture dates are only a last resort if no write timestamps exist at all.
+  let lastWriteMs: number | null = null;
+  let lastDateMs: number | null = null;
 
   for (const doc of snap.docs) {
     const d = doc.data() as Record<string, unknown>;
@@ -87,9 +91,10 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     const awayOrgId = (d.awayOrgId as string) || '';
     if (!homeOrgId || !awayOrgId) continue; // need two identified schools to rank
 
-    // Track the freshest result timestamp for the "last updated" line.
-    const stamp = toMillis(d.updatedAt) ?? toMillis(d.createdAt) ?? toMillis(d.matchDate) ?? toMillis(d.scheduledAt);
-    if (stamp !== null && (lastUpdatedMs === null || stamp > lastUpdatedMs)) lastUpdatedMs = stamp;
+    const writeMs = toMillis(d.updatedAt) ?? toMillis(d.createdAt);
+    if (writeMs !== null && (lastWriteMs === null || writeMs > lastWriteMs)) lastWriteMs = writeMs;
+    const dateMs = toMillis(d.matchDate) ?? toMillis(d.scheduledAt);
+    if (dateMs !== null && (lastDateMs === null || dateMs > lastDateMs)) lastDateMs = dateMs;
 
     const date = toDateStr(d.matchDate) ?? toDateStr(d.scheduledAt);
     if (!date) continue; // undated finals can't be replayed chronologically
@@ -128,6 +133,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     });
   }
 
+  const lastUpdatedMs = lastWriteMs ?? lastDateMs;
   return {
     matches,
     orgs: Array.from(orgs.values()),
