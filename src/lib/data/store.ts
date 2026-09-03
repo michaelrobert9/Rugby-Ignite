@@ -15,12 +15,23 @@ import type { WhereFilterOp } from 'firebase-admin/firestore';
 import * as firestore from './firestoreStore';
 import * as local from './localStore';
 
-/** True when no Firebase credential is configured — use the demo backend. */
-function isDemoMode(): boolean {
+/**
+ * True when no persistent store is configured — use the in-memory demo backend.
+ *
+ * Persistence turns on when EITHER an explicit service-account key is set, OR
+ * APP_FIRESTORE_DB names a dedicated Firestore database for this app's own data
+ * (config, settings, pages, posts). The named-database option needs no key —
+ * it uses Application Default Credentials, exactly like the live sport reads —
+ * and is routed to its own database so it never touches the Match Pulse core's
+ * (default) database. Without either, edits are in-memory only and reset on
+ * restart (fine for a zero-setup preview, but settings won't stick).
+ */
+export function isDemoMode(): boolean {
   return !(
     process.env.SERVICE_ACCOUNT_KEY ||
     process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
-    process.env.GOOGLE_APPLICATION_CREDENTIALS
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    process.env.APP_FIRESTORE_DB
   );
 }
 

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSportConfig } from '@/lib/data/config';
+import { isDemoMode } from '@/lib/data/store';
 import { listSports } from '@/lib/matchpulse/source';
 import { listSeasons } from '@/lib/data/matches';
 import { saveConfigAction, rebuildAction } from '@/lib/actions';
@@ -20,8 +21,18 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
 
   const [config, seasons] = await Promise.all([getSportConfig(sportKey), listSeasons()]);
 
+  const demo = isDemoMode();
+
   return (
     <div className="space-y-6">
+      {demo && (
+        <div className="rir-card p-4 text-sm" style={{ background: '#fdf3e7', borderColor: '#f0d9b5', color: 'var(--color-navy-900)' }}>
+          <strong>Preview mode — changes are not saved.</strong> No database is attached, so settings are held in
+          memory only and reset when the server restarts. Each sport still has its own settings; until a database
+          is attached they all just show the built-in defaults. To save per-sport settings permanently, set
+          <code> APP_FIRESTORE_DB</code> to a dedicated database in <code>apphosting.yaml</code> (see DEPLOY.md).
+        </div>
+      )}
       {searchParams.saved === '1' && (
         <div className="rir-card p-4 text-sm" style={{ background: '#e9f7ee', borderColor: '#bfe3cc', color: 'var(--color-up)' }}>
           {sport.name} settings saved. Rankings are computed live on every page load, so the new formula applies immediately.

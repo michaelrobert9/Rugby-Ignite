@@ -10,14 +10,26 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 
-# PREVIEW MODE (current): no database secret is attached, so the app serves the
-# bundled historical data via the in-memory demo backend (src/lib/data/localStore.ts).
-# Every page renders with real data; admin edits are NOT persisted. This lets the
-# site deploy to a live URL with zero credential setup.
+# PREVIEW MODE (current): no database is attached, so the app serves the bundled
+# historical data via the in-memory demo backend (src/lib/data/localStore.ts).
+# Every page renders with real data; admin edits (including ranking settings) are
+# NOT persisted and reset when the instance restarts.
 #
-# TO SWITCH TO THE LIVE FIRESTORE DATABASE later, uncomment the block below AND
-# make sure the Secret Manager secret FIREBASE_SERVICE_ACCOUNT_KEY holds valid
-# service-account JSON. The most reliable way to set it (avoids paste mangling):
+# TO PERSIST THIS APP'S OWN DATA (ranking settings, pages, posts) — RECOMMENDED:
+# create a DEDICATED Firestore database in the same project (e.g. id
+# "rugby-ignite") so it never collides with the Match Pulse core's (default)
+# database, then set APP_FIRESTORE_DB to that id. No key is needed — App Hosting
+# reaches it with Application Default Credentials, exactly like the live sport
+# reads. Uncomment:
+#
+# env:
+#   - variable: APP_FIRESTORE_DB
+#     value: rugby-ignite
+#     availability:
+#       - RUNTIME
+#
+# ALTERNATIVELY, point the app at a store via an explicit service-account key
+# (uncomment BOTH the block above's style and this, with the secret set):
 #
 #   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY \
 #     --data-file /path/to/serviceAccountKey.json --project match-pulse-4560e

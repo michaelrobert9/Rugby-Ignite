@@ -49,10 +49,20 @@ function initApp(): App {
   return initializeApp({ credential: applicationDefault() });
 }
 
-/** Lazily-initialized Firestore handle for the (default) database. */
+/**
+ * Firestore handle for THIS app's own data (config, settings, pages, posts).
+ *
+ * If APP_FIRESTORE_DB is set, that names a dedicated database for this app —
+ * kept separate from the Match Pulse core's (default) database so the two never
+ * collide — reached with Application Default Credentials (no key needed on App
+ * Hosting). Otherwise it falls back to the project's (default) database, which
+ * only makes sense when a dedicated service-account key points at a store of
+ * this app's own.
+ */
 export function getDb(): Firestore {
   if (cachedDb) return cachedDb;
-  cachedDb = getFirestore(initApp());
+  const appDbId = process.env.APP_FIRESTORE_DB;
+  cachedDb = appDbId ? getFirestore(initApp(), appDbId) : getFirestore(initApp());
   return cachedDb;
 }
 
