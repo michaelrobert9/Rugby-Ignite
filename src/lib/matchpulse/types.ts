@@ -1,23 +1,18 @@
-// Match Pulse–shaped data model for the ranking test bed.
+// Match Pulse–shaped data model for the ranking system.
 //
-// These shapes mirror the real Match Pulse platform (a shared Firebase project
-// with one named Firestore database per sport). The ranking system reads this
-// data READ-ONLY and computes ratings in memory — it never writes back.
-//
-// A "sport" has its own database (rugby/hockey/waterpolo/netball). Within a
-// sport, results are grouped by AGE GROUP (u19, u16, …). Rankings are computed
-// per sport × age group, on two tracks (Master = continuous, Season = per year),
-// at two levels: organisation (school/club) and individual team (e.g. U16A).
+// The system reads Match Pulse data READ-ONLY and computes ratings in memory —
+// it never writes back. A "sport" is its own named Firestore database
+// (rugby/hockey/…). Within a sport, results are grouped by AGE GROUP (which is
+// the team dimension — a school's side for that age group). Rankings are one
+// ladder per sport × age group, on two tracks (Master = all-time, Season).
 
 export type SportKey = 'rugby' | 'hockey' | 'waterpolo' | 'netball';
 
 export interface SportDef {
   key: SportKey;
   name: string;
-  /** How a score is expressed — drives labels and the ranking margin scale. */
   scoreUnit: 'points' | 'goals';
-  /** Admin toggle: does this sport get a ranking system at all. */
-  rankingsEnabled: boolean;
+  rankingsEnabled: boolean; // admin toggle: does this sport get rankings
 }
 
 export interface MPOrg {
@@ -25,41 +20,29 @@ export interface MPOrg {
   name: string; // school / club name
 }
 
-/** An individual side within an org, e.g. "Paarl Gimnasium U16A". */
-export interface MPTeam {
-  id: string;
-  orgId: string;
-  name: string;
-  ageGroup: string; // 'u19' | 'u16' | 'senior' | …
-}
-
 /** A finalised result, normalised from a sport DB's `matches` collection. */
 export interface MPMatch {
   id: string;
   sport: SportKey;
-  ageGroup: string;
+  ageGroup: string; // 'u19' | 'u16' | '1st' | …
   season: string; // e.g. '2026'
-  date: string; // ISO
+  date: string; // ISO 'YYYY-MM-DD'
   homeOrgId: string;
   awayOrgId: string;
-  homeTeamId: string | null;
-  awayTeamId: string | null;
   homeScore: number;
   awayScore: number;
-  // Rugby only, when known (used for future bonus-point tuning). null = unknown.
+  // Rugby only, when known — reserved for future bonus-point tuning.
   homeTries?: number | null;
   awayTries?: number | null;
 }
 
 export type Track = 'master' | 'season';
-export type RankLevel = 'org' | 'team';
 
-/** One row in a computed ladder. */
+/** One row in a computed ladder (a school's side for the chosen age group). */
 export interface RatingRow {
   entityId: string;
   name: string;
-  subtitle?: string; // e.g. org name under a team, or province
-  rating: number;
+  rating: number; // 0–100 scale, everyone starts at 50
   played: number;
   wins: number;
   draws: number;

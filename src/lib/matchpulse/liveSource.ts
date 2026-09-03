@@ -1,22 +1,21 @@
 // Live, READ-ONLY reader for Match Pulse sport data.
 //
-// Each sport is a named Firestore database in match-pulse-4560e. We open it
-// with the Admin SDK (getSportDb) and read finalised `matches`. Names are
-// denormalised onto each match (homeOrgName / homeTeamName / …), so the ladders
-// are built straight from `matches` — no reads of `organizations` or `teams`.
+// Each sport is a named Firestore database in match-pulse-4560e. We open it with
+// the Admin SDK (getSportDb) and read finalised `matches`. School names are
+// denormalised onto each match (homeOrgName / awayOrgName), so ladders build
+// straight from `matches` — no reads of `organizations`/`teams`.
 //
-// This module NEVER writes. It runs server-side only.
+// This module NEVER writes. Server-side only.
 
 import { getSportDb } from '../data/firebaseAdmin';
-import type { MPMatch, MPOrg, MPTeam, SportKey } from './types';
+import type { MPMatch, MPOrg, SportKey } from './types';
 
 export interface SportData {
   matches: MPMatch[];
   orgs: MPOrg[];
-  teams: MPTeam[];
 }
 
-// Firestore Timestamp | Date | number | 'YYYY-MM-DD' -> ISO date (YYYY-MM-DD).
+// Firestore Timestamp | Date | number | 'YYYY-MM-DD' -> 'YYYY-MM-DD'.
 function toDateStr(v: unknown): string | null {
   if (!v) return null;
   if (typeof v === 'string') return v.slice(0, 10);
@@ -32,8 +31,8 @@ const numOrNull = (v: unknown): number | null => (typeof v === 'number' && Numbe
 
 /**
  * Read finalised results for one sport. `ageGroup` is fixed to '1st' for now —
- * only 1st-team rugby data exists live; when age sides arrive, derive the group
- * from each team's teamLevel/ageGroup (a join against the `teams` collection).
+ * only 1st-team rugby data exists live. When age sides arrive, derive the group
+ * from each team's level/ageGroup (a join against the `teams` collection).
  */
 export async function loadSportLive(sport: SportKey): Promise<SportData> {
   const db = getSportDb(sport);
@@ -41,15 +40,16 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
 
   const matches: MPMatch[] = [];
   const orgs = new Map<string, string>();
-  const teams = new Map<string, { name: string; orgId: string }>();
 
   for (const doc of snap.docs) {
     const d = doc.data() as Record<string, unknown>;
-    const homeOrgId = (d.homeOrgId as string) ?? null;
-    const awayOrgId = (d.awayOrgId as string) ?? null;
+    const homeOrgId = (d.homeOrgId as string) || '';
+    const awayOrgId = (d.awayOrgId as string) || '';
+    if (!homeOrgId || !awayOrgId) continue; // need two identified schools to rank
+
     const date = toDateStr(d.matchDate) ?? toDateStr(d.scheduledAt);
-    const season = d.season ? String(d.season) : (date ? date.slice(0, 4) : '');
     if (!date) continue; // undated finals can't be replayed chronologically
+    const season = d.season ? String(d.season) : date.slice(0, 4);
 
     matches.push({
       id: doc.id,
@@ -57,30 +57,17 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
       ageGroup: '1st',
       season,
       date,
-      homeOrgId: homeOrgId ?? '',
-      awayOrgId: awayOrgId ?? '',
-      homeTeamId: (d.homeTeamId as string) ?? null,
-      awayTeamId: (d.awayTeamId as string) ?? null,
+      homeOrgId,
+      awayOrgId,
       homeScore: num(d.homeScore),
       awayScore: num(d.awayScore),
       homeTries: numOrNull(d.homeTries),
       awayTries: numOrNull(d.awayTries),
     });
 
-    // Harvest labels from the denormalised fields.
-    if (homeOrgId && d.homeOrgName) orgs.set(homeOrgId, String(d.homeOrgName));
-    if (awayOrgId && d.awayOrgName) orgs.set(awayOrgId, String(d.awayOrgName));
-    if (d.homeTeamId && (d.homeTeamName || d.homeDisplay)) {
-      teams.set(String(d.homeTeamId), { name: String(d.homeTeamName || d.homeDisplay), orgId: homeOrgId ?? '' });
-    }
-    if (d.awayTeamId && (d.awayTeamName || d.awayDisplay)) {
-      teams.set(String(d.awayTeamId), { name: String(d.awayTeamName || d.awayDisplay), orgId: awayOrgId ?? '' });
-    }
+    if (d.homeOrgName) orgs.set(homeOrgId, String(d.homeOrgName));
+    if (d.awayOrgName) orgs.set(awayOrgId, String(d.awayOrgName));
   }
 
-  return {
-    matches,
-    orgs: Array.from(orgs, ([id, name]) => ({ id, name })),
-    teams: Array.from(teams, ([id, t]) => ({ id, orgId: t.orgId, name: t.name, ageGroup: '1st' } as MPTeam)),
-  };
+  return { matches, orgs: Array.from(orgs, ([id, name]) => ({ id, name })) };
 }
