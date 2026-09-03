@@ -26,6 +26,7 @@ export interface LadderRow {
   losses: number;
   winPercent: number;
   movement: number | null; // places gained/lost since last Thu 23:59 snapshot
+  weekPoints: number | null; // rating points gained/lost since that snapshot
 }
 
 export interface LadderResult {
@@ -104,6 +105,7 @@ export function computeLiveLadder(
     losses: tr.losses,
     winPercent: tr.matchesPlayed ? Math.round((tr.wins / tr.matchesPlayed) * 1000) / 10 : 0,
     movement: tr.movement,
+    weekPoints: tr.weekPoints,
   }));
 
   rows.sort(

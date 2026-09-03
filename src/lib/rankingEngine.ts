@@ -256,15 +256,23 @@ function computePositions(ratings: Map<string, number>): Map<string, number> {
   return out;
 }
 
-/** Most recent Thursday 23:59 strictly before `from`. */
+// South African Standard Time is UTC+2 year-round (no daylight saving).
+const SAST_OFFSET_MS = 2 * 60 * 60 * 1000;
+
+/**
+ * Most recent Thursday 23:59 (South African time) strictly before `from`.
+ * The weekly movement window resets at 23:59 SAST every Thursday. The server
+ * runs in UTC, so we shift into SAST, snap to Thursday 23:59 there, then shift
+ * back to the real UTC instant.
+ */
 function lastThursdayCutoff(from: Date): Date {
-  const c = new Date(from);
-  c.setHours(23, 59, 0, 0);
-  // JS getDay(): 0=Sun..4=Thu
-  while (c.getDay() !== 4 || c.getTime() >= from.getTime()) {
-    c.setDate(c.getDate() - 1);
+  const sa = new Date(from.getTime() + SAST_OFFSET_MS); // SAST wall clock, read via getUTC*
+  sa.setUTCHours(23, 59, 0, 0);
+  // getUTCDay(): 0=Sun..4=Thu
+  while (sa.getUTCDay() !== 4 || sa.getTime() >= from.getTime() + SAST_OFFSET_MS) {
+    sa.setUTCDate(sa.getUTCDate() - 1);
   }
-  return c;
+  return new Date(sa.getTime() - SAST_OFFSET_MS);
 }
 
 export interface RecalculationResult {
