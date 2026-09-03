@@ -297,7 +297,11 @@ export function runFullRecalculation(
   const eligible = matches
     .filter((m) => m.rankingEligible && m.status === 'played' && m.homePoints !== null && m.awayPoints !== null)
     .slice()
-    .sort((a, b) => a.date.localeCompare(b.date));
+    // Strict chronological replay. The id tiebreak makes the order of matches
+    // sharing a date fully deterministic, so the ranking is a reproducible
+    // function of the data — it never shifts just because the source rows
+    // arrived in a different order.
+    .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
 
   const seasons = Array.from(new Set(eligible.map((m) => m.season))).sort();
 
