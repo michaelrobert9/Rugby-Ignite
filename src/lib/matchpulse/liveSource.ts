@@ -53,10 +53,32 @@ const numOrNull = (v: unknown): number | null => (typeof v === 'number' && Numbe
  */
 export async function loadSportLive(sport: SportKey): Promise<SportData> {
   const db = getSportDb(sport);
-  const snap = await db.collection('matches').where('status', '==', 'final').get();
+
+  // Canonical org names + logos come from `organizations` (what Match Pulse
+  // shows), read in parallel with the results. The denormalised name on each
+  // match is only a fallback for an org that has no organisations doc.
+  const [snap, orgSnap] = await Promise.all([
+    db.collection('matches').where('status', '==', 'final').get(),
+    db.collection('organizations').get().catch(() => null),
+  ]);
+
+  const orgDocs = new Map<string, { name: string; logoUrl: string | null; primaryColor: string | null }>();
+  if (orgSnap) {
+    for (const o of orgSnap.docs) {
+      const od = o.data() as Record<string, unknown>;
+      const name = od.name ? String(od.name) : od.displayName ? String(od.displayName) : '';
+      if (!name) continue;
+      orgDocs.set(o.id, {
+        name,
+        logoUrl: od.logoUrl ? String(od.logoUrl) : null,
+        primaryColor: od.primaryColor ? String(od.primaryColor) : null,
+      });
+    }
+  }
 
   const matches: MPMatch[] = [];
-  const orgs = new Map<string, string>();
+  const fallbackName = new Map<string, string>();
+  const usedOrgIds = new Set<string>();
   let lastUpdatedMs: number | null = null;
 
   for (const doc of snap.docs) {
@@ -87,13 +109,28 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
       awayTries: numOrNull(d.awayTries),
     });
 
-    if (d.homeOrgName) orgs.set(homeOrgId, String(d.homeOrgName));
-    if (d.awayOrgName) orgs.set(awayOrgId, String(d.awayOrgName));
+    usedOrgIds.add(homeOrgId);
+    usedOrgIds.add(awayOrgId);
+    if (d.homeOrgName) fallbackName.set(homeOrgId, String(d.homeOrgName));
+    if (d.awayOrgName) fallbackName.set(awayOrgId, String(d.awayOrgName));
+  }
+
+  // Build the org list for every school that actually appears in a result,
+  // preferring the canonical organisations doc (name + logo).
+  const orgs = new Map<string, MPOrg>();
+  for (const id of usedOrgIds) {
+    const canonical = orgDocs.get(id);
+    orgs.set(id, {
+      id,
+      name: canonical?.name || fallbackName.get(id) || id,
+      logoUrl: canonical?.logoUrl ?? null,
+      primaryColor: canonical?.primaryColor ?? null,
+    });
   }
 
   return {
     matches,
-    orgs: Array.from(orgs, ([id, name]) => ({ id, name })),
+    orgs: Array.from(orgs.values()),
     lastUpdated: lastUpdatedMs !== null ? new Date(lastUpdatedMs).toISOString() : null,
   };
 }

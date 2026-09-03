@@ -18,6 +18,8 @@ import type { MPMatch, MPOrg, Track } from './types';
 export interface LadderRow {
   entityId: string;
   name: string;
+  logoUrl: string | null; // organisation crest from Match Pulse
+  primaryColor: string | null; // brand colour for the monogram fallback
   rating: number; // starts at baselineRating (50 by default)
   startingRating: number;
   played: number;
@@ -70,6 +72,7 @@ export function computeLiveLadder(
   season: string,
   config: RankingConfig,
 ): LadderResult {
+  const orgById = new Map(orgs.map((o) => [o.id, o]));
   const nameFor = new Map(orgs.map((o) => [o.id, o.name]));
 
   // One independent ladder per age group: only replay this group's matches.
@@ -96,7 +99,9 @@ export function computeLiveLadder(
 
   const rows: LadderRow[] = Array.from(map.values()).map((tr) => ({
     entityId: tr.teamId,
-    name: nameFor.get(tr.teamId) ?? tr.teamId,
+    name: orgById.get(tr.teamId)?.name ?? tr.teamId,
+    logoUrl: orgById.get(tr.teamId)?.logoUrl ?? null,
+    primaryColor: orgById.get(tr.teamId)?.primaryColor ?? null,
     rating: tr.rating,
     startingRating: tr.startingRating,
     played: tr.matchesPlayed,
