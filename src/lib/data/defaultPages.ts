@@ -1,48 +1,20 @@
-import { PROVINCE_NAV_ORDER, type Page, type Province } from '../types';
+import type { Page } from '../types';
 
-/** URL slug for a province page, e.g. 'Western Cape' -> 'western-cape'. */
-export function provinceSlug(province: Province): string {
-  return province.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
-/** Map a province to its CMS page id (same as its slug). */
-export function pageIdForProvince(province: Province): string {
-  return provinceSlug(province);
-}
-
+// The home page is now the live rankings view itself (src/app/page.tsx renders
+// <LiveRankings/>), so it carries no editable body. It stays here only so the
+// nav has a "Home" entry and metadata resolves.
 const HOME: Page = {
   id: 'home',
   slug: '/',
   navLabel: 'Home',
   navOrder: 0,
   showInNav: true,
-  title: 'Master Ranking',
+  title: 'Rankings',
   metaTitle: 'Rugby Ignite — School Rugby Rankings',
-  metaDescription: 'Ignite the passion. Honour the game. The complete record of South African school rugby.',
+  metaDescription: 'Live South African school rugby rankings — Master and Season, refreshed as verified results are added.',
   rankingScope: 'master',
-  body: [
-    'One continuous rating across every fixture ever played. Never resets.',
-    '',
-    '[rankings toggle="true"]',
-  ].join('\n'),
+  body: '',
 };
 
-const PROVINCE_PAGES: Page[] = PROVINCE_NAV_ORDER.map((province, i) => ({
-  id: pageIdForProvince(province),
-  slug: `/${provinceSlug(province)}`,
-  navLabel: province,
-  navOrder: i + 1,
-  showInNav: true,
-  title: province,
-  metaTitle: `${province} — Rugby Ignite Rankings`,
-  metaDescription: `School rugby rankings for ${province}, filtered to fixtures between two ${province} teams.`,
-  rankingScope: province,
-  body: [
-    `The ${province} table, filtered to fixtures between two ${province} teams only.`,
-    '',
-    '[rankings]',
-  ].join('\n'),
-}));
-
 /** Seed content for the editable pages. */
-export const DEFAULT_PAGES: Page[] = [HOME, ...PROVINCE_PAGES];
+export const DEFAULT_PAGES: Page[] = [HOME];

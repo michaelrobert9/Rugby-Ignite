@@ -26,7 +26,7 @@ export default function PageForm({ page }: { page: Page }) {
           label="URL / slug"
           name="slug"
           defaultValue={page.slug}
-          hint="The page's web address (for SEO/reference). Home is / and provinces live at /provinces/…"
+          hint="The page's web address (for SEO/reference). Home is /."
         />
         <Field label="Meta title (browser tab / search results)" name="metaTitle" defaultValue={page.metaTitle} />
         <div>
@@ -56,7 +56,7 @@ export default function PageForm({ page }: { page: Page }) {
               <code>[rankings province=&quot;Western Cape&quot;]</code> — a specific province&apos;s table.
             </li>
             <li>
-              <code>## Heading</code>, <code>- list item</code>, <code>**bold**</code>, <code>[link](/results)</code>
+              <code>## Heading</code>, <code>- list item</code>, <code>**bold**</code>, <code>[link](/)</code>
             </li>
           </ul>
         </div>
