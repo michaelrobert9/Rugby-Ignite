@@ -138,6 +138,7 @@ export async function saveConfigAction(formData: FormData) {
   await saveConfig(config);
   revalidatePath('/admin/settings');
   revalidatePath('/');
+  revalidatePath('/rankings');
   redirect('/admin/settings?saved=1');
 }
 
