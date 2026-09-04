@@ -4,7 +4,7 @@
 import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeProvinceTable, provinceByKey } from '@/lib/matchpulse/provinces';
 import { getCurrentSeason } from '@/lib/season';
-import { TeamCell } from './rankingCells';
+import { TeamCell, rankClass } from './rankingCells';
 
 export default async function ProvinceTable({
   province,
@@ -44,14 +44,14 @@ export default async function ProvinceTable({
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.entityId} className={i === 0 ? 'rir-rank-1' : undefined}>
+            <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
               <td className="rir-data">{r.played}</td>
               <td className="rir-data rir-col-wdl">{r.wins}</td>
               <td className="rir-data rir-col-wdl">{r.draws}</td>
               <td className="rir-data rir-col-wdl">{r.losses}</td>
-              <td className="rir-data font-semibold" style={{ color: i === 0 ? 'var(--gold)' : undefined }}>{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-data font-semibold">{r.winPercent.toFixed(1)}%</td>
             </tr>
           ))}
         </tbody>

@@ -6,7 +6,7 @@ import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
 import { getSportConfig } from '@/lib/data/config';
 import { getCurrentSeason } from '@/lib/season';
-import { TeamCell, PointsDelta, PositionDelta, fmtUpdated } from './rankingCells';
+import { TeamCell, PointsDelta, PositionDelta, fmtUpdated, rankClass } from './rankingCells';
 
 export async function LastUpdatedLine() {
   const { lastUpdated } = await getCachedSportData('rugby');
@@ -65,7 +65,7 @@ export default async function RankingTable({
         </thead>
         <tbody>
           {shown.map((r, i) => (
-            <tr key={r.entityId} className={i === 0 ? 'rir-rank-1' : undefined}>
+            <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
               <td className="rir-data">{r.played}</td>
@@ -73,7 +73,7 @@ export default async function RankingTable({
               <td className="rir-data rir-col-wdl">{r.draws}</td>
               <td className="rir-data rir-col-wdl">{r.losses}</td>
               <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
-              <td className="rir-data font-semibold" style={{ color: i === 0 ? 'var(--gold)' : undefined }}>{r.rating.toFixed(1)}</td>
+              <td className="rir-data font-semibold">{r.rating.toFixed(1)}</td>
               <td className="rir-data"><PointsDelta value={r.weekPoints} /></td>
               <td><PositionDelta value={r.movement} /></td>
             </tr>

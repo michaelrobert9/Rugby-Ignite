@@ -93,7 +93,7 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
           <Field label="Upset threshold (leaderboard places)" name="upsetThreshold" type="number" defaultValue={config.upsetThreshold} hint="Season upset multiplier needs a rank gap of at least this." />
           <div className="sm:col-span-2">
             <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>Current season</label>
-            <div className="rir-input" style={{ background: '#f4efe6', display: 'flex', alignItems: 'center' }}>{currentSeason}</div>
+            <div className="rir-input" style={{ background: 'var(--light)', display: 'flex', alignItems: 'center' }}>{currentSeason}</div>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Set automatically from the calendar year (SA time) — it rolls over to {String(Number(currentSeason) + 1)} on 1 January. Every year reference on the site follows this.</p>
           </div>
         </Section>

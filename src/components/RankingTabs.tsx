@@ -30,7 +30,7 @@ export default function RankingTabs({
 
   return (
     <div className="space-y-4">
-      <div role="tablist" aria-label="Ranking view" className="flex gap-1" style={{ borderBottom: '1px solid #e5ddce' }}>
+      <div role="tablist" aria-label="Ranking view" className="flex gap-1" style={{ borderBottom: '1px solid var(--color-border)' }}>
         <TabButton active={onMaster} onClick={() => setTab('master')}>All-Time</TabButton>
         <TabButton active={!onMaster} onClick={() => setTab('season')}>Season</TabButton>
       </div>
@@ -54,7 +54,7 @@ export default function RankingTabs({
               style={
                 y.year === year
                   ? { background: 'var(--night)', color: 'var(--chalk)', cursor: 'pointer', border: 'none' }
-                  : { background: '#ece3d3', color: 'var(--color-text-muted)', cursor: 'pointer', border: 'none' }
+                  : { background: 'var(--light)', color: 'var(--color-text-muted)', cursor: 'pointer', border: 'none' }
               }
             >
               {y.year}

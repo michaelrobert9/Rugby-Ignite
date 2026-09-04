@@ -5,6 +5,12 @@ export function monogram(name: string): string {
   return name.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
 }
 
+// Podium styling by zero-based row index: #1 Ember, #2–#3 Gold (brand book v6).
+// Returns the row class the ranking tables hang the medal treatment off.
+export function rankClass(i: number): string | undefined {
+  return i === 0 ? 'rir-rank-1' : i === 1 ? 'rir-rank-2' : i === 2 ? 'rir-rank-3' : undefined;
+}
+
 // South African school sport — always UTC+2, no daylight saving.
 export function fmtUpdated(iso: string): string {
   const d = new Date(iso);
