@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { navPages } from "@/lib/data/pages";
+import { getSiteSettings } from "@/lib/data/siteSettings";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const nav = await navPages();
+  const [nav, site] = await Promise.all([navPages(), getSiteSettings()]);
   const navItems = [
     ...nav.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/news", label: "News" },
@@ -38,6 +39,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           href="https://fonts.googleapis.com/css2?family=Roboto+Serif:opsz,wght@8..144,500;8..144,600;8..144,700;8..144,800&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        {site.adsenseClient && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(site.adsenseClient)}`}
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
       <body className="min-h-full flex flex-col">
         <header className="relative" style={{ background: "var(--night)" }}>
