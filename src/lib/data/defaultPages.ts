@@ -92,7 +92,7 @@ const METHODOLOGY: Page = {
     '',
     '## How results are recorded',
     '',
-    'Results, teams and match data are captured and verified on **Match Pulse**, the live scoring platform that powers South African school sport. Rugby Ignite reads those verified 1st XV results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host fixtures, player profiles or venue data.',
+    'Results, teams and match data are captured and verified on **Match Pulse**, the live scoring platform that powers South African school sport. Rugby Ignite reads those verified 1st XV results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host match schedules, player profiles or venue data.',
     '',
     '## Are the rankings official?',
     '',
