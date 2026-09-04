@@ -10,21 +10,23 @@ import { TeamCell } from './TeamCell';
 export default async function ProvinceTable({
   province,
   track = 'season',
+  season,
 }: {
   province: string;
   track?: 'season' | 'all';
+  season?: string; // season year for the season track; defaults to currentSeason
 }) {
   const def = provinceByKey(province);
   if (!def) return null;
 
   const { matches, orgs } = await getCachedSportData('rugby');
-  const season = getCurrentSeason();
-  const rows = computeProvinceTable(matches, orgs, def, track, season);
+  const seasonYear = season || getCurrentSeason();
+  const rows = computeProvinceTable(matches, orgs, def, track, seasonYear);
 
   if (rows.length === 0) {
     return (
       <div className="rir-card p-6 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        No {def.name} results recorded yet{track === 'season' ? ` for the ${season} season` : ''}.
+        No {def.name} results recorded yet{track === 'season' ? ` for the ${seasonYear} season` : ''}.
       </div>
     );
   }
