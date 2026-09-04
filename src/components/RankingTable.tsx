@@ -18,10 +18,12 @@ export async function LastUpdatedLine() {
 
 export default async function RankingTable({
   track = 'master',
+  season,
   limit,
 }: {
   track?: 'season' | 'master';
-  limit?: number;
+  season?: string; // season year for the season track; defaults to currentSeason
+  limit?: number; // omit for no cap (show every team)
 }) {
   const [{ matches, orgs }, config] = await Promise.all([
     loadSportData('rugby'),
@@ -30,9 +32,9 @@ export default async function RankingTable({
 
   const ages = Array.from(new Set(matches.map((m) => m.ageGroup)));
   const age = ages.includes('1st') ? '1st' : (ages[0] ?? '1st');
-  const season = config.currentSeason;
+  const seasonYear = season || config.currentSeason;
 
-  const { rows } = computeLiveLadder(matches, orgs, age, track, season, config);
+  const { rows } = computeLiveLadder(matches, orgs, age, track, seasonYear, config);
   const shown = typeof limit === 'number' && limit > 0 ? rows.slice(0, limit) : rows;
 
   if (shown.length === 0) {
