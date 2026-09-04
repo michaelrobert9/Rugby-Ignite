@@ -10,31 +10,25 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 
-# PREVIEW MODE (current): no database is attached, so the app serves the bundled
-# historical data via the in-memory demo backend (src/lib/data/localStore.ts).
-# Every page renders with real data; admin edits (including ranking settings) are
-# NOT persisted and reset when the instance restarts.
-#
-# TO PERSIST THIS APP'S OWN DATA (ranking settings, pages, posts) — RECOMMENDED:
-# create a DEDICATED Firestore database in the same project (e.g. id
-# "rugby-ignite") so it never collides with the Match Pulse core's (default)
-# database, then set APP_FIRESTORE_DB to that id. No key is needed — App Hosting
-# reaches it with Application Default Credentials, exactly like the live sport
-# reads. Uncomment:
-#
-# env:
-#   - variable: APP_FIRESTORE_DB
-#     value: rugby-ignite
-#     availability:
-#       - RUNTIME
-#
-# ALTERNATIVELY, point the app at a store via an explicit service-account key
-# (uncomment BOTH the block above's style and this, with the secret set):
+# PERSISTENCE (active): this app stores its OWN data — ranking settings, pages,
+# posts — in a DEDICATED Firestore database ("rugby-ignite"), kept separate from
+# the Match Pulse core's (default) database so the two never collide. It is
+# reached with Application Default Credentials (no service-account key needed),
+# exactly like the live sport reads. The live rankings still read the Match Pulse
+# sport databases read-only.
+env:
+  - variable: APP_FIRESTORE_DB
+    value: rugby-ignite
+    availability:
+      - RUNTIME
+
+# ALTERNATIVE (not used): an explicit service-account key. If ever needed, set the
+# secret and add SERVICE_ACCOUNT_KEY here — but KEEP APP_FIRESTORE_DB above so the
+# app still writes to its own database, never the core (default) one.
 #
 #   firebase apphosting:secrets:set FIREBASE_SERVICE_ACCOUNT_KEY \
 #     --data-file /path/to/serviceAccountKey.json --project match-pulse-4560e
 #
-# env:
 #   - variable: SERVICE_ACCOUNT_KEY
 #     secret: FIREBASE_SERVICE_ACCOUNT_KEY
 #     availability:
