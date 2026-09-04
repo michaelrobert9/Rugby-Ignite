@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getPage } from '@/lib/data/pages';
 import { getSportConfig } from '@/lib/data/config';
 import { getSiteSettings } from '@/lib/data/siteSettings';
-import { loadSportData } from '@/lib/matchpulse/source';
+import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { getCurrentSeason, withSeason } from '@/lib/season';
 import { RichText } from '@/lib/content';
 import { rankingShortcodes } from '@/components/rankingShortcodes';
@@ -25,7 +25,7 @@ export default async function HomePage() {
   const [config, page, { matches }] = await Promise.all([
     getSportConfig('rugby'),
     getPage('home'),
-    loadSportData('rugby'),
+    getCachedSportData('rugby'),
   ]);
 
   const season = getCurrentSeason();
@@ -44,9 +44,9 @@ export default async function HomePage() {
         season={{
           heading: withSeason(config.seasonHeading, season),
           intro: withSeason(config.seasonIntro, season),
-          extra: <LastUpdatedLine />,
           years: years.map((year) => ({ year, table: <RankingTable track="season" season={year} /> })),
         }}
+        lastUpdated={<LastUpdatedLine />}
       />
 
       {page?.body && (

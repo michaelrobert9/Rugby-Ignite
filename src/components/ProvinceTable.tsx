@@ -1,7 +1,7 @@
 // A provincial win-percentage table (no ratings) rendered from live Match Pulse
 // data, via the [province_rankings province="gauteng" track="season|all"] shortcode.
 
-import { loadSportData } from '@/lib/matchpulse/source';
+import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeProvinceTable, provinceByKey } from '@/lib/matchpulse/provinces';
 import { getCurrentSeason } from '@/lib/season';
 import { TeamCell } from './rankingCells';
@@ -16,7 +16,7 @@ export default async function ProvinceTable({
   const def = provinceByKey(province);
   if (!def) return null;
 
-  const { matches, orgs } = await loadSportData('rugby');
+  const { matches, orgs } = await getCachedSportData('rugby');
   const season = getCurrentSeason();
   const rows = computeProvinceTable(matches, orgs, def, track, season);
 

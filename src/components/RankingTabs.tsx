@@ -14,9 +14,11 @@ interface SeasonYear {
 export default function RankingTabs({
   master,
   season,
+  lastUpdated,
 }: {
   master: { heading: string; intro: string; table: React.ReactNode };
-  season: { heading: string; intro: string; extra?: React.ReactNode; years: SeasonYear[] };
+  season: { heading: string; intro: string; years: SeasonYear[] };
+  lastUpdated?: React.ReactNode; // shown on both tabs
 }) {
   const [tab, setTab] = useState<'master' | 'season'>('master');
   const latest = season.years.length ? season.years[season.years.length - 1].year : '';
@@ -36,7 +38,7 @@ export default function RankingTabs({
       <div>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{heading}</h1>
         <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--color-text-muted)', maxWidth: '52rem' }}>{intro}</p>
-        {!onMaster && season.extra && <div className="mt-2">{season.extra}</div>}
+        {lastUpdated && <div className="mt-2">{lastUpdated}</div>}
       </div>
 
       {/* Season year picker */}
