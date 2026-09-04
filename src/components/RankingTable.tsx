@@ -6,12 +6,12 @@ import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
 import { getSportConfig } from '@/lib/data/config';
 import { getCurrentSeason } from '@/lib/season';
-import { TeamCell, PointsDelta, PositionDelta, fmtUpdated } from './rankingCells';
+import { TeamCell, PointsDelta, PositionDelta, fmtUpdated, rankClass } from './rankingCells';
 
 export async function LastUpdatedLine() {
   const { lastUpdated } = await getCachedSportData('rugby');
   return (
-    <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+    <p className="text-sm" style={{ color: 'var(--dim)' }}>
       Last updated: {lastUpdated ? fmtUpdated(lastUpdated) : 'awaiting the first verified result'}
     </p>
   );
@@ -53,29 +53,29 @@ export default async function RankingTable({
           <tr>
             <th>Pos</th>
             <th>Team</th>
-            <th>P</th>
+            <th className="rir-col-sec">P</th>
             <th className="rir-col-wdl">W</th>
             <th className="rir-col-wdl">D</th>
             <th className="rir-col-wdl">L</th>
             <th>Win%</th>
             <th>Rating</th>
-            <th>+/- Pts</th>
-            <th>+/-</th>
+            <th className="rir-col-sec">+/- Pts</th>
+            <th className="rir-col-sec">+/-</th>
           </tr>
         </thead>
         <tbody>
           {shown.map((r, i) => (
-            <tr key={r.entityId} className={i === 0 ? 'rir-rank-1' : undefined}>
+            <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
-              <td className="rir-data">{r.played}</td>
-              <td className="rir-data rir-col-wdl">{r.wins}</td>
-              <td className="rir-data rir-col-wdl">{r.draws}</td>
-              <td className="rir-data rir-col-wdl">{r.losses}</td>
-              <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
-              <td className="rir-data font-semibold" style={{ color: i === 0 ? 'var(--gold)' : undefined }}>{r.rating.toFixed(1)}</td>
-              <td className="rir-data"><PointsDelta value={r.weekPoints} /></td>
-              <td><PositionDelta value={r.movement} /></td>
+              <td className="rir-data rir-dim rir-col-sec">{r.played}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.wins}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
+              <td className="rir-data rir-dim">{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-data font-semibold">{r.rating.toFixed(1)}</td>
+              <td className="rir-data rir-col-sec"><PointsDelta value={r.weekPoints} /></td>
+              <td className="rir-col-sec"><PositionDelta value={r.movement} /></td>
             </tr>
           ))}
         </tbody>

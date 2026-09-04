@@ -1,20 +1,28 @@
 @import "tailwindcss";
 
 /*
- * Rugby Ignite brand system (Brand Guidelines v2).
- * Palette: Night / Ember / Chalk primary; Ash / Flint / Gold / Ember-Tempered secondary.
+ * Rugby Ignite brand system (Brand Book v6).
+ * Palette: Night / Ember / Off-white primary; Chalk / Light / Flint / Gold /
+ * Ember-Tempered secondary. Colour balance ≈ Off-white 65 / Night 20 /
+ * Light 10 / Ember 5.
  * The Ember rule: full Ember (#E8360A) is reserved for primary CTAs, live
- * indicators and the #1 row. Inline links use Ember Tempered (#C4401A).
- * Type: serif headings (authority), sans body, monospace for data.
+ * indicators and the #1 row. Rows #2–#3 wear Gold (#C9973A). Inline links use
+ * Ember Tempered (#C4401A).
+ * Type: Georgia throughout (authority), monospace for data.
  */
 :root {
   /* Brand palette */
   --night: #0f1923;
   --ember: #e8360a;
-  --chalk: #f4efe6;
+  --offwhite: #f7f4f0; /* default page ground */
+  --chalk: #f4efe6; /* type/marks on dark */
+  --light: #edeae5; /* zebra, borders, quiet fills */
   --ash: #1e2c38;
-  --flint: #4a4a4a;
+  --flint: #4a4a4a; /* body copy on light */
+  --dim: #6b7b87; /* meta, timestamps, column headers */
+  --muted: #8a9ba8; /* supporting text on dark */
   --gold: #c9973a;
+  --green: #2e7d32; /* positive movement */
   --ember-tempered: #c4401a;
 
   /* Mapped onto the app's existing token names so every component inherits the brand */
@@ -24,17 +32,23 @@
   --color-navy-700: var(--ash);
   --color-gold-500: var(--gold);
   --color-gold-400: #d8ad57;
-  --color-bg: var(--chalk);
-  --color-surface: #fcfaf5;
-  --color-border: #e6ddcd;
+  --color-bg: var(--offwhite); /* Off-white does the bulk of the page */
+  --color-surface: #ffffff; /* white cards do the work on the off-white ground */
+  --color-border: var(--light);
   --color-text: var(--night);
   --color-text-muted: var(--flint);
-  --color-up: #1c8a4a;
-  --color-down: var(--ember-tempered);
+  --color-up: var(--green); /* ▲ / +Pts */
+  --color-down: var(--ember); /* ▼ / −Pts — full Ember per the guide */
   --color-link: var(--ember-tempered);
 
-  --font-serif: "Roboto Serif", Georgia, "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Radius scale — crisp. No pills (not on brand). */
+  --radius-sm: 2px; /* badges, tags */
+  --radius: 4px; /* buttons, inputs, cards */
+  --radius-lg: 8px; /* modals, dropdowns */
+
+  /* Georgia (serif) + monospace for data — both system faces, no web-font fetch. */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "Courier New", Courier, ui-monospace, monospace;
 }
 
 @theme inline {
@@ -45,11 +59,11 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Georgia throughout, per the brand book. */
+  font-family: var(--font-serif);
 }
 
-/* Serif-led headings for authority. */
+/* Headings carry the brand authority. */
 h1,
 h2,
 h3,
@@ -58,11 +72,16 @@ h3,
   letter-spacing: -0.01em;
 }
 
-/* Monospace for data: ratings, results, win%. */
+/* Monospace for data: ratings, results, win% — signals the numbers are exact. */
 .rir-data {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+}
+
+/* Secondary numeric columns (P/W/D/L, Win%) sit back in the cool-grey Dim so
+   the emphasised column (Rating/Points) reads first. */
+.rir-dim {
+  color: var(--dim);
 }
 
 /* Inline links use Ember Tempered, never full Ember. Exclude buttons and
@@ -84,13 +103,13 @@ a.rir-link,
 .rir-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
 }
 
+/* The ranking table is the product — crisp, no rounding, the border is the frame. */
 .rir-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
   background: var(--color-surface);
 }
 
@@ -100,62 +119,90 @@ table.rir-table {
   font-size: 0.875rem;
 }
 
+/* Column headers: light off-white row, cool-grey Dim monospace labels. */
 table.rir-table thead th {
-  background: var(--night);
-  color: var(--chalk);
+  background: var(--offwhite);
+  color: var(--dim);
   text-align: left;
-  padding: 0.6rem 0.75rem;
-  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
   white-space: nowrap;
   font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
 }
 
 table.rir-table tbody td {
   padding: 0.55rem 0.75rem;
-  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-left: 3px solid transparent;
+}
+/* Data cells stay on one line; the Team name may wrap so long school names
+   never force the table wider than a phone screen. */
+table.rir-table .rir-data {
   white-space: nowrap;
 }
+/* Only the first cell carries the podium left-edge; clear it on the rest. */
+table.rir-table tbody td:not(:first-child) {
+  border-left: none;
+}
+/* Position numbers sit in Flint by default; the podium rules recolour #1. */
+table.rir-table tbody td:first-child {
+  color: var(--flint);
+}
 
+/* Zebra — white / off-white, deliberately subtle. */
 table.rir-table tbody tr:nth-child(even) {
-  background: #fbf7ee;
+  background: var(--offwhite);
 }
 
 table.rir-table tbody tr:hover {
-  background: #f1e9db;
+  background: rgba(15, 25, 35, 0.05);
 }
 
-/* #1 row — the Ember rule: a single restrained ember signal at the top. */
+/* Podium. #1 wears Ember — a faint tint plus an edge and a coloured numeral
+   (the Ember rule). #2–#3 wear a single Gold left edge, nothing more. */
 table.rir-table tbody tr.rir-rank-1 td {
-  background: rgba(232, 54, 10, 0.06);
+  background: rgba(232, 54, 10, 0.04);
 }
 table.rir-table tbody tr.rir-rank-1 td:first-child {
-  box-shadow: inset 3px 0 0 0 var(--ember);
+  border-left-color: var(--ember);
   color: var(--ember);
   font-weight: 700;
 }
 
-/* On narrow screens the ranking table drops the W/D/L columns to stay readable;
-   Played, Win% and Rating remain. */
+table.rir-table tbody tr.rir-rank-2 td:first-child,
+table.rir-table tbody tr.rir-rank-3 td:first-child {
+  border-left-color: var(--gold);
+}
+
+/* On phones the table shows only the essentials — Pos, Team, Win% and Rating —
+   so it fits without horizontal scrolling. The W/D/L columns and the secondary
+   columns (Played, movement) are dropped and return on wider screens. */
 @media (max-width: 640px) {
-  .rir-col-wdl {
+  .rir-col-wdl,
+  .rir-col-sec {
     display: none;
   }
 }
 
+/* Badges are functional, never decorative — crisp 2px corners, monospace. */
 .rir-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
+  letter-spacing: 0.08em;
   font-weight: 600;
 }
 
 .rir-nav-link {
-  color: rgba(244, 239, 230, 0.82);
+  color: var(--muted);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.4rem 0.15rem;
@@ -171,52 +218,54 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
 input.rir-input,
 select.rir-input {
   width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 0.45rem 0.65rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.65rem;
   font-size: 0.875rem;
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text);
 }
 
+/* Focus is the one moment an input takes a brand colour. */
 input.rir-input:focus,
 select.rir-input:focus {
-  outline: 2px solid var(--ember);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--ember);
 }
 
 .rir-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
   font-size: 0.875rem;
-  font-weight: 600;
-  border: 1px solid transparent;
+  font-weight: 700;
+  border: 1.5px solid transparent;
   cursor: pointer;
 }
 
-/* Primary CTA = full Ember (per the Ember rule). */
+/* Primary CTA = full Ember, one per page (per the Ember rule). Hover tempers. */
 .rir-btn-primary {
   background: var(--ember);
-  color: var(--chalk);
+  color: #fff;
 }
 .rir-btn-primary:hover {
-  background: #cf300a;
+  background: var(--ember-tempered);
 }
 
+/* Secondary = Night outline. */
 .rir-btn-secondary {
   background: transparent;
   color: var(--night);
-  border-color: var(--color-border);
+  border-color: var(--night);
 }
 .rir-btn-secondary:hover {
-  background: #ece3d3;
+  background: var(--light);
 }
 
 .rir-btn-danger {
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-down);
   border-color: #ecccbf;
 }
