@@ -46,9 +46,11 @@
   --radius: 4px; /* buttons, inputs, cards */
   --radius-lg: 8px; /* modals, dropdowns */
 
-  /* Georgia (serif) + monospace for data — both system faces, no web-font fetch. */
+  /* Georgia (serif) + a clean native monospace for data — both system faces,
+     no web-font fetch. ui-monospace resolves to SF Mono on Apple devices. */
   --font-serif: Georgia, "Times New Roman", serif;
-  --font-mono: "Courier New", Courier, ui-monospace, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", "Segoe UI Mono",
+    "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 @theme inline {

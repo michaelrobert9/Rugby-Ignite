@@ -4,7 +4,8 @@
 import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeProvinceTable, provinceByKey } from '@/lib/matchpulse/provinces';
 import { getCurrentSeason } from '@/lib/season';
-import { TeamCell, rankClass } from './rankingCells';
+import { rankClass } from './rankingCells';
+import { TeamCell } from './TeamCell';
 
 export default async function ProvinceTable({
   province,
