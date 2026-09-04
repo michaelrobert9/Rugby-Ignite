@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import { navPages } from "@/lib/data/pages";
 import { getSiteSettings } from "@/lib/data/siteSettings";
+import { getCurrentSeason, withSeason } from "@/lib/season";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
@@ -16,11 +17,16 @@ function pageHref(page: Page): string {
 // at build time, which fails in offline/sandboxed environments. System fonts
 // look clean for a data-table-heavy site like this and need no network call.
 
-export const metadata: Metadata = {
-  title: "Rugby Ignite — School Rugby Rankings",
-  description: "Ignite the passion. Honour the game. The complete record of South African school rugby.",
-  icons: { icon: "/logo-icon.png", apple: "/logo-icon.png" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteSettings();
+  const season = getCurrentSeason();
+  return {
+    title: withSeason(site.seoTitle || "Rugby Ignite — School Rugby Rankings", season),
+    description: withSeason(site.seoDescription || "The complete record of South African school rugby.", season),
+    keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
+    icons: { icon: "/logo-icon.png", apple: "/logo-icon.png" },
+  };
+}
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [nav, site] = await Promise.all([navPages(), getSiteSettings()]);

@@ -4,7 +4,8 @@ const NAV = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/pages', label: 'Pages' },
   { href: '/admin/news', label: 'News' },
-  { href: '/admin/settings', label: 'Settings' },
+  { href: '/admin/settings', label: 'Rankings' },
+  { href: '/admin/seo', label: 'SEO' },
   { href: '/admin/ads', label: 'Ads' },
 ];
 

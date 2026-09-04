@@ -2,6 +2,7 @@ import { getSportConfig } from '@/lib/data/config';
 import { isDemoMode } from '@/lib/data/store';
 import { listSports } from '@/lib/matchpulse/source';
 import { saveConfigAction } from '@/lib/actions';
+import { getCurrentSeason } from '@/lib/season';
 import type { RankingConfig } from '@/lib/types';
 import type { SportKey } from '@/lib/matchpulse/types';
 import MasterFormulaGate from './MasterFormulaGate';
@@ -18,6 +19,7 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
   const sport = sports.find((s) => s.key === sportKey)!;
 
   const config = await getSportConfig(sportKey);
+  const currentSeason = getCurrentSeason();
 
   const demo = isDemoMode();
 
@@ -50,11 +52,11 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
         <input type="hidden" name="sport" value={sportKey} />
 
         <div className="rir-card p-5">
-          <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Master Ranking</h2>
+          <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>All-Time Ranking</h2>
           <p className="text-xs mt-1 mb-4" style={{ color: 'var(--color-text-muted)' }}>
-            Continuous World Rugby points exchange across all history — every team starts at the baseline and is
-            never reset. A pure exchange: each match only moves points between the two teams, so the pool never
-            changes (true for every setting below).
+            The continuous World Rugby points exchange across all history — every team starts at the baseline and
+            is never reset. A pure exchange: each match only moves points between the two teams, so the pool never
+            changes (true for every setting below). Shown publicly as the “All-Time School Rugby Ratings”.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 mb-4">
             <Field label="Display title" name="masterTitle" defaultValue={config.masterTitle} />
@@ -89,7 +91,11 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
           <Field label="Home advantage (rating points)" name="homeAdvantage" type="number" step="0.1" defaultValue={config.homeAdvantage} hint="Added to the home side's rating before comparing. Off for live data until venues are linked." />
           <Field label="Season margin threshold (winning margin)" name="marginThreshold" type="number" defaultValue={config.marginThreshold} hint={`In ${sport.scoreUnit}. Season margin multiplier kicks in above this.`} />
           <Field label="Upset threshold (leaderboard places)" name="upsetThreshold" type="number" defaultValue={config.upsetThreshold} hint="Season upset multiplier needs a rank gap of at least this." />
-          <Field label="Current season" name="currentSeason" defaultValue={config.currentSeason} hint="The season year the Season Rankings show (e.g. 2026)." />
+          <div className="sm:col-span-2">
+            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>Current season</label>
+            <div className="rir-input" style={{ background: '#f4efe6', display: 'flex', alignItems: 'center' }}>{currentSeason}</div>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Set automatically from the calendar year (SA time) — it rolls over to {String(Number(currentSeason) + 1)} on 1 January. Every year reference on the site follows this.</p>
+          </div>
         </Section>
 
         <Section title="Home page copy (SEO)" description="The headings and intro text shown under the Season and All-Time tabs on the home page.">

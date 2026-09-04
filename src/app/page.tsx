@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { getPage } from '@/lib/data/pages';
 import { getSportConfig } from '@/lib/data/config';
+import { getSiteSettings } from '@/lib/data/siteSettings';
 import { loadSportData } from '@/lib/matchpulse/source';
+import { getCurrentSeason, withSeason } from '@/lib/season';
 import { RichText } from '@/lib/content';
 import { rankingShortcodes } from '@/components/rankingShortcodes';
 import RankingTabs from '@/components/RankingTabs';
@@ -10,8 +12,13 @@ import RankingTable, { LastUpdatedLine } from '@/components/RankingTable';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await getPage('home');
-  return { title: page?.metaTitle, description: page?.metaDescription };
+  const [site, page] = await Promise.all([getSiteSettings(), getPage('home')]);
+  const season = getCurrentSeason();
+  return {
+    title: withSeason(site.seoTitle || page?.metaTitle || 'Rugby Ignite', season),
+    description: withSeason(site.seoDescription || page?.metaDescription || '', season),
+    keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
+  };
 }
 
 export default async function HomePage() {
@@ -21,25 +28,22 @@ export default async function HomePage() {
     loadSportData('rugby'),
   ]);
 
-  // Every season that appears in the data, oldest → newest.
-  const years = Array.from(new Set(matches.map((m) => m.season))).sort();
-  if (!years.includes(config.currentSeason) && years.length) {
-    // currentSeason always available even if it has no matches yet
-    years.push(config.currentSeason);
-    years.sort();
-  }
+  const season = getCurrentSeason();
+
+  // Every season that appears in the data, plus the current one, oldest → newest.
+  const years = Array.from(new Set([...matches.map((m) => m.season), season])).sort();
 
   return (
     <div className="rir-container py-8 space-y-8">
       <RankingTabs
         master={{
-          heading: config.masterHeading,
-          intro: config.masterIntro,
+          heading: withSeason(config.masterHeading, season),
+          intro: withSeason(config.masterIntro, season),
           table: <RankingTable track="master" />,
         }}
         season={{
-          heading: config.seasonHeading,
-          intro: config.seasonIntro,
+          heading: withSeason(config.seasonHeading, season),
+          intro: withSeason(config.seasonIntro, season),
           extra: <LastUpdatedLine />,
           years: years.map((year) => ({ year, table: <RankingTable track="season" season={year} /> })),
         }}
@@ -47,7 +51,7 @@ export default async function HomePage() {
 
       {page?.body && (
         <div style={{ maxWidth: '52rem' }}>
-          <RichText body={page.body} renderShortcode={rankingShortcodes} />
+          <RichText body={withSeason(page.body, season)} renderShortcode={rankingShortcodes} />
         </div>
       )}
     </div>

@@ -40,9 +40,9 @@ function base(overrides: Partial<RankingConfig>): RankingConfig {
     currentSeason: '2026',
     masterTitle: 'Master Ranking',
     seasonTitle: 'Season Ranking',
-    seasonHeading: 'School Rugby Rankings 2026',
+    seasonHeading: 'School Rugby Rankings {season}',
     seasonIntro:
-      'View the latest South African school rugby rankings for the 2026 season, including current 1st XV form, ranking points, movement and recent results.',
+      'View the latest South African school rugby rankings for the {season} season, including current 1st XV form, ranking points, movement and recent results.',
     masterHeading: 'All-Time School Rugby Ratings',
     masterIntro:
       "These ratings measure a school's long-term strength over multiple seasons using a points-based system adapted from World Rugby's ranking model.",

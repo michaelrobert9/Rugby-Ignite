@@ -2,8 +2,8 @@
 // data, via the [province_rankings province="gauteng" track="season|all"] shortcode.
 
 import { loadSportData } from '@/lib/matchpulse/source';
-import { getSportConfig } from '@/lib/data/config';
 import { computeProvinceTable, provinceByKey } from '@/lib/matchpulse/provinces';
+import { getCurrentSeason } from '@/lib/season';
 import { TeamCell } from './rankingCells';
 
 export default async function ProvinceTable({
@@ -16,17 +16,14 @@ export default async function ProvinceTable({
   const def = provinceByKey(province);
   if (!def) return null;
 
-  const [{ matches, orgs }, config] = await Promise.all([
-    loadSportData('rugby'),
-    getSportConfig('rugby'),
-  ]);
-
-  const rows = computeProvinceTable(matches, orgs, def, track, config.currentSeason);
+  const { matches, orgs } = await loadSportData('rugby');
+  const season = getCurrentSeason();
+  const rows = computeProvinceTable(matches, orgs, def, track, season);
 
   if (rows.length === 0) {
     return (
       <div className="rir-card p-6 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>
-        No {def.name} results recorded yet{track === 'season' ? ` for the ${config.currentSeason} season` : ''}.
+        No {def.name} results recorded yet{track === 'season' ? ` for the ${season} season` : ''}.
       </div>
     );
   }

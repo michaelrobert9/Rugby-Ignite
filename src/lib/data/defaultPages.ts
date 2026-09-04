@@ -13,9 +13,9 @@ const HOME: Page = {
   navOrder: 0,
   showInNav: true,
   title: 'South African School Rugby Rankings',
-  metaTitle: 'School Rugby Rankings 2026 | South African 1st XV Rankings — Rugby Ignite',
+  metaTitle: 'School Rugby Rankings {season} | South African 1st XV Rankings — Rugby Ignite',
   metaDescription:
-    'View the latest South African school rugby rankings for the 2026 season — current 1st XV form, ranking points, movement and recent results, plus the All-Time School Rugby Ratings.',
+    'View the latest South African school rugby rankings for the {season} season — current 1st XV form, ranking points, movement and recent results, plus the All-Time School Rugby Ratings.',
   rankingScope: 'master',
   // The Season / All-Time headings, intros and tables are rendered by the tabbed
   // component (their copy lives in Settings). This body is the explainer shown
@@ -67,7 +67,7 @@ const METHODOLOGY: Page = {
     '',
     'Rugby Ignite publishes two views of the same results, both out of 100, with every team starting on 50:',
     '',
-    '- **2026 Season Rankings** — current-season form. At the start of each season every team is re-seeded from its all-time rating, so the season table is a clean read of how schools are performing right now.',
+    '- **{season} Season Rankings** — current-season form. At the start of each season every team is re-seeded from its all-time rating, so the season table is a clean read of how schools are performing right now.',
     '- **All-Time School Rugby Ratings** — one continuous rating across every season on record. It never resets, so it rewards consistent, long-term strength rather than a single hot run.',
     '',
     '## When are the rankings updated?',
@@ -93,7 +93,7 @@ const METHODOLOGY: Page = {
     '### Why does beating a higher-ranked school matter more?',
     'Because the system rewards the quality of a result, not just the fact of a win. Taking down a top-rated side is worth more points than beating a school near the bottom of the table.',
     '',
-    '### Why are there 2026 Season Rankings and All-Time School Rugby Ratings?',
+    '### Why are there {season} Season Rankings and All-Time School Rugby Ratings?',
     'The Season Rankings show current form for the year; the All-Time Ratings show long-term strength across every season on record. A school can top one and not the other.',
     '',
     '### How often are the rankings updated?',
@@ -119,7 +119,7 @@ function provincePage(id: string, key: string, name: string, order: number, intr
     navOrder: order,
     showInNav: true,
     title: `${name} School Rugby Rankings`,
-    metaTitle: `${name} School Rugby Rankings ${new Date().getFullYear()} | Provincial Win % — Rugby Ignite`,
+    metaTitle: `${name} School Rugby Rankings {season} | Provincial Win % — Rugby Ignite`,
     metaDescription: `${name} school rugby rankings by win percentage — this season and all-time, counting only matches between two ${name} schools.`,
     rankingScope: name,
     body: [
