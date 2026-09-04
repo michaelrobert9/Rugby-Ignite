@@ -48,16 +48,22 @@ export function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUr
   );
 }
 
-// Rating points gained/lost since the last Thursday 23:59 reset.
+// A quiet "NEW" tag for entries with no prior snapshot to compare against.
+function NewTag() {
+  return (
+    <span className="rir-badge" style={{ background: 'var(--offwhite)', color: 'var(--dim)', border: '1px solid var(--light)' }}>NEW</span>
+  );
+}
+
+// Rating points gained/lost since the last Thursday 23:59 reset. Plain mono
+// text — green up, Ember down, Dim when flat (deltas signal, never decorate).
 export function PointsDelta({ value }: { value: number | null }) {
-  if (value === null) {
-    return <span className="rir-badge" style={{ background: '#eef1f5', color: 'var(--color-text-muted)' }}>NEW</span>;
-  }
+  if (value === null) return <NewTag />;
   const rounded = Math.round(value * 10) / 10;
-  if (rounded === 0) return <span style={{ color: 'var(--color-text-muted)' }}>—</span>;
+  if (rounded === 0) return <span className="rir-data" style={{ color: 'var(--dim)' }}>—</span>;
   const up = rounded > 0;
   return (
-    <span style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 600 }}>
+    <span className="rir-data" style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 700 }}>
       {up ? '+' : '−'}{Math.abs(rounded).toFixed(1)}
     </span>
   );
@@ -65,13 +71,11 @@ export function PointsDelta({ value }: { value: number | null }) {
 
 // Leaderboard positions gained/lost since the last Thursday 23:59 reset.
 export function PositionDelta({ value }: { value: number | null }) {
-  if (value === null) {
-    return <span className="rir-badge" style={{ background: '#eef1f5', color: 'var(--color-text-muted)' }}>NEW</span>;
-  }
-  if (value === 0) return <span style={{ color: 'var(--color-text-muted)' }}>—</span>;
+  if (value === null) return <NewTag />;
+  if (value === 0) return <span className="rir-data" style={{ color: 'var(--dim)' }}>—</span>;
   const up = value > 0;
   return (
-    <span className="rir-badge" style={{ background: up ? '#e9f7ee' : '#fbecec', color: up ? 'var(--color-up)' : 'var(--color-down)' }}>
+    <span className="rir-data" style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 700 }}>
       {up ? '▲' : '▼'} {Math.abs(value)}
     </span>
   );

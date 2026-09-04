@@ -47,10 +47,10 @@ export default async function ProvinceTable({
             <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
-              <td className="rir-data">{r.played}</td>
-              <td className="rir-data rir-col-wdl">{r.wins}</td>
-              <td className="rir-data rir-col-wdl">{r.draws}</td>
-              <td className="rir-data rir-col-wdl">{r.losses}</td>
+              <td className="rir-data rir-dim">{r.played}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.wins}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
               <td className="rir-data font-semibold">{r.winPercent.toFixed(1)}%</td>
             </tr>
           ))}

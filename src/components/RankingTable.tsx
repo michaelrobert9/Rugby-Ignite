@@ -11,7 +11,7 @@ import { TeamCell, PointsDelta, PositionDelta, fmtUpdated, rankClass } from './r
 export async function LastUpdatedLine() {
   const { lastUpdated } = await getCachedSportData('rugby');
   return (
-    <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+    <p className="text-sm" style={{ color: 'var(--dim)' }}>
       Last updated: {lastUpdated ? fmtUpdated(lastUpdated) : 'awaiting the first verified result'}
     </p>
   );
@@ -68,11 +68,11 @@ export default async function RankingTable({
             <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
-              <td className="rir-data">{r.played}</td>
-              <td className="rir-data rir-col-wdl">{r.wins}</td>
-              <td className="rir-data rir-col-wdl">{r.draws}</td>
-              <td className="rir-data rir-col-wdl">{r.losses}</td>
-              <td className="rir-data">{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-data rir-dim">{r.played}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.wins}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
+              <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
+              <td className="rir-data rir-dim">{r.winPercent.toFixed(1)}%</td>
               <td className="rir-data font-semibold">{r.rating.toFixed(1)}</td>
               <td className="rir-data"><PointsDelta value={r.weekPoints} /></td>
               <td><PositionDelta value={r.movement} /></td>

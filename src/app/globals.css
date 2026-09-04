@@ -18,8 +18,11 @@
   --chalk: #f4efe6; /* type/marks on dark */
   --light: #edeae5; /* zebra, borders, quiet fills */
   --ash: #1e2c38;
-  --flint: #4a4a4a;
+  --flint: #4a4a4a; /* body copy on light */
+  --dim: #6b7b87; /* meta, timestamps, column headers */
+  --muted: #8a9ba8; /* supporting text on dark */
   --gold: #c9973a;
+  --green: #2e7d32; /* positive movement */
   --ember-tempered: #c4401a;
 
   /* Mapped onto the app's existing token names so every component inherits the brand */
@@ -34,13 +37,18 @@
   --color-border: var(--light);
   --color-text: var(--night);
   --color-text-muted: var(--flint);
-  --color-up: #1c8a4a;
-  --color-down: var(--ember-tempered);
+  --color-up: var(--green); /* ▲ / +Pts */
+  --color-down: var(--ember); /* ▼ / −Pts — full Ember per the guide */
   --color-link: var(--ember-tempered);
 
-  /* Georgia is a system serif — renders everywhere with no web-font fetch. */
-  --font-serif: Georgia, "Times New Roman", "Roboto Serif", serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Radius scale — crisp. No pills (not on brand). */
+  --radius-sm: 2px; /* badges, tags */
+  --radius: 4px; /* buttons, inputs, cards */
+  --radius-lg: 8px; /* modals, dropdowns */
+
+  /* Georgia (serif) + monospace for data — both system faces, no web-font fetch. */
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: "Courier New", Courier, ui-monospace, monospace;
 }
 
 @theme inline {
@@ -64,11 +72,16 @@ h3,
   letter-spacing: -0.01em;
 }
 
-/* Monospace for data: ratings, results, win%. */
+/* Monospace for data: ratings, results, win% — signals the numbers are exact. */
 .rir-data {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
+}
+
+/* Secondary numeric columns (P/W/D/L, Win%) sit back in the cool-grey Dim so
+   the emphasised column (Rating/Points) reads first. */
+.rir-dim {
+  color: var(--dim);
 }
 
 /* Inline links use Ember Tempered, never full Ember. Exclude buttons and
@@ -90,13 +103,13 @@ a.rir-link,
 .rir-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
 }
 
+/* The ranking table is the product — crisp, no rounding, the border is the frame. */
 .rir-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
   background: var(--color-surface);
 }
 
@@ -106,56 +119,59 @@ table.rir-table {
   font-size: 0.875rem;
 }
 
+/* Column headers: light off-white row, cool-grey Dim monospace labels. */
 table.rir-table thead th {
-  background: var(--night);
-  color: var(--chalk);
+  background: var(--offwhite);
+  color: var(--dim);
   text-align: left;
-  padding: 0.6rem 0.75rem;
-  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
   white-space: nowrap;
   font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
 }
 
 table.rir-table tbody td {
   padding: 0.55rem 0.75rem;
-  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-left: 3px solid transparent;
   white-space: nowrap;
 }
+/* Only the first cell carries the podium left-edge; clear it on the rest. */
+table.rir-table tbody td:not(:first-child) {
+  border-left: none;
+}
+/* Position numbers sit in Flint by default; the podium rules recolour #1. */
+table.rir-table tbody td:first-child {
+  color: var(--flint);
+}
 
+/* Zebra — white / off-white, deliberately subtle. */
 table.rir-table tbody tr:nth-child(even) {
-  background: var(--light);
+  background: var(--offwhite);
 }
 
 table.rir-table tbody tr:hover {
   background: rgba(15, 25, 35, 0.05);
 }
 
-/* Podium rows carry a restrained left-edge signal and a coloured position.
-   #1 wears Ember (the Ember rule); #2–#3 wear Gold. Row tints stay faint so the
-   data reads first — and they win over the zebra stripe. */
-table.rir-table tbody tr.rir-rank-1 td,
-table.rir-table tbody tr.rir-rank-1:nth-child(even) td {
-  background: rgba(232, 54, 10, 0.06);
+/* Podium. #1 wears Ember — a faint tint plus an edge and a coloured numeral
+   (the Ember rule). #2–#3 wear a single Gold left edge, nothing more. */
+table.rir-table tbody tr.rir-rank-1 td {
+  background: rgba(232, 54, 10, 0.04);
 }
 table.rir-table tbody tr.rir-rank-1 td:first-child {
-  box-shadow: inset 3px 0 0 0 var(--ember);
+  border-left-color: var(--ember);
   color: var(--ember);
   font-weight: 700;
 }
 
-table.rir-table tbody tr.rir-rank-2 td,
-table.rir-table tbody tr.rir-rank-2:nth-child(even) td,
-table.rir-table tbody tr.rir-rank-3 td,
-table.rir-table tbody tr.rir-rank-3:nth-child(even) td {
-  background: rgba(201, 151, 58, 0.07);
-}
 table.rir-table tbody tr.rir-rank-2 td:first-child,
 table.rir-table tbody tr.rir-rank-3 td:first-child {
-  box-shadow: inset 3px 0 0 0 var(--gold);
-  color: var(--gold);
-  font-weight: 700;
+  border-left-color: var(--gold);
 }
 
 /* On narrow screens the ranking table drops the W/D/L columns to stay readable;
@@ -166,18 +182,21 @@ table.rir-table tbody tr.rir-rank-3 td:first-child {
   }
 }
 
+/* Badges are functional, never decorative — crisp 2px corners, monospace. */
 .rir-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
+  letter-spacing: 0.08em;
   font-weight: 600;
 }
 
 .rir-nav-link {
-  color: rgba(244, 239, 230, 0.82);
+  color: var(--muted);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.4rem 0.15rem;
@@ -193,52 +212,54 @@ table.rir-table tbody tr.rir-rank-3 td:first-child {
 input.rir-input,
 select.rir-input {
   width: 100%;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  padding: 0.45rem 0.65rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.65rem;
   font-size: 0.875rem;
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text);
 }
 
+/* Focus is the one moment an input takes a brand colour. */
 input.rir-input:focus,
 select.rir-input:focus {
-  outline: 2px solid var(--ember);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--ember);
 }
 
 .rir-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
   font-size: 0.875rem;
-  font-weight: 600;
-  border: 1px solid transparent;
+  font-weight: 700;
+  border: 1.5px solid transparent;
   cursor: pointer;
 }
 
-/* Primary CTA = full Ember (per the Ember rule). */
+/* Primary CTA = full Ember, one per page (per the Ember rule). Hover tempers. */
 .rir-btn-primary {
   background: var(--ember);
-  color: var(--chalk);
+  color: #fff;
 }
 .rir-btn-primary:hover {
-  background: #cf300a;
+  background: var(--ember-tempered);
 }
 
+/* Secondary = Night outline. */
 .rir-btn-secondary {
   background: transparent;
   color: var(--night);
-  border-color: var(--color-border);
+  border-color: var(--night);
 }
 .rir-btn-secondary:hover {
   background: var(--light);
 }
 
 .rir-btn-danger {
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-down);
   border-color: #ecccbf;
 }

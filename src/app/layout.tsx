@@ -37,16 +37,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   ];
   return (
     <html lang="en" className="h-full antialiased">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Georgia (headings + body) is a system serif and needs no fetch; only
-            the monospace data face is loaded from the web. */}
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&display=swap"
-          rel="stylesheet"
-        />
+      {/* No custom <head>: the metadata head is injected automatically, and the
+          brand type (Georgia + Courier New) is system-only, so no fonts load.
+          The AdSense loader sits at the top of <body> when a publisher ID is set. */}
+      <body className="min-h-full flex flex-col">
         {site.adsenseClient && (
           <script
             async
@@ -54,8 +48,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             crossOrigin="anonymous"
           />
         )}
-      </head>
-      <body className="min-h-full flex flex-col">
         <header className="relative" style={{ background: "var(--night)" }}>
           <div className="rir-container flex items-center justify-between h-16 gap-6">
             <Link href="/" className="flex items-center shrink-0" aria-label="Rugby Ignite home">
@@ -69,7 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <footer style={{ background: "var(--night)" }}>
           <div
             className="rir-container py-6 text-xs flex flex-wrap items-center gap-x-2 gap-y-1"
-            style={{ color: "rgba(244,239,230,0.6)" }}
+            style={{ color: "var(--muted)" }}
           >
             <span style={{ color: "var(--chalk)", fontWeight: 600 }}>Ignite the passion.</span>
             <span style={{ color: "var(--ember)", fontWeight: 600 }}>Honour the game.</span>
