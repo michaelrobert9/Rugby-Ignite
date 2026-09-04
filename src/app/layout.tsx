@@ -49,10 +49,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           />
         )}
         <header className="relative" style={{ background: "var(--night)" }}>
-          <div className="rir-container flex items-center justify-between h-16 gap-6">
-            <Link href="/" className="flex items-center shrink-0" aria-label="Rugby Ignite home">
+          <div className="rir-container flex items-center justify-between gap-6 py-3">
+            <Link href="/" className="flex flex-col shrink-0" style={{ gap: 4 }} aria-label="Rugby Ignite home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 40, width: "auto" }} />
+              <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 60, width: "auto" }} />
+              <span
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: 12,
+                  color: "var(--muted)",
+                  lineHeight: 1.2,
+                }}
+              >
+                The ranking system school rugby deserves
+              </span>
             </Link>
             <SiteNav items={navItems} />
           </div>
