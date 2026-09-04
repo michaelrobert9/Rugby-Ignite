@@ -138,6 +138,10 @@ table.rir-table tbody td {
   padding: 0.55rem 0.75rem;
   border-bottom: 1px solid var(--color-border);
   border-left: 3px solid transparent;
+}
+/* Data cells stay on one line; the Team name may wrap so long school names
+   never force the table wider than a phone screen. */
+table.rir-table .rir-data {
   white-space: nowrap;
 }
 /* Only the first cell carries the podium left-edge; clear it on the rest. */
@@ -174,10 +178,12 @@ table.rir-table tbody tr.rir-rank-3 td:first-child {
   border-left-color: var(--gold);
 }
 
-/* On narrow screens the ranking table drops the W/D/L columns to stay readable;
-   Played, Win% and Rating remain. */
+/* On phones the table shows only the essentials — Pos, Team, Win% and Rating —
+   so it fits without horizontal scrolling. The W/D/L columns and the secondary
+   columns (Played, movement) are dropped and return on wider screens. */
 @media (max-width: 640px) {
-  .rir-col-wdl {
+  .rir-col-wdl,
+  .rir-col-sec {
     display: none;
   }
 }
