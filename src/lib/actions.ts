@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { RANKINGS_TAG } from './matchpulse/cachedSource';
 import { getSportConfig, saveSportConfig } from './data/config';
 import { getSiteSettings, saveSiteSettings } from './data/siteSettings';
 import type { SportKey } from './matchpulse/types';
@@ -87,6 +88,15 @@ export async function saveSeoAction(formData: FormData) {
   });
   revalidatePath('/', 'layout');
   redirect('/admin/seo?saved=1');
+}
+
+// ---------------- Rankings refresh ----------------
+
+export async function refreshRankingsAction() {
+  // Expire the cached snapshot immediately so the next page load re-captures.
+  revalidateTag(RANKINGS_TAG, { expire: 0 });
+  revalidatePath('/', 'layout');
+  redirect('/admin?refreshed=1');
 }
 
 // ---------------- Pages (CMS) ----------------

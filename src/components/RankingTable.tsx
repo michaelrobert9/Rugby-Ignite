@@ -2,14 +2,14 @@
 // Match Pulse data. Used by the home page and other pages via the [rankings]
 // shortcode. Read-only.
 
-import { loadSportData } from '@/lib/matchpulse/source';
+import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
 import { getSportConfig } from '@/lib/data/config';
 import { getCurrentSeason } from '@/lib/season';
 import { TeamCell, PointsDelta, PositionDelta, fmtUpdated } from './rankingCells';
 
 export async function LastUpdatedLine() {
-  const { lastUpdated } = await loadSportData('rugby');
+  const { lastUpdated } = await getCachedSportData('rugby');
   return (
     <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
       Last updated: {lastUpdated ? fmtUpdated(lastUpdated) : 'awaiting the first verified result'}
@@ -27,7 +27,7 @@ export default async function RankingTable({
   limit?: number; // omit for no cap (show every team)
 }) {
   const [{ matches, orgs }, config] = await Promise.all([
-    loadSportData('rugby'),
+    getCachedSportData('rugby'),
     getSportConfig('rugby'),
   ]);
 
