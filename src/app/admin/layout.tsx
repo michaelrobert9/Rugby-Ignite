@@ -5,9 +5,6 @@ const NAV = [
   { href: '/admin/pages', label: 'Pages' },
   { href: '/admin/news', label: 'News' },
   { href: '/admin/settings', label: 'Settings' },
-  { href: '/admin/teams', label: 'Teams' },
-  { href: '/admin/venues', label: 'Venues' },
-  { href: '/admin/matches', label: 'Matches' },
 ];
 
 export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
@@ -18,8 +15,8 @@ export default function AdminLayout({ children }: LayoutProps<'/admin'>) {
           Rugby Ignite Admin
         </h1>
         <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          Connected to the Match Pulse Firestore project — Teams, Venues and Matches are read from
-          and written to Firestore. Edit the source data here, then Rebuild to recompute rankings.
+          Rankings read live from Match Pulse (results, teams and venues all live on Match Pulse).
+          Here you manage the ranking settings, pages and news for the Rugby Ignite site.
         </p>
       </div>
       <div className="flex flex-col md:flex-row gap-6">

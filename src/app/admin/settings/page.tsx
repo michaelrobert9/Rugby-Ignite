@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { getSportConfig } from '@/lib/data/config';
 import { isDemoMode } from '@/lib/data/store';
 import { listSports } from '@/lib/matchpulse/source';
@@ -42,20 +41,8 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
       <div>
         <h1 className="text-xl font-bold" style={{ color: 'var(--color-navy-900)' }}>Ranking settings</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          Each sport has its own formula. Choose a sport to edit its settings.
+          The formula behind the School Rugby Rankings. Every setting below drives the live tables.
         </p>
-        <div className="flex flex-wrap items-center gap-2 mt-3">
-          {sports.map((s) => (
-            <Link
-              key={s.key}
-              href={`/admin/settings?sport=${s.key}`}
-              className="rir-badge"
-              style={s.key === sportKey ? { background: 'var(--night)', color: 'var(--chalk)' } : { background: '#ece3d3', color: 'var(--color-text-muted)' }}
-            >
-              {s.name}
-            </Link>
-          ))}
-        </div>
       </div>
 
       <FormulaExplainer config={config} sportName={sport.name} />
