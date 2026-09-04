@@ -15,11 +15,14 @@ export default function RankingTabs({
   master,
   season,
   lastUpdated,
+  headingLevel = 'h1',
 }: {
   master: { heading: string; intro: string; table: React.ReactNode };
   season: { heading: string; intro: string; years: SeasonYear[] };
   lastUpdated?: React.ReactNode; // shown on both tabs
+  headingLevel?: 'h1' | 'h2'; // h1 on the home page; h2 where a page title already owns the h1
 }) {
+  const Heading = headingLevel;
   const [tab, setTab] = useState<'master' | 'season'>('master');
   const latest = season.years.length ? season.years[season.years.length - 1].year : '';
   const [year, setYear] = useState<string>(latest);
@@ -36,7 +39,7 @@ export default function RankingTabs({
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{heading}</h1>
+        <Heading className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{heading}</Heading>
         <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--color-text-muted)', maxWidth: '52rem' }}>{intro}</p>
         {lastUpdated && <div className="mt-2">{lastUpdated}</div>}
       </div>

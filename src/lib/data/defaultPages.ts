@@ -125,15 +125,9 @@ function provincePage(id: string, key: string, name: string, order: number, intr
     body: [
       intro,
       '',
-      `## ${name} School Rugby Rankings This Year`,
-      '',
-      `[province_rankings province="${key}" track="season"]`,
-      '',
-      `## Overall ${name} Standings (All-Time)`,
-      '',
-      `[province_rankings province="${key}" track="all"]`,
-      '',
       NOTE,
+      '',
+      `[province_tabs province="${key}"]`,
     ].join('\n'),
   };
 }
