@@ -21,7 +21,7 @@
 import type { WhereFilterOp } from 'firebase-admin/firestore';
 import { getDb } from './firebaseAdmin';
 
-const SINGLETON_COLLECTIONS = new Set(['config', 'meta', 'sportConfigs']);
+const SINGLETON_COLLECTIONS = new Set(['config', 'meta', 'sportConfigs', 'site']);
 const SINGLETON_DOC_ID = 'current';
 
 // Firestore batches allow up to 500 writes; stay comfortably under.

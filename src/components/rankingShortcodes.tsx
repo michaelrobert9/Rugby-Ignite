@@ -1,6 +1,7 @@
 import type { ShortcodeRenderer } from '@/lib/content';
 import RankingTable, { LastUpdatedLine } from './RankingTable';
 import ProvinceTable from './ProvinceTable';
+import AdCard from './AdCard';
 
 // Shortcodes usable in editable page bodies:
 //   [rankings track="season" limit="20"]           – live School Rugby Rankings table (Elo)
@@ -19,6 +20,9 @@ export const rankingShortcodes: ShortcodeRenderer = (name, attrs, key) => {
   }
   if (name === 'last_updated' || name === 'rankings_last_updated') {
     return <LastUpdatedLine key={key} />;
+  }
+  if (name === 'ad') {
+    return <AdCard key={key} slot={attrs.slot} label={attrs.label} />;
   }
   return null;
 };

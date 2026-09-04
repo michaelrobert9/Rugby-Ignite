@@ -6,6 +6,7 @@ import { deleteMatch, nextMatchId, saveMatch } from './data/matches';
 import { deleteTeam, nextTeamId, saveTeam } from './data/teams';
 import { deleteVenue, nextVenueId, saveVenue } from './data/venues';
 import { getSportConfig, saveSportConfig } from './data/config';
+import { getSiteSettings, saveSiteSettings } from './data/siteSettings';
 import type { SportKey } from './matchpulse/types';
 import { rebuildRankings } from './data/rankings';
 import { getPage, savePage } from './data/pages';
@@ -152,6 +153,19 @@ export async function saveConfigAction(formData: FormData) {
   revalidatePath('/');
   revalidatePath('/rankings');
   redirect(`/admin/settings?sport=${sport}&saved=1`);
+}
+
+// ---------------- Site settings (ads) ----------------
+
+export async function saveSiteSettingsAction(formData: FormData) {
+  const current = await getSiteSettings();
+  await saveSiteSettings({
+    adsenseClient: (str(formData, 'adsenseClient') || current.adsenseClient).trim(),
+    adsTxt: formData.get('adsTxt') != null ? String(formData.get('adsTxt')) : current.adsTxt,
+  });
+  revalidatePath('/', 'layout');
+  revalidatePath('/ads.txt');
+  redirect('/admin/ads?saved=1');
 }
 
 // ---------------- Rebuild ----------------
