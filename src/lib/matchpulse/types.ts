@@ -18,6 +18,7 @@ export interface SportDef {
 export interface MPOrg {
   id: string;
   name: string; // canonical school / club name from Match Pulse `organizations`
+  matchName?: string | null; // short "match name" Match Pulse shows on match cards
   logoUrl?: string | null; // organisation crest/logo URL, when set
   primaryColor?: string | null; // brand colour, for the monogram fallback
   region?: string | null; // Match Pulse `region` (e.g. "Western Province") — used for province tables

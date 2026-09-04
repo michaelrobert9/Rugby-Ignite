@@ -92,6 +92,13 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
           <Field label="Current season" name="currentSeason" defaultValue={config.currentSeason} hint="The season year the Season Rankings show (e.g. 2026)." />
         </Section>
 
+        <Section title="Home page copy (SEO)" description="The headings and intro text shown under the Season and All-Time tabs on the home page.">
+          <Field label="Season tab heading" name="seasonHeading" defaultValue={config.seasonHeading} />
+          <Field label="All-Time tab heading" name="masterHeading" defaultValue={config.masterHeading} />
+          <TextArea label="Season tab intro" name="seasonIntro" defaultValue={config.seasonIntro} />
+          <TextArea label="All-Time tab intro" name="masterIntro" defaultValue={config.masterIntro} />
+        </Section>
+
         <button type="submit" className="rir-btn rir-btn-primary">
           Save {sport.name} settings
         </button>
@@ -110,6 +117,17 @@ function Section({ title, description, children }: { title: string; description:
         {description}
       </p>
       <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+    </div>
+  );
+}
+
+function TextArea({ label, name, defaultValue }: { label: string; name: string; defaultValue: string }) {
+  return (
+    <div className="sm:col-span-2">
+      <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+        {label}
+      </label>
+      <textarea className="rir-input" name={name} rows={3} defaultValue={defaultValue} />
     </div>
   );
 }

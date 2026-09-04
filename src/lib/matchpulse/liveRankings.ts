@@ -99,7 +99,7 @@ export function computeLiveLadder(
 
   const rows: LadderRow[] = Array.from(map.values()).map((tr) => ({
     entityId: tr.teamId,
-    name: orgById.get(tr.teamId)?.name ?? tr.teamId,
+    name: orgById.get(tr.teamId)?.matchName || orgById.get(tr.teamId)?.name || tr.teamId,
     logoUrl: orgById.get(tr.teamId)?.logoUrl ?? null,
     primaryColor: orgById.get(tr.teamId)?.primaryColor ?? null,
     rating: tr.rating,
