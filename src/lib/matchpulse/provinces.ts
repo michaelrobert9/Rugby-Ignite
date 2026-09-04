@@ -85,7 +85,7 @@ export function computeProvinceTable(
     const org = orgById.get(id);
     return {
       entityId: id,
-      name: org?.name ?? id,
+      name: org?.matchName || org?.name || id,
       logoUrl: org?.logoUrl ?? null,
       primaryColor: org?.primaryColor ?? null,
       played: a.played,

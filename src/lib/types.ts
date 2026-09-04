@@ -140,6 +140,11 @@ export interface RankingConfig {
   currentSeason: string;
   masterTitle: string;
   seasonTitle: string;
+  // Home-page tab copy (editable SEO text shown under each tab).
+  seasonHeading: string;
+  seasonIntro: string;
+  masterHeading: string;
+  masterIntro: string;
 }
 
 /**

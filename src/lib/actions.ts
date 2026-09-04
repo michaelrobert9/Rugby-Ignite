@@ -51,6 +51,10 @@ export async function saveConfigAction(formData: FormData) {
     currentSeason: str(formData, 'currentSeason') || current.currentSeason,
     masterTitle: str(formData, 'masterTitle') || current.masterTitle,
     seasonTitle: str(formData, 'seasonTitle') || current.seasonTitle,
+    seasonHeading: str(formData, 'seasonHeading') || current.seasonHeading,
+    seasonIntro: str(formData, 'seasonIntro') || current.seasonIntro,
+    masterHeading: str(formData, 'masterHeading') || current.masterHeading,
+    masterIntro: str(formData, 'masterIntro') || current.masterIntro,
   };
   await saveSportConfig(sport, config);
   revalidatePath('/admin/settings');
