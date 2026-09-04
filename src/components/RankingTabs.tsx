@@ -2,45 +2,70 @@
 
 import { useState } from 'react';
 
-interface TabContent {
-  heading: string;
-  intro: string;
-  extra?: React.ReactNode; // e.g. the "last updated" line (season only)
-  table: React.ReactNode; // server-rendered live table
+interface SeasonYear {
+  year: string;
+  table: React.ReactNode; // server-rendered live table for that season
 }
 
-// Season / All-Time tabs for the home page. Both tables are rendered on the
-// server and passed in; switching tabs just shows the other one and swaps the
-// heading + intro copy — instant, no reload. Styled to the Rugby Ignite brand
-// (ember accent underline on the active tab).
+// Season / All-Time tabs for the home page. All-Time is first and shown by
+// default. The Season tab lets the viewer pick any year. Every table is
+// rendered on the server and passed in; switching tab/year just shows the
+// matching one (instant, no reload) and the heading + intro copy follow.
 export default function RankingTabs({
-  season,
   master,
-  defaultTab = 'season',
+  season,
 }: {
-  season: TabContent;
-  master: TabContent;
-  defaultTab?: 'season' | 'master';
+  master: { heading: string; intro: string; table: React.ReactNode };
+  season: { heading: string; intro: string; extra?: React.ReactNode; years: SeasonYear[] };
 }) {
-  const [tab, setTab] = useState<'season' | 'master'>(defaultTab);
-  const active = tab === 'season' ? season : master;
+  const [tab, setTab] = useState<'master' | 'season'>('master');
+  const latest = season.years.length ? season.years[season.years.length - 1].year : '';
+  const [year, setYear] = useState<string>(latest);
+
+  const onMaster = tab === 'master';
+  const heading = onMaster ? master.heading : season.heading;
+  const intro = onMaster ? master.intro : season.intro;
 
   return (
     <div className="space-y-4">
       <div role="tablist" aria-label="Ranking view" className="flex gap-1" style={{ borderBottom: '1px solid #e5ddce' }}>
-        <TabButton active={tab === 'season'} onClick={() => setTab('season')}>Season</TabButton>
-        <TabButton active={tab === 'master'} onClick={() => setTab('master')}>All-Time</TabButton>
+        <TabButton active={onMaster} onClick={() => setTab('master')}>All-Time</TabButton>
+        <TabButton active={!onMaster} onClick={() => setTab('season')}>Season</TabButton>
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{active.heading}</h1>
-        <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--color-text-muted)', maxWidth: '52rem' }}>{active.intro}</p>
-        {active.extra && <div className="mt-2">{active.extra}</div>}
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{heading}</h1>
+        <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--color-text-muted)', maxWidth: '52rem' }}>{intro}</p>
+        {!onMaster && season.extra && <div className="mt-2">{season.extra}</div>}
       </div>
 
-      {/* Both tables stay mounted; only the active one is shown. */}
-      <div hidden={tab !== 'season'}>{season.table}</div>
-      <div hidden={tab !== 'master'}>{master.table}</div>
+      {/* Season year picker */}
+      {!onMaster && season.years.length > 1 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wide mr-1" style={{ color: 'var(--color-text-muted)' }}>Season</span>
+          {season.years.map((y) => (
+            <button
+              key={y.year}
+              type="button"
+              onClick={() => setYear(y.year)}
+              className="rir-badge"
+              style={
+                y.year === year
+                  ? { background: 'var(--night)', color: 'var(--chalk)', cursor: 'pointer', border: 'none' }
+                  : { background: '#ece3d3', color: 'var(--color-text-muted)', cursor: 'pointer', border: 'none' }
+              }
+            >
+              {y.year}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* All tables stay mounted; only the active one shows. */}
+      <div hidden={!onMaster}>{master.table}</div>
+      {season.years.map((y) => (
+        <div key={y.year} hidden={onMaster || y.year !== year}>{y.table}</div>
+      ))}
     </div>
   );
 }
