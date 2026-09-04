@@ -9,11 +9,10 @@
 import type { SportDef, SportKey } from './types';
 import { loadSportLive, type SportData } from './liveSource';
 
+// Rugby Ignite is a rugby-only site (its own brand and revenue model, separate
+// from Match Pulse). Only rugby is configured here.
 const SPORTS: SportDef[] = [
   { key: 'rugby', name: 'Rugby', scoreUnit: 'points', rankingsEnabled: true },
-  { key: 'hockey', name: 'Hockey', scoreUnit: 'goals', rankingsEnabled: false },
-  { key: 'waterpolo', name: 'Water Polo', scoreUnit: 'goals', rankingsEnabled: false },
-  { key: 'netball', name: 'Netball', scoreUnit: 'goals', rankingsEnabled: false },
 ];
 
 export async function listSports(): Promise<SportDef[]> {

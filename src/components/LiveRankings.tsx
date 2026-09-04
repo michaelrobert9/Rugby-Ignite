@@ -161,10 +161,12 @@ export default async function LiveRankings({ sp, basePath = '/' }: { sp: SP; bas
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide mr-1" style={{ color: 'var(--color-text-muted)' }}>Sport</span>
-            {sports.map((s) => <Chip key={s.key} active={s.key === sportKey} href={href(basePath, sel, { sport: s.key })}>{s.name}</Chip>)}
-          </div>
+          {sports.length > 1 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wide mr-1" style={{ color: 'var(--color-text-muted)' }}>Sport</span>
+              {sports.map((s) => <Chip key={s.key} active={s.key === sportKey} href={href(basePath, sel, { sport: s.key })}>{s.name}</Chip>)}
+            </div>
+          )}
 
           {ages.length > 1 && (
             <div className="flex flex-wrap items-center gap-2">
