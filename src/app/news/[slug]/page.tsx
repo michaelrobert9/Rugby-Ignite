@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPost, listPublishedPosts } from '@/lib/data/posts';
-import { RichText, type ShortcodeRenderer } from '@/lib/content';
-import RankingsBlock from '@/components/RankingsBlock';
+import { RichText } from '@/lib/content';
+import { rankingShortcodes } from '@/components/rankingShortcodes';
 import type { Post } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -31,18 +31,6 @@ export default async function PostPage(props: PageProps<'/news/[slug]'>) {
   const post = await findPublished(slug);
   if (!post) notFound();
 
-  const renderShortcode: ShortcodeRenderer = (name, attrs, key) => {
-    if (name !== 'rankings') return null;
-    return (
-      <RankingsBlock
-        key={key}
-        scope={attrs.scope ?? 'master'}
-        province={attrs.province}
-        toggle={attrs.toggle === 'true'}
-      />
-    );
-  };
-
   return (
     <div className="rir-container py-8 space-y-4" style={{ maxWidth: '48rem' }}>
       <Link href="/news" className="text-xs hover:underline" style={{ color: 'var(--color-text-muted)' }}>
@@ -54,7 +42,7 @@ export default async function PostPage(props: PageProps<'/news/[slug]'>) {
       <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
         {fmtDate(post.date)} · {post.author}
       </div>
-      <RichText body={post.body} renderShortcode={renderShortcode} />
+      <RichText body={post.body} renderShortcode={rankingShortcodes} />
     </div>
   );
 }

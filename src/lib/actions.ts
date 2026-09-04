@@ -2,16 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { deleteMatch, nextMatchId, saveMatch } from './data/matches';
-import { deleteTeam, nextTeamId, saveTeam } from './data/teams';
-import { deleteVenue, nextVenueId, saveVenue } from './data/venues';
 import { getSportConfig, saveSportConfig } from './data/config';
 import { getSiteSettings, saveSiteSettings } from './data/siteSettings';
 import type { SportKey } from './matchpulse/types';
-import { rebuildRankings } from './data/rankings';
 import { getPage, savePage } from './data/pages';
 import { deletePost, savePost, slugify, uniquePostId } from './data/posts';
-import { PROVINCES, type Match, type MatchStatus, type Page, type Post, type Province, type RankingConfig, type Team, type Venue } from './types';
+import { type Page, type Post, type RankingConfig } from './types';
 
 function str(fd: FormData, key: string): string {
   const v = fd.get(key);
@@ -21,98 +17,6 @@ function num(fd: FormData, key: string, fallback = 0): number {
   const v = str(fd, key);
   const n = Number(v);
   return Number.isFinite(n) ? n : fallback;
-}
-
-// ---------------- Teams ----------------
-
-export async function saveTeamAction(formData: FormData) {
-  const idInput = str(formData, 'id');
-  const id = idInput || (await nextTeamId());
-  const province = str(formData, 'province');
-  const homeVenueId = str(formData, 'homeVenueId');
-
-  const team: Team = {
-    id,
-    name: str(formData, 'name'),
-    province: PROVINCES.includes(province as Province) ? (province as Province) : null,
-    homeVenueId: homeVenueId || null,
-    logoUrl: str(formData, 'logoUrl') || null,
-    needsReview: formData.get('needsReview') === 'on',
-  };
-  await saveTeam(team);
-  revalidatePath('/admin/teams');
-  revalidatePath('/');
-  revalidatePath(`/teams/${id}`);
-  redirect('/admin/teams');
-}
-
-export async function deleteTeamAction(formData: FormData) {
-  const id = str(formData, 'id');
-  await deleteTeam(id);
-  revalidatePath('/admin/teams');
-  redirect('/admin/teams');
-}
-
-// ---------------- Venues ----------------
-
-export async function saveVenueAction(formData: FormData) {
-  const idInput = str(formData, 'id');
-  const name = str(formData, 'name');
-  const id = idInput || (await nextVenueId(name));
-
-  const venue: Venue = {
-    id,
-    name,
-    isNeutral: formData.get('isNeutral') === 'on',
-  };
-  await saveVenue(venue);
-  revalidatePath('/admin/venues');
-  redirect('/admin/venues');
-}
-
-export async function deleteVenueAction(formData: FormData) {
-  const id = str(formData, 'id');
-  await deleteVenue(id);
-  revalidatePath('/admin/venues');
-  redirect('/admin/venues');
-}
-
-// ---------------- Matches ----------------
-
-export async function saveMatchAction(formData: FormData) {
-  const idInput = str(formData, 'id');
-  const id = idInput || (await nextMatchId());
-  const homePointsStr = str(formData, 'homePoints');
-  const awayPointsStr = str(formData, 'awayPoints');
-  const venueId = str(formData, 'venueId');
-  const status = str(formData, 'status') as MatchStatus;
-  const dateInput = str(formData, 'date');
-  const date = dateInput.length === 16 ? `${dateInput}:00` : dateInput;
-
-  const match: Match = {
-    id,
-    homeTeamId: str(formData, 'homeTeamId'),
-    awayTeamId: str(formData, 'awayTeamId'),
-    homePoints: homePointsStr === '' ? null : Number(homePointsStr),
-    awayPoints: awayPointsStr === '' ? null : Number(awayPointsStr),
-    date,
-    season: str(formData, 'season'),
-    venueId: venueId || null,
-    isFestival: formData.get('isFestival') === 'on',
-    rankingEligible: formData.get('rankingEligible') === 'on',
-    status: (['scheduled', 'played', 'cancelled', 'postponed'] as MatchStatus[]).includes(status) ? status : 'played',
-  };
-  await saveMatch(match);
-  revalidatePath('/admin/matches');
-  revalidatePath('/');
-  redirect('/admin/matches');
-}
-
-export async function deleteMatchAction(formData: FormData) {
-  const id = str(formData, 'id');
-  await deleteMatch(id);
-  revalidatePath('/admin/matches');
-  redirect('/admin/matches');
 }
 
 // ---------------- Config ----------------
@@ -166,15 +70,6 @@ export async function saveSiteSettingsAction(formData: FormData) {
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');
   redirect('/admin/ads?saved=1');
-}
-
-// ---------------- Rebuild ----------------
-
-export async function rebuildAction() {
-  await rebuildRankings();
-  revalidatePath('/');
-  revalidatePath('/admin');
-  redirect('/admin?rebuilt=1');
 }
 
 // ---------------- Pages (CMS) ----------------

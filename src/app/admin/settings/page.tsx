@@ -1,8 +1,7 @@
 import { getSportConfig } from '@/lib/data/config';
 import { isDemoMode } from '@/lib/data/store';
 import { listSports } from '@/lib/matchpulse/source';
-import { listSeasons } from '@/lib/data/matches';
-import { saveConfigAction, rebuildAction } from '@/lib/actions';
+import { saveConfigAction } from '@/lib/actions';
 import type { RankingConfig } from '@/lib/types';
 import type { SportKey } from '@/lib/matchpulse/types';
 import MasterFormulaGate from './MasterFormulaGate';
@@ -18,7 +17,7 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
     : 'rugby') as SportKey;
   const sport = sports.find((s) => s.key === sportKey)!;
 
-  const [config, seasons] = await Promise.all([getSportConfig(sportKey), listSeasons()]);
+  const config = await getSportConfig(sportKey);
 
   const demo = isDemoMode();
 
@@ -90,37 +89,13 @@ export default async function SettingsPage(props: PageProps<'/admin/settings'>) 
           <Field label="Home advantage (rating points)" name="homeAdvantage" type="number" step="0.1" defaultValue={config.homeAdvantage} hint="Added to the home side's rating before comparing. Off for live data until venues are linked." />
           <Field label="Season margin threshold (winning margin)" name="marginThreshold" type="number" defaultValue={config.marginThreshold} hint={`In ${sport.scoreUnit}. Season margin multiplier kicks in above this.`} />
           <Field label="Upset threshold (leaderboard places)" name="upsetThreshold" type="number" defaultValue={config.upsetThreshold} hint="Season upset multiplier needs a rank gap of at least this." />
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
-              Current season
-            </label>
-            <select name="currentSeason" defaultValue={config.currentSeason} className="rir-input">
-              {(seasons.length ? seasons : [config.currentSeason]).map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Field label="Current season" name="currentSeason" defaultValue={config.currentSeason} hint="The season year the Season Rankings show (e.g. 2026)." />
         </Section>
 
         <button type="submit" className="rir-btn rir-btn-primary">
           Save {sport.name} settings
         </button>
       </form>
-
-      <div className="rir-card p-5">
-        <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Rebuild rankings</h2>
-        <p className="text-xs mt-1 mb-3" style={{ color: 'var(--color-text-muted)' }}>
-          Live ladders recompute on every page load, so this is only needed for the stored (CMS) rankings —
-          it replays every eligible match from scratch, chronologically.
-        </p>
-        <form action={rebuildAction}>
-          <button type="submit" className="rir-btn rir-btn-secondary">
-            Rebuild Master + all Seasons
-          </button>
-        </form>
-      </div>
     </div>
   );
 }
