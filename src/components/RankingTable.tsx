@@ -5,6 +5,7 @@
 import { loadSportData } from '@/lib/matchpulse/source';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
 import { getSportConfig } from '@/lib/data/config';
+import { getCurrentSeason } from '@/lib/season';
 import { TeamCell, PointsDelta, PositionDelta, fmtUpdated } from './rankingCells';
 
 export async function LastUpdatedLine() {
@@ -32,7 +33,7 @@ export default async function RankingTable({
 
   const ages = Array.from(new Set(matches.map((m) => m.ageGroup)));
   const age = ages.includes('1st') ? '1st' : (ages[0] ?? '1st');
-  const seasonYear = season || config.currentSeason;
+  const seasonYear = season || getCurrentSeason();
 
   const { rows } = computeLiveLadder(matches, orgs, age, track, seasonYear, config);
   const shown = typeof limit === 'number' && limit > 0 ? rows.slice(0, limit) : rows;

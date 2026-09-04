@@ -68,12 +68,25 @@ export async function saveConfigAction(formData: FormData) {
 export async function saveSiteSettingsAction(formData: FormData) {
   const current = await getSiteSettings();
   await saveSiteSettings({
-    adsenseClient: (str(formData, 'adsenseClient') || current.adsenseClient).trim(),
+    ...current,
+    adsenseClient: str(formData, 'adsenseClient').trim(),
     adsTxt: formData.get('adsTxt') != null ? String(formData.get('adsTxt')) : current.adsTxt,
   });
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');
   redirect('/admin/ads?saved=1');
+}
+
+export async function saveSeoAction(formData: FormData) {
+  const current = await getSiteSettings();
+  await saveSiteSettings({
+    ...current,
+    seoTitle: str(formData, 'seoTitle') || current.seoTitle,
+    seoDescription: str(formData, 'seoDescription') || current.seoDescription,
+    seoKeywords: str(formData, 'seoKeywords'),
+  });
+  revalidatePath('/', 'layout');
+  redirect('/admin/seo?saved=1');
 }
 
 // ---------------- Pages (CMS) ----------------
