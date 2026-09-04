@@ -123,5 +123,59 @@ const METHODOLOGY: Page = {
   ].join('\n'),
 };
 
+const NOTE = [
+  'Please note that the standings on this page are calculated **exclusively from matches played between schools within this province**. This "local-only" win percentage gives a fair, like-for-like comparison of regional form. Inter-provincial matches are excluded here but are fully reflected in the [National School Rugby Rankings](/) on our homepage.',
+].join('\n');
+
+function provincePage(id: string, key: string, name: string, order: number, intro: string): Page {
+  return {
+    id,
+    slug: `/${id}`,
+    navLabel: name,
+    navOrder: order,
+    showInNav: true,
+    title: `${name} School Rugby Rankings`,
+    metaTitle: `${name} School Rugby Rankings ${new Date().getFullYear()} | Provincial Win % — Rugby Ignite`,
+    metaDescription: `${name} school rugby rankings by win percentage — this season and all-time, counting only matches between two ${name} schools.`,
+    rankingScope: name,
+    body: [
+      intro,
+      '',
+      `## ${name} School Rugby Rankings This Year`,
+      '',
+      `[province_rankings province="${key}" track="season"]`,
+      '',
+      `## Overall ${name} Standings (All-Time)`,
+      '',
+      `[province_rankings province="${key}" track="all"]`,
+      '',
+      NOTE,
+    ].join('\n'),
+  };
+}
+
+const PROVINCE_PAGES: Page[] = [
+  provincePage(
+    'gauteng-school-rugby-ranking', 'gauteng', 'Gauteng', 2,
+    "Gauteng is the most competitive school rugby market in the country, where Pretoria's Noordvaal giants and Johannesburg's traditional schools collide week after week. Follow Affies (Afrikaanse Hoër Seunskool), Garsfontein, Monument, KES, Jeppe and Pretoria Boys' High as they fight through one of the toughest schedules in South African schoolboy rugby. Results recorded here drive our Gauteng rankings, showing how each Noordvaal Cup result and city derby reorders a relentlessly deep field.",
+  ),
+  provincePage(
+    'western-cape-school-rugby-rankings', 'western-cape', 'Western Cape', 3,
+    "Western Cape school rugby carries some of the oldest traditions in the country, from the historic Cape Town schools to the farming powerhouses of the Boland. Track Paul Roos Gymnasium, Paarl Gimnasium, Paarl Boys' High, Rondebosch, Bishops, SACS and Boland Landbou as they contest fierce local rivalries and provincial bragging rights. Each result recorded here shapes our Western Cape rankings, so you can see how every Cape derby and Boland battle reshuffles the order.",
+  ),
+  provincePage(
+    'kzn-school-rugby-ranking', 'kzn', 'KZN', 4,
+    "KwaZulu-Natal is one of South Africa's deepest school rugby provinces, where Durban's coastal heavyweights meet the traditional powers of the Midlands. Follow the form of schools like Glenwood, Durban High School, Maritzburg College, Kearsney and Hilton as they battle through derby season. Every KZN result here feeds directly into our provincial rankings, so whether it's a Durban inter-schools clash or a Midlands rivalry decided in the last play, you'll see exactly how it moves the leaderboard.",
+  ),
+  provincePage(
+    'eastern-cape-school-rugby-ranking', 'eastern-cape', 'Eastern Cape', 5,
+    "The Eastern Cape is the heartland of Border rugby and a region that punches far above its weight on the national stage. Follow Grey High School, Selborne College, Dale College, Queen's College and Kingswood as they bring their famously physical, uncompromising style to every match. Results on this page feed our Eastern Cape rankings, capturing the giant-killing upsets and proud rivalries that define schoolboy rugby in this part of the country.",
+  ),
+  provincePage(
+    'free-state-school-rugby-ranking', 'free-state', 'Free State', 6,
+    "Free State school rugby is built around Bloemfontein's storied institutions and a culture that treats the schoolboy game with near-professional intensity. Track Grey College, Hoërskool Sentraal and the province's other contenders as they set the standard that the rest of the country measures itself against. Every Free State result here updates our provincial rankings, so you can follow exactly how the season's biggest clashes shift the order at the top.",
+  ),
+];
+
 /** Seed content for the editable pages. */
-export const DEFAULT_PAGES: Page[] = [HOME, METHODOLOGY];
+export const DEFAULT_PAGES: Page[] = [HOME, METHODOLOGY, ...PROVINCE_PAGES];

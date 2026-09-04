@@ -62,7 +62,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     db.collection('organizations').get().catch(() => null),
   ]);
 
-  const orgDocs = new Map<string, { name: string; logoUrl: string | null; primaryColor: string | null }>();
+  const orgDocs = new Map<string, { name: string; logoUrl: string | null; primaryColor: string | null; region: string | null }>();
   if (orgSnap) {
     for (const o of orgSnap.docs) {
       const od = o.data() as Record<string, unknown>;
@@ -72,6 +72,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
         name,
         logoUrl: od.logoUrl ? String(od.logoUrl) : null,
         primaryColor: od.primaryColor ? String(od.primaryColor) : null,
+        region: od.region ? String(od.region) : null,
       });
     }
   }
@@ -130,6 +131,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
       name: canonical?.name || fallbackName.get(id) || id,
       logoUrl: canonical?.logoUrl ?? null,
       primaryColor: canonical?.primaryColor ?? null,
+      region: canonical?.region ?? null,
     });
   }
 

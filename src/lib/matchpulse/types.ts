@@ -20,6 +20,7 @@ export interface MPOrg {
   name: string; // canonical school / club name from Match Pulse `organizations`
   logoUrl?: string | null; // organisation crest/logo URL, when set
   primaryColor?: string | null; // brand colour, for the monogram fallback
+  region?: string | null; // Match Pulse `region` (e.g. "Western Province") — used for province tables
 }
 
 /** A finalised result, normalised from a sport DB's `matches` collection. */
