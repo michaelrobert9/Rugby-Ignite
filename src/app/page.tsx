@@ -1,14 +1,22 @@
 import type { Metadata } from 'next';
-import LiveRankings from '@/components/LiveRankings';
+import { getPage } from '@/lib/data/pages';
+import { RichText } from '@/lib/content';
+import { rankingShortcodes } from '@/components/rankingShortcodes';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Rugby Ignite — School Rugby Rankings',
-  description: 'Live South African school rugby rankings — Master and Season, refreshed as verified results are added.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage('home');
+  return { title: page?.metaTitle, description: page?.metaDescription };
+}
 
-export default async function HomePage(props: PageProps<'/'>) {
-  const sp = await props.searchParams;
-  return <LiveRankings sp={sp} basePath="/" />;
+export default async function HomePage() {
+  const page = await getPage('home');
+  if (!page) return null;
+
+  return (
+    <div className="rir-container py-8 space-y-5">
+      <RichText body={page.body} renderShortcode={rankingShortcodes} />
+    </div>
+  );
 }
