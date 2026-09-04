@@ -23,31 +23,6 @@ export function fmtUpdated(iso: string): string {
   return `${date} at ${time} GMT+0200`;
 }
 
-// Team name matching Match Pulse, with its crest (or a brand-coloured monogram
-// when the organisation has no logo).
-export function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUrl: string | null; primaryColor: string | null }) {
-  return (
-    <div className="flex items-center gap-2">
-      {logoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt="" width={24} height={24} style={{ width: 24, height: 24, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
-      ) : (
-        <span
-          aria-hidden
-          style={{
-            width: 24, height: 24, borderRadius: 4, flexShrink: 0,
-            background: primaryColor || 'var(--night)', color: 'var(--chalk)',
-            fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          {monogram(name)}
-        </span>
-      )}
-      <span className="font-medium" style={{ color: 'var(--color-navy-900)' }}>{name}</span>
-    </div>
-  );
-}
-
 // A quiet "NEW" tag for entries with no prior snapshot to compare against.
 function NewTag() {
   return (

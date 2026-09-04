@@ -50,7 +50,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         )}
         <header className="relative" style={{ background: "var(--night)" }}>
           <div className="rir-container flex items-center justify-between gap-6 py-3">
-            <Link href="/" className="flex flex-col shrink-0" style={{ gap: 4 }} aria-label="Rugby Ignite home">
+            <Link href="/" className="flex flex-col items-start shrink-0" style={{ gap: 4 }} aria-label="Rugby Ignite home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 60, width: "auto" }} />
               <span

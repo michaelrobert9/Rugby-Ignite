@@ -6,7 +6,8 @@ import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
 import { getSportConfig } from '@/lib/data/config';
 import { getCurrentSeason } from '@/lib/season';
-import { TeamCell, PointsDelta, PositionDelta, fmtUpdated, rankClass } from './rankingCells';
+import { PointsDelta, PositionDelta, fmtUpdated, rankClass } from './rankingCells';
+import { TeamCell } from './TeamCell';
 
 export async function LastUpdatedLine() {
   const { lastUpdated } = await getCachedSportData('rugby');
