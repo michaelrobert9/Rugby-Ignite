@@ -30,9 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const [nav, site] = await Promise.all([navPages(), getSiteSettings()]);
+  // "How the Rankings Work" (methodology) sits after News, near the end.
+  const METHODOLOGY_ID = "school-rugby-rankings-methodology";
+  const primary = nav.filter((page) => page.id !== METHODOLOGY_ID);
+  const methodology = nav.find((page) => page.id === METHODOLOGY_ID);
   const navItems = [
-    ...nav.map((page) => ({ href: pageHref(page), label: page.navLabel })),
+    ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/news", label: "News" },
+    ...(methodology ? [{ href: pageHref(methodology), label: methodology.navLabel }] : []),
     { href: "/admin", label: "Admin" },
   ];
   return (
@@ -54,7 +59,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="rir-container flex items-center py-5">
               <Link href="/" className="flex flex-col items-start shrink-0" style={{ gap: 6 }} aria-label="Rugby Ignite home">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo-lockup-dark.png" alt="Rugby Ignite" style={{ height: 64, width: "auto" }} />
+                <img src="/logo-lockup-dark.png" alt="Rugby Ignite" style={{ height: 128, width: "auto" }} />
                 <span
                   style={{
                     fontFamily: "var(--font-serif)",
