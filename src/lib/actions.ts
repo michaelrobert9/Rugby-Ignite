@@ -15,7 +15,12 @@ function str(fd: FormData, key: string): string {
   return typeof v === 'string' ? v.trim() : '';
 }
 function num(fd: FormData, key: string, fallback = 0): number {
+  // An absent or empty field must preserve the fallback (the current value) —
+  // NOT collapse to 0. Number('') is 0 and passes Number.isFinite, so guard the
+  // empty case explicitly. This is what keeps a locked/disabled input (which the
+  // browser never submits) from silently zeroing a saved setting.
   const v = str(fd, key);
+  if (v === '') return fallback;
   const n = Number(v);
   return Number.isFinite(n) ? n : fallback;
 }
@@ -28,17 +33,34 @@ export async function saveConfigAction(formData: FormData) {
   const raw = str(formData, 'sport');
   const sport: SportKey = (SPORT_KEYS as string[]).includes(raw) ? (raw as SportKey) : 'rugby';
 
-  // `current` is the fallback for every field: when the Master formula is left
-  // locked, its inputs aren't submitted, so those values are preserved as-is.
   const current = await getSportConfig(sport);
+
+  // The All-Time (Master) formula is protected: its six values are only ever
+  // taken from the form when the admin explicitly UNLOCKS that section. When it
+  // is locked (the default) they are copied straight from the stored config, so
+  // a routine save can never overwrite or clear the All-Time settings.
+  const masterUnlocked = str(formData, 'masterUnlocked') === '1';
+  const master = masterUnlocked
+    ? {
+        kMaster: num(formData, 'kMaster', current.kMaster),
+        masterSafetyCap: num(formData, 'masterSafetyCap', current.masterSafetyCap),
+        masterMarginMultiplier: num(formData, 'masterMarginMultiplier', current.masterMarginMultiplier),
+        masterMarginThreshold: num(formData, 'masterMarginThreshold', current.masterMarginThreshold),
+        masterUpsetMultiplier: num(formData, 'masterUpsetMultiplier', current.masterUpsetMultiplier),
+        masterUpsetThreshold: num(formData, 'masterUpsetThreshold', current.masterUpsetThreshold),
+      }
+    : {
+        kMaster: current.kMaster,
+        masterSafetyCap: current.masterSafetyCap,
+        masterMarginMultiplier: current.masterMarginMultiplier,
+        masterMarginThreshold: current.masterMarginThreshold,
+        masterUpsetMultiplier: current.masterUpsetMultiplier,
+        masterUpsetThreshold: current.masterUpsetThreshold,
+      };
+
   const config: RankingConfig = {
     ...current,
-    kMaster: num(formData, 'kMaster', current.kMaster),
-    masterSafetyCap: num(formData, 'masterSafetyCap', current.masterSafetyCap),
-    masterMarginMultiplier: num(formData, 'masterMarginMultiplier', current.masterMarginMultiplier),
-    masterMarginThreshold: num(formData, 'masterMarginThreshold', current.masterMarginThreshold),
-    masterUpsetMultiplier: num(formData, 'masterUpsetMultiplier', current.masterUpsetMultiplier),
-    masterUpsetThreshold: num(formData, 'masterUpsetThreshold', current.masterUpsetThreshold),
+    ...master,
     kSeason: num(formData, 'kSeason', current.kSeason),
     seedFactor: num(formData, 'seedFactor', current.seedFactor),
     seasonMarginMultiplier: num(formData, 'seasonMarginMultiplier', current.seasonMarginMultiplier),

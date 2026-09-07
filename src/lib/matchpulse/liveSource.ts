@@ -13,23 +13,13 @@ import type { MPMatch, MPOrg, SportKey } from './types';
 export interface SportData {
   matches: MPMatch[];
   orgs: MPOrg[];
-  /** Most recent time any result was added/edited (ISO), for the "last updated" line. */
+  /**
+   * When this snapshot was captured from Match Pulse (ISO), for the "last
+   * updated" line. Because the snapshot is cached, this is effectively the last
+   * time the rankings were rebuilt — it moves on every refresh (the automatic
+   * revalidate, or the admin "Refresh rankings now"). Null when there is no data.
+   */
   lastUpdated: string | null;
-}
-
-// Firestore Timestamp | Date | number | string -> epoch ms (or null).
-function toMillis(v: unknown): number | null {
-  if (!v) return null;
-  const maybe = v as { toMillis?: () => number; toDate?: () => Date };
-  if (typeof maybe.toMillis === 'function') return maybe.toMillis();
-  if (typeof maybe.toDate === 'function') return maybe.toDate().getTime();
-  if (v instanceof Date) return v.getTime();
-  if (typeof v === 'number') return v;
-  if (typeof v === 'string') {
-    const t = Date.parse(v);
-    return Number.isNaN(t) ? null : t;
-  }
-  return null;
 }
 
 // Firestore Timestamp | Date | number | 'YYYY-MM-DD' -> 'YYYY-MM-DD'.
@@ -81,22 +71,12 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
   const matches: MPMatch[] = [];
   const fallbackName = new Map<string, string>();
   const usedOrgIds = new Set<string>();
-  // "Last updated" = the freshest time a result was written (added or edited) in
-  // Match Pulse, so the card moves whenever the data behind the table changes.
-  // Fixture dates are only a last resort if no write timestamps exist at all.
-  let lastWriteMs: number | null = null;
-  let lastDateMs: number | null = null;
 
   for (const doc of snap.docs) {
     const d = doc.data() as Record<string, unknown>;
     const homeOrgId = (d.homeOrgId as string) || '';
     const awayOrgId = (d.awayOrgId as string) || '';
     if (!homeOrgId || !awayOrgId) continue; // need two identified schools to rank
-
-    const writeMs = toMillis(d.updatedAt) ?? toMillis(d.createdAt);
-    if (writeMs !== null && (lastWriteMs === null || writeMs > lastWriteMs)) lastWriteMs = writeMs;
-    const dateMs = toMillis(d.matchDate) ?? toMillis(d.scheduledAt);
-    if (dateMs !== null && (lastDateMs === null || dateMs > lastDateMs)) lastDateMs = dateMs;
 
     const date = toDateStr(d.matchDate) ?? toDateStr(d.scheduledAt);
     if (!date) continue; // undated finals can't be replayed chronologically
@@ -137,10 +117,11 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     });
   }
 
-  const lastUpdatedMs = lastWriteMs ?? lastDateMs;
   return {
     matches,
     orgs: Array.from(orgs.values()),
-    lastUpdated: lastUpdatedMs !== null ? new Date(lastUpdatedMs).toISOString() : null,
+    // Timestamp of this capture (the rebuild time). Null with no data so the
+    // card can show "awaiting the first verified result" instead.
+    lastUpdated: matches.length > 0 ? new Date().toISOString() : null,
   };
 }
