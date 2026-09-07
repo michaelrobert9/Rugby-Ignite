@@ -24,7 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: withSeason(site.seoTitle || "Rugby Ignite — School Rugby Rankings", season),
     description: withSeason(site.seoDescription || "The complete record of South African school rugby.", season),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
-    icons: { icon: "/logo-icon.png", apple: "/logo-icon.png" },
+    // The favicon / app icons come from the App Router file convention
+    // (src/app/icon.png, apple-icon.png, favicon.ico), so no manual icons here.
   };
 }
 
