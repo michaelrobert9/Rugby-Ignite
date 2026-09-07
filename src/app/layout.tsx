@@ -48,23 +48,34 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             crossOrigin="anonymous"
           />
         )}
-        <header className="relative" style={{ background: "var(--night)" }}>
-          <div className="rir-container flex items-center justify-between gap-6 py-3">
-            <Link href="/" className="flex flex-col items-start shrink-0" style={{ gap: 4 }} aria-label="Rugby Ignite home">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-lockup.png" alt="Rugby Ignite" style={{ height: 60, width: "auto" }} />
-              <span
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: 12,
-                  color: "var(--muted)",
-                  lineHeight: 1.2,
-                }}
-              >
-                The ranking system school rugby deserves
-              </span>
-            </Link>
-            <SiteNav items={navItems} />
+        <header className="relative">
+          {/* Top band — light, carrying the logo + tagline. */}
+          <div style={{ background: "var(--offwhite)" }}>
+            <div className="rir-container flex items-center py-5">
+              <Link href="/" className="flex flex-col items-start shrink-0" style={{ gap: 6 }} aria-label="Rugby Ignite home">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo-lockup-dark.png" alt="Rugby Ignite" style={{ height: 64, width: "auto" }} />
+                <span
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontSize: "clamp(10px, 3vw, 13px)",
+                    fontWeight: 600,
+                    color: "var(--night)",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  The ranking system school rugby deserves
+                </span>
+              </Link>
+            </div>
+          </div>
+          {/* Menu bar — dark, sitting below the logo. */}
+          <div style={{ background: "var(--night)" }}>
+            <div className="rir-container">
+              <SiteNav items={navItems} />
+            </div>
           </div>
         </header>
         <main className="flex-1">{children}</main>

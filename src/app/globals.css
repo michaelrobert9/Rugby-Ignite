@@ -202,11 +202,17 @@ table.rir-table tbody tr.rir-rank-3 td:first-child {
   font-weight: 600;
 }
 
+/* Menu-bar links: uppercase, tracked, filling the dark bar with an ember
+   underline at its base on hover / active. */
 .rir-nav-link {
+  display: inline-flex;
+  align-items: center;
   color: var(--muted);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.4rem 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.85rem 0;
   border-bottom: 2px solid transparent;
 }
 

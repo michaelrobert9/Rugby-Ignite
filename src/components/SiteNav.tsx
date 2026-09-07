@@ -14,9 +14,9 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
-      {/* Desktop: inline links */}
-      <nav className="hidden md:flex items-center gap-5">
+    <div className="flex items-stretch">
+      {/* Desktop: inline links, filling the bar, left-aligned */}
+      <nav className="hidden md:flex items-stretch gap-6">
         {items.map((item) => (
           <Link key={item.href} href={item.href} className="rir-nav-link whitespace-nowrap">
             {item.label}
@@ -27,13 +27,14 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
       {/* Mobile: hamburger button */}
       <button
         type="button"
-        className="md:hidden inline-flex items-center justify-center p-2 -mr-2 rounded"
-        style={{ color: 'var(--chalk)' }}
+        className="md:hidden inline-flex items-center gap-2 ml-auto py-3 rounded"
+        style={{ color: 'var(--chalk)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         aria-controls="mobile-nav"
         onClick={() => setOpen((o) => !o)}
       >
+        <span>Menu</span>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           {open ? (
             <>
@@ -80,6 +81,6 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
           </nav>
         </>
       )}
-    </>
+    </div>
   );
 }
