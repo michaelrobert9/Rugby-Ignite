@@ -11,6 +11,9 @@ export default function MasterFormulaGate({ children }: { children: React.ReactN
 
   return (
     <div>
+      {/* Outside the disabled fieldset so it always submits: tells the server
+          whether the Master formula was deliberately unlocked for editing. */}
+      <input type="hidden" name="masterUnlocked" value={unlocked ? '1' : '0'} />
       <label
         className="flex items-center gap-2 text-sm cursor-pointer mb-3"
         style={{ color: unlocked ? 'var(--ember)' : 'var(--color-text-muted)' }}
