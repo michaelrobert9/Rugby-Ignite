@@ -8,6 +8,7 @@ import { getSiteSettings, saveSiteSettings } from './data/siteSettings';
 import type { SportKey } from './matchpulse/types';
 import { getPage, savePage } from './data/pages';
 import { deletePost, savePost, slugify, uniquePostId } from './data/posts';
+import { assertAdmin } from './adminAuth';
 import { type Page, type Post, type RankingConfig } from './types';
 
 function str(fd: FormData, key: string): string {
@@ -30,6 +31,7 @@ function num(fd: FormData, key: string, fallback = 0): number {
 const SPORT_KEYS: SportKey[] = ['rugby', 'hockey', 'waterpolo', 'netball'];
 
 export async function saveConfigAction(formData: FormData) {
+  await assertAdmin();
   const raw = str(formData, 'sport');
   const sport: SportKey = (SPORT_KEYS as string[]).includes(raw) ? (raw as SportKey) : 'rugby';
 
@@ -89,6 +91,7 @@ export async function saveConfigAction(formData: FormData) {
 // ---------------- Site settings (ads) ----------------
 
 export async function saveSiteSettingsAction(formData: FormData) {
+  await assertAdmin();
   const current = await getSiteSettings();
   await saveSiteSettings({
     ...current,
@@ -101,6 +104,7 @@ export async function saveSiteSettingsAction(formData: FormData) {
 }
 
 export async function saveSeoAction(formData: FormData) {
+  await assertAdmin();
   const current = await getSiteSettings();
   await saveSiteSettings({
     ...current,
@@ -115,6 +119,7 @@ export async function saveSeoAction(formData: FormData) {
 // ---------------- Rankings refresh ----------------
 
 export async function refreshRankingsAction() {
+  await assertAdmin();
   // Expire the cached snapshot immediately so the next page load re-captures.
   revalidateTag(RANKINGS_TAG, { expire: 0 });
   revalidatePath('/', 'layout');
@@ -124,6 +129,7 @@ export async function refreshRankingsAction() {
 // ---------------- Pages (CMS) ----------------
 
 export async function savePageAction(formData: FormData) {
+  await assertAdmin();
   const id = str(formData, 'id');
   const existing = await getPage(id);
   if (!existing) redirect('/admin/pages');
@@ -149,6 +155,7 @@ export async function savePageAction(formData: FormData) {
 // ---------------- News / Posts ----------------
 
 export async function savePostAction(formData: FormData) {
+  await assertAdmin();
   const idInput = str(formData, 'id');
   const title = str(formData, 'title') || 'Untitled';
   const slugInput = str(formData, 'slug');
@@ -170,6 +177,7 @@ export async function savePostAction(formData: FormData) {
 }
 
 export async function deletePostAction(formData: FormData) {
+  await assertAdmin();
   const id = str(formData, 'id');
   if (id) await deletePost(id);
   revalidatePath('/', 'layout');

@@ -22,6 +22,55 @@ env:
     availability:
       - RUNTIME
 
+  # ADMIN LOGIN. The admin section (/admin) is locked to Match Pulse platform
+  # admins. Sign-in uses the shared Firebase project (same account as Match
+  # Pulse); authorisation mirrors Match Pulse's platformAdmin rule. Three things
+  # are needed:
+  #
+  # 1) The public Firebase Web config, so the browser can sign in. Get these from
+  #    the Firebase console → Project settings → your Web app. They are inlined
+  #    into the client bundle, so they need BUILD availability. (authDomain and
+  #    projectId already default to the Match Pulse project in code, but are set
+  #    here too for clarity.)
+  # These are the Match Pulse project's PUBLIC web config (safe to expose;
+  # security is enforced by Firebase Auth + Firestore rules, not by hiding them).
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyA1Q_HLScaii8-jQqKEf2ETTepw0HDG2P8
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:161675532534:web:2ee33dbaf52575c19eb4d7"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: match-pulse-4560e.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: match-pulse-4560e
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # 2) A secret used to sign the admin session cookie. NEVER commit its value —
+  #    this repo is public. Create it once as a Secret Manager secret, then
+  #    uncomment the block below:
+  #
+  #    firebase apphosting:secrets:set ADMIN_SESSION_SECRET   # paste a long random string
+  #
+  # - variable: ADMIN_SESSION_SECRET
+  #   secret: ADMIN_SESSION_SECRET
+  #   availability:
+  #     - RUNTIME
+  #
+  # 3) The App Hosting runtime service account must be able to read the (default)
+  #    Firestore database's users/{uid} docs and verify ID tokens — it already
+  #    has project Firestore access for the live reads, so no extra grant is
+  #    normally needed.
+
 # ALTERNATIVE (not used): an explicit service-account key. If ever needed, set the
 # secret and add SERVICE_ACCOUNT_KEY here — but KEEP APP_FIRESTORE_DB above so the
 # app still writes to its own database, never the core (default) one.
