@@ -19,8 +19,10 @@
 
 import { cert, getApps, initializeApp, applicationDefault, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
+import { getAuth, type Auth } from 'firebase-admin/auth';
 
 let cachedDb: Firestore | null = null;
+let cachedCoreDb: Firestore | null = null;
 const cachedSportDbs = new Map<string, Firestore>();
 
 function initApp(): App {
@@ -78,4 +80,21 @@ export function getSportDb(sportKey: string): Firestore {
   const db = getFirestore(initApp(), sportKey);
   cachedSportDbs.set(sportKey, db);
   return db;
+}
+
+/**
+ * The Match Pulse CORE (default) database — its identity store, where the
+ * `users/{uid}` docs (and the `platformAdmin` flag) live. Read-only for us; used
+ * only to authorise the admin login against the same platform-admin rule Match
+ * Pulse itself enforces.
+ */
+export function getCoreDb(): Firestore {
+  if (cachedCoreDb) return cachedCoreDb;
+  cachedCoreDb = getFirestore(initApp());
+  return cachedCoreDb;
+}
+
+/** Firebase Auth (Admin) for the shared project — used to verify admin ID tokens. */
+export function getAdminAuth(): Auth {
+  return getAuth(initApp());
 }

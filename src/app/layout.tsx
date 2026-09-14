@@ -4,6 +4,7 @@ import "./globals.css";
 import { navPages } from "@/lib/data/pages";
 import { getSiteSettings } from "@/lib/data/siteSettings";
 import { getCurrentSeason, withSeason } from "@/lib/season";
+import { ADSENSE_CLIENT } from "@/lib/adsense";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
@@ -24,7 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: withSeason(site.seoTitle || "Rugby Ignite — School Rugby Rankings", season),
     description: withSeason(site.seoDescription || "The complete record of South African school rugby.", season),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
-    icons: { icon: "/logo-icon.png", apple: "/logo-icon.png" },
+    // The favicon / app icons come from the App Router file convention
+    // (src/app/icon.png, apple-icon.png, favicon.ico), so no manual icons here.
   };
 }
 
@@ -46,13 +48,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           brand type (Georgia + Courier New) is system-only, so no fonts load.
           The AdSense loader sits at the top of <body> when a publisher ID is set. */}
       <body className="min-h-full flex flex-col">
-        {site.adsenseClient && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(site.adsenseClient)}`}
-            crossOrigin="anonymous"
-          />
-        )}
+        {/* AdSense loader — loaded once, site-wide, so both Auto ads and the
+            explicit rankings units can fill. Uses the configured publisher id,
+            falling back to the site's own so the units always have a loader. */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(site.adsenseClient || ADSENSE_CLIENT)}`}
+          crossOrigin="anonymous"
+        />
         <header className="relative">
           {/* Top band — light, carrying the logo + tagline. */}
           <div style={{ background: "var(--offwhite)" }}>

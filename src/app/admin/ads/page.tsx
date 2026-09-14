@@ -45,6 +45,20 @@ export default async function AdsSettingsPage(props: PageProps<'/admin/ads'>) {
               is generated for you. Paste your own only if AdSense gives you a specific ads.txt to use.
             </p>
           </div>
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+              Rankings ad slots (explicit units)
+            </label>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <input className="rir-input" name="slotTop" defaultValue={site.adsense?.slotTop ?? ''} placeholder="Top slot ID" />
+              <input className="rir-input" name="slotMid" defaultValue={site.adsense?.slotMid ?? ''} placeholder="Mid slot ID" />
+              <input className="rir-input" name="slotBottom" defaultValue={site.adsense?.slotBottom ?? ''} placeholder="Bottom slot ID" />
+            </div>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              Display ad-unit slot IDs (digits only) placed on the rankings tables: Top above the table, Mid after
+              row 20, Bottom below. Leave a box <strong>blank</strong> to hide that position.
+            </p>
+          </div>
           <button type="submit" className="rir-btn rir-btn-primary">Save ad settings</button>
         </div>
       </form>
