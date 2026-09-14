@@ -66,11 +66,12 @@ export default function RankingTabs({
         </div>
       )}
 
-      {/* All tables stay mounted; only the active one shows. */}
-      <div hidden={!onMaster}>{master.table}</div>
-      {season.years.map((y) => (
-        <div key={y.year} hidden={onMaster || y.year !== year}>{y.table}</div>
-      ))}
+      {/* Render only the active table. Mounting one at a time keeps a single set
+          of ad units on the page and requests a fresh ad when the tab or year
+          changes (the newly mounted table's units push on mount). */}
+      {onMaster
+        ? master.table
+        : (season.years.find((y) => y.year === year)?.table ?? null)}
     </div>
   );
 }

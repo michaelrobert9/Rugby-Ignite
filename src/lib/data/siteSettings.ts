@@ -8,6 +8,12 @@ export interface SiteSettings {
   adsenseClient: string;
   /** Contents served at /ads.txt (one line per network). */
   adsTxt: string;
+  /** Explicit rankings ad-unit slot ids. Empty string for a slot = no ad there. */
+  adsense?: {
+    slotTop: string;
+    slotMid: string;
+    slotBottom: string;
+  };
   /** Site-wide SEO. {season} is replaced with the current season year. */
   seoTitle: string;
   seoDescription: string;
@@ -19,6 +25,7 @@ const COLLECTION = 'site';
 const DEFAULTS: SiteSettings = {
   adsenseClient: '',
   adsTxt: '',
+  adsense: { slotTop: '3417521276', slotMid: '1896556042', slotBottom: '1367529272' },
   seoTitle: 'School Rugby Rankings {season} | South African 1st XV Rankings — Rugby Ignite',
   seoDescription:
     'View the latest South African school rugby rankings for the {season} season — 1st XV form, ranking points, movement and results, plus the All-Time School Rugby Ratings.',

@@ -179,6 +179,18 @@ table.rir-table tbody tr.rir-rank-3 td:first-child {
   border-left-color: var(--gold);
 }
 
+/* Ad slot reservation: hold the space so the layout doesn't shift when an ad
+   fills. Full width, aligned to the table edges; no border or label. */
+.rir-ad {
+  width: 100%;
+  min-height: 280px;
+}
+@media (max-width: 640px) {
+  .rir-ad {
+    min-height: 250px;
+  }
+}
+
 /* On phones the table shows only the essentials — Pos, Team, Win% and Rating —
    so it fits without horizontal scrolling. The W/D/L columns and the secondary
    columns (Played, movement) are dropped and return on wider screens. */

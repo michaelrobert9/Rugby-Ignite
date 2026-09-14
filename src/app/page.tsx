@@ -39,12 +39,12 @@ export default async function HomePage() {
         master={{
           heading: withSeason(config.masterHeading, season),
           intro: withSeason(config.masterIntro, season),
-          table: <RankingTable track="master" />,
+          table: <RankingTable track="master" ads />,
         }}
         season={{
           heading: withSeason(config.seasonHeading, season),
           intro: withSeason(config.seasonIntro, season),
-          years: years.map((year) => ({ year, table: <RankingTable track="season" season={year} /> })),
+          years: years.map((year) => ({ year, table: <RankingTable track="season" season={year} ads /> })),
         }}
         lastUpdated={<LastUpdatedLine />}
       />

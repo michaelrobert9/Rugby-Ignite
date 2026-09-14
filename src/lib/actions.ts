@@ -97,6 +97,12 @@ export async function saveSiteSettingsAction(formData: FormData) {
     ...current,
     adsenseClient: str(formData, 'adsenseClient').trim(),
     adsTxt: formData.get('adsTxt') != null ? String(formData.get('adsTxt')) : current.adsTxt,
+    // Rankings ad-unit slots. Digits only; an empty box means "hide that slot".
+    adsense: {
+      slotTop: str(formData, 'slotTop').replace(/\D/g, ''),
+      slotMid: str(formData, 'slotMid').replace(/\D/g, ''),
+      slotBottom: str(formData, 'slotBottom').replace(/\D/g, ''),
+    },
   });
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');
