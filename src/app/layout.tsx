@@ -5,6 +5,7 @@ import { navPages } from "@/lib/data/pages";
 import { getSiteSettings } from "@/lib/data/siteSettings";
 import { getCurrentSeason, withSeason } from "@/lib/season";
 import { ADSENSE_CLIENT } from "@/lib/adsense";
+import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 
@@ -88,13 +89,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main className="flex-1">{children}</main>
         <footer style={{ background: "var(--night)" }}>
-          <div
-            className="rir-container py-6 text-xs flex flex-wrap items-center gap-x-2 gap-y-1"
-            style={{ color: "var(--muted)" }}
-          >
-            <span style={{ color: "var(--chalk)", fontWeight: 600 }}>Ignite the passion.</span>
-            <span style={{ color: "var(--ember)", fontWeight: 600 }}>Honour the game.</span>
-            <span>The complete record of South African school rugby.</span>
+          <div className="rir-container py-6 text-xs" style={{ color: "var(--muted)" }}>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span style={{ color: "var(--chalk)", fontWeight: 600 }}>Ignite the passion.</span>
+              <span style={{ color: "var(--ember)", fontWeight: 600 }}>Honour the game.</span>
+              <span>The complete record of South African school rugby.</span>
+            </div>
+            <div className="mt-2">
+              Rankings built from verified results on{" "}
+              <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" style={{ color: "var(--chalk)", textDecoration: "underline" }}>
+                Match Pulse Rugby
+              </a>{" "}
+              — live scores, fixtures &amp; results.
+            </div>
           </div>
         </footer>
       </body>

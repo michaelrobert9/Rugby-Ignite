@@ -8,6 +8,7 @@ import { RichText } from '@/lib/content';
 import { rankingShortcodes } from '@/components/rankingShortcodes';
 import RankingTabs from '@/components/RankingTabs';
 import RankingTable, { LastUpdatedLine } from '@/components/RankingTable';
+import MatchPulseCTA from '@/components/MatchPulseCTA';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +49,8 @@ export default async function HomePage() {
         }}
         lastUpdated={<LastUpdatedLine />}
       />
+
+      <MatchPulseCTA />
 
       {page?.body && (
         <div style={{ maxWidth: '52rem' }}>

@@ -29,6 +29,8 @@ const HOME: Page = {
     '',
     'The Season Rankings focus on current form this season, while the All-Time School Rugby Ratings show longer-term strength across seasons.',
     '',
+    'Every ranking here is built from verified 1st XV results captured on [Match Pulse](https://matchpulse.co.za). For upcoming matches, live scores and full results, visit [Match Pulse Rugby](https://rugby.matchpulse.co.za).',
+    '',
     '[Learn more about how the Rugby Ignite school rugby rankings work](/school-rugby-rankings-methodology)',
   ].join('\n'),
 };
@@ -76,7 +78,9 @@ const METHODOLOGY: Page = {
     '',
     '## How results are recorded',
     '',
-    'Results, teams and match data are captured and verified on **Match Pulse**, the live scoring platform that powers South African school sport. Rugby Ignite reads those verified 1st XV results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host match schedules, player profiles or venue data.',
+    'Results, teams and match data are captured and verified on [Match Pulse](https://matchpulse.co.za), the live scoring platform that powers South African school sport. Rugby Ignite reads those verified 1st XV results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host match schedules, player profiles or venue data.',
+    '',
+    'Upcoming matches, live scores and full results are on [Match Pulse Rugby](https://rugby.matchpulse.co.za) — with fixtures, standings and results by [competition](https://rugby.matchpulse.co.za/competitions) and by [school](https://rugby.matchpulse.co.za/schools).',
     '',
     '## Are the rankings official?',
     '',
@@ -108,7 +112,7 @@ const METHODOLOGY: Page = {
 };
 
 const NOTE = [
-  'Please note that the standings on this page are calculated **exclusively from matches played between schools within this province**. This "local-only" win percentage gives a fair, like-for-like comparison of regional form. Inter-provincial matches are excluded here but are fully reflected in the [National School Rugby Rankings](/) on our homepage.',
+  'Please note that the standings on this page are calculated **exclusively from matches played between schools within this province**. This "local-only" win percentage gives a fair, like-for-like comparison of regional form. Inter-provincial matches are excluded here but are fully reflected in the [All-Time School Rugby Rankings](/) on our homepage. Upcoming matches, live scores and full results are on [Match Pulse Rugby](https://rugby.matchpulse.co.za).',
 ].join('\n');
 
 function provincePage(id: string, key: string, name: string, order: number, intro: string): Page {

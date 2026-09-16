@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getPage } from '@/lib/data/pages';
 import { RichText } from '@/lib/content';
 import { rankingShortcodes } from '@/components/rankingShortcodes';
+import MatchPulseCTA from '@/components/MatchPulseCTA';
 import { getCurrentSeason, withSeason } from '@/lib/season';
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,7 @@ export default async function CmsPage(props: PageProps<'/[slug]'>) {
       <div className="space-y-5" style={{ maxWidth: '52rem' }}>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, season)}</h1>
         <RichText body={withSeason(page.body, season)} renderShortcode={rankingShortcodes} />
+        <MatchPulseCTA />
       </div>
     </div>
   );
