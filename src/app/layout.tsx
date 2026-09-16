@@ -45,9 +45,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   ];
   return (
     <html lang="en" className="h-full antialiased">
-      {/* No custom <head>: the metadata head is injected automatically, and the
-          brand type (Georgia + Courier New) is system-only, so no fonts load.
-          The AdSense loader sits at the top of <body> when a publisher ID is set. */}
+      <head>
+        {/* Brand Book v7 typefaces: Instrument Serif (ratings/headlines),
+            Archivo (body/UI/wordmark), JetBrains Mono (labels/movement). */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {/* AdSense loader — loaded once, site-wide, so both Auto ads and the
             explicit rankings units can fill. Uses the configured publisher id,
@@ -58,30 +66,31 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           crossOrigin="anonymous"
         />
         <header className="relative">
-          {/* Top band — light, carrying the logo + tagline. */}
-          <div style={{ background: "var(--offwhite)" }}>
-            <div className="rir-container flex items-center py-5">
-              <Link href="/" className="flex flex-col items-start shrink-0" style={{ gap: 6 }} aria-label="Rugby Ignite home">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo-lockup-dark.png" alt="Rugby Ignite" style={{ height: 128, width: "auto" }} />
-                <span
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(10px, 3vw, 13px)",
-                    fontWeight: 600,
-                    color: "var(--night)",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    lineHeight: 1.2,
-                  }}
-                >
-                  The ranking system school rugby deserves
+          {/* Top band — coal, carrying the mark + wordmark (the reversed lockup). */}
+          <div style={{ background: "var(--coal)" }}>
+            <div className="rir-container flex items-center py-6">
+              <Link href="/" className="flex items-center shrink-0" style={{ gap: 14 }} aria-label="Rugby Ignite home">
+                <span className="rir-mark" aria-hidden />
+                <span className="flex flex-col" style={{ gap: 6 }}>
+                  <span className="rir-wordmark">RUGBY IGNITE</span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "clamp(9px, 2.6vw, 11px)",
+                      color: "var(--on-coal-label)",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    The ranking system school rugby deserves
+                  </span>
                 </span>
               </Link>
             </div>
           </div>
-          {/* Menu bar — dark, sitting below the logo. */}
-          <div style={{ background: "var(--night)" }}>
+          {/* Menu bar — coal, sitting below the mark. */}
+          <div style={{ background: "var(--coal)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
             <div className="rir-container">
               <SiteNav items={navItems} />
             </div>

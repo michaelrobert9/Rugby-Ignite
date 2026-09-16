@@ -82,7 +82,7 @@ export default async function RankingTable({
       <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
       <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
       <td className="rir-data rir-dim">{r.winPercent.toFixed(1)}%</td>
-      <td className="rir-data font-semibold">{r.rating.toFixed(1)}</td>
+      <td className="rir-rating">{r.rating.toFixed(2)}</td>
       <td className="rir-data rir-col-sec"><PointsDelta value={r.weekPoints} /></td>
       <td className="rir-col-sec"><PositionDelta value={r.movement} /></td>
     </tr>
