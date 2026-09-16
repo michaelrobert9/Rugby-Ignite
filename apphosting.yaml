@@ -56,15 +56,13 @@ env:
       - RUNTIME
 
   # 2) A secret used to sign the admin session cookie. NEVER commit its value —
-  #    this repo is public. Create it once as a Secret Manager secret, then
-  #    uncomment the block below:
-  #
-  #    firebase apphosting:secrets:set ADMIN_SESSION_SECRET   # paste a long random string
-  #
-  # - variable: ADMIN_SESSION_SECRET
-  #   secret: ADMIN_SESSION_SECRET
-  #   availability:
-  #     - RUNTIME
+  #    this repo is public. It is stored as a Secret Manager secret named
+  #    ADMIN_SESSION_SECRET (created with `firebase apphosting:secrets:set`) and
+  #    referenced here — only the reference is committed, never the value.
+  - variable: ADMIN_SESSION_SECRET
+    secret: ADMIN_SESSION_SECRET
+    availability:
+      - RUNTIME
   #
   # 3) The App Hosting runtime service account must be able to read the (default)
   #    Firestore database's users/{uid} docs and verify ID tokens — it already
