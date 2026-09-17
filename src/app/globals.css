@@ -24,13 +24,15 @@
   --leader-tint: #fbf5ec;
   --on-coal: #cfc3b9;
   --on-coal-label: #8a7a70;
-  /* Heat ramp — mark + gauge only */
-  --heat-1: #4a1f06;
-  --heat-2: #c64a0a;
-  --heat-3: #e86a12;
-  --heat-4: #f5a623;
-  --heat-5: #ffe0b2;
-  --heat-ramp: linear-gradient(to top, var(--heat-1), var(--heat-2) 35%, var(--heat-3) 58%, var(--heat-4) 82%, var(--heat-5));
+  /* Heat ramp — mark + gauge only. 5 stops, bottom to top. The base glows a
+     warm ember (never coal-black) and the ramp runs brighter through the
+     middle to a white-hot tip, so the stroke reads lit end-to-end. */
+  --heat-1: #702c07; /* base — warm ember, not coal */
+  --heat-2: #a33e08;
+  --heat-3: #d2550c;
+  --heat-4: #f4a322;
+  --heat-5: #ffe0b2; /* white-hot tip */
+  --heat-ramp: linear-gradient(to top, var(--heat-1), var(--heat-2) 25%, var(--heat-3) 50%, var(--heat-4) 78%, var(--heat-5));
 
   /* Existing component token names, repointed to v7 so every component inherits it */
   --night: var(--coal);
@@ -290,7 +292,8 @@ select.rir-input:focus {
   background: #f6e9e1;
 }
 
-/* The mark: a single upright stroke that heats from coal to white-hot. */
+/* The mark: a single upright stroke, lit end-to-end — a warm ember base
+   rising to a white-hot tip. */
 .rir-mark {
   display: inline-block;
   width: 11px;
