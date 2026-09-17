@@ -24,15 +24,15 @@
   --leader-tint: #fbf5ec;
   --on-coal: #cfc3b9;
   --on-coal-label: #8a7a70;
-  /* Heat ramp — mark + gauge only. 5 stops, bottom to top. The base glows a
-     warm ember (never coal-black) and the ramp runs brighter through the
-     middle to a white-hot tip, so the stroke reads lit end-to-end. */
-  --heat-1: #702c07; /* base — warm ember, not coal */
-  --heat-2: #a33e08;
-  --heat-3: #d2550c;
-  --heat-4: #f4a322;
+  /* Heat ramp — Form Heat gauge, the mark and live indicators ONLY (never a
+     surface, never type, never a button). 5 stops, bottom to top, per Brand
+     Book v7.0 §04: coal-ember base heating to a white-hot tip. */
+  --heat-1: #4a1f06; /* base */
+  --heat-2: #c64a0a;
+  --heat-3: #e86a12;
+  --heat-4: #f5a623;
   --heat-5: #ffe0b2; /* white-hot tip */
-  --heat-ramp: linear-gradient(to top, var(--heat-1), var(--heat-2) 25%, var(--heat-3) 50%, var(--heat-4) 78%, var(--heat-5));
+  --heat-ramp: linear-gradient(to top, var(--heat-1) 0%, var(--heat-2) 38%, var(--heat-3) 68%, var(--heat-4) 88%, var(--heat-5) 100%);
 
   /* Existing component token names, repointed to v7 so every component inherits it */
   --night: var(--coal);
@@ -292,8 +292,8 @@ select.rir-input:focus {
   background: #f6e9e1;
 }
 
-/* The mark: a single upright stroke, lit end-to-end — a warm ember base
-   rising to a white-hot tip. */
+/* The mark: a single upright stroke that heats from a coal-ember base to a
+   white-hot tip. A rising measure — not a flame, not a shield, not a crest. */
 .rir-mark {
   display: inline-block;
   width: 11px;
