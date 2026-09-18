@@ -3,8 +3,11 @@ import Link from 'next/link';
 import RankingTable from '@/components/RankingTable';
 import SponsorBand from '@/components/SponsorBand';
 import MatchPulseCTA from '@/components/MatchPulseCTA';
-import { getStandings } from '@/lib/store/read';
+import { getStandings, schoolSlug } from '@/lib/store/read';
 import { getCurrentSeason, withSeason } from '@/lib/season';
+import JsonLd from '@/components/JsonLd';
+
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://rugbyignite.co.za').replace(/\/$/, '');
 
 export const dynamic = 'force-dynamic';
 
@@ -27,8 +30,24 @@ export default async function RankingPage(props: PageProps<'/ranking'>) {
     new Set(master.map((r) => r.province).filter((p): p is string => !!p)),
   ).sort();
 
+  const listRows = (selected ? master.filter((r) => r.province === selected) : master).slice(0, 25);
+
   return (
     <div className="rir-container py-8">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'The Ignite Rating — South African school rugby first XV ranking',
+          numberOfItems: listRows.length,
+          itemListElement: listRows.map((r, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: r.name,
+            url: `${SITE}/school/${schoolSlug(r.name)}`,
+          })),
+        }}
+      />
       <div className="space-y-2" style={{ maxWidth: '72rem' }}>
         <div
           style={{

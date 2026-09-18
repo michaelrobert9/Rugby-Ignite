@@ -22,7 +22,9 @@ function pageHref(page: Page): string {
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
   const season = getCurrentSeason();
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://rugbyignite.co.za").replace(/\/$/, "");
   return {
+    metadataBase: new URL(base),
     title: withSeason(site.seoTitle || "Rugby Ignite — School Rugby Rankings", season),
     description: withSeason(site.seoDescription || "The complete record of South African school rugby.", season),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,

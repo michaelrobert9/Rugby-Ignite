@@ -6,6 +6,7 @@ import { getSchoolBySlug, getSeasonRow, getTeamHistory, getSiteBuild } from '@/l
 import { HEAT_BAND_LABEL } from '@/lib/store/methodConfig';
 import { MATCHPULSE } from '@/lib/matchpulseLinks';
 import { movementSentence } from '@/lib/generate/sentences';
+import JsonLd from '@/components/JsonLd';
 import type { RatingHistoryRow } from '@/lib/store/types';
 
 export const dynamic = 'force-dynamic';
@@ -53,6 +54,16 @@ export default async function SchoolPage(props: PageProps<'/school/[slug]'>) {
 
   return (
     <div>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'SportsTeam',
+          name: row.name,
+          sport: 'Rugby union',
+          ...(row.province ? { location: { '@type': 'Place', name: row.province } } : {}),
+          description: `${row.name} are rated ${row.rating.toFixed(2)} on the Ignite Rating, ranked ${ordinal(rank)} of ${total} South African school first XVs.`,
+        }}
+      />
       {/* Header */}
       <div className="rir-container py-8" style={{ borderBottom: '1px solid var(--coal)' }}>
         <div className="flex flex-wrap items-start" style={{ gap: 32 }}>
