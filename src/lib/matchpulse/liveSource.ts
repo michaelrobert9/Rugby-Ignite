@@ -36,6 +36,17 @@ function toDateStr(v: unknown): string | null {
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
 const numOrNull = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
+// Firestore Timestamp | Date | number | ISO string -> full ISO string, else null.
+function toIsoOrNull(v: unknown): string | null {
+  if (!v) return null;
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number') return new Date(v).toISOString();
+  const maybe = v as { toDate?: () => Date };
+  if (typeof maybe.toDate === 'function') return maybe.toDate().toISOString();
+  if (v instanceof Date) return v.toISOString();
+  return null;
+}
+
 /**
  * Read finalised results for one sport. `ageGroup` is fixed to '1st' for now —
  * only 1st-team rugby data exists live. When age sides arrive, derive the group
@@ -82,6 +93,10 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
     if (!date) continue; // undated finals can't be replayed chronologically
     const season = d.season ? String(d.season) : date.slice(0, 4);
 
+    // Source amend timestamp, when exposed under any of the common field names.
+    const amendRaw = d.amendedAt ?? d.updatedAt ?? d.lastModified ?? d.modifiedAt ?? null;
+    const amendedAt = toIsoOrNull(amendRaw);
+
     matches.push({
       id: doc.id,
       sport,
@@ -94,6 +109,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
       awayScore: num(d.awayScore),
       homeTries: numOrNull(d.homeTries),
       awayTries: numOrNull(d.awayTries),
+      amendedAt,
     });
 
     usedOrgIds.add(homeOrgId);
