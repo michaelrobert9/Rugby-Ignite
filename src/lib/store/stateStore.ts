@@ -20,6 +20,7 @@ import { isDemoMode } from '../data/store';
 import type {
   BuildMeta,
   RatingHistoryRow,
+  StoredArticle,
   StoredCorrection,
   StoredFixture,
   StoredSnapshot,
@@ -179,6 +180,56 @@ export async function listCorrections(): Promise<StoredCorrection[]> {
 export async function writeCorrection(correction: StoredCorrection): Promise<void> {
   if (isDemoMode()) return;
   await getDb().collection('corrections').doc(correction.id).set(correction);
+}
+
+// ---- articles (frozen, never edited) -------------------------------------
+
+function articleDocId(slug: string): string {
+  return slug.replace(/\//g, '__'); // Firestore doc ids can't contain '/'
+}
+
+export async function listArticles(limit?: number): Promise<StoredArticle[]> {
+  if (isDemoMode()) return [];
+  try {
+    const snap = await getDb().collection('articles').get();
+    const all = snap.docs
+      .map((d) => d.data() as StoredArticle)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.generatedAt.localeCompare(a.generatedAt));
+    return typeof limit === 'number' ? all.slice(0, limit) : all;
+  } catch {
+    return [];
+  }
+}
+
+export async function readArticle(slug: string): Promise<StoredArticle | null> {
+  if (isDemoMode()) return null;
+  try {
+    const snap = await getDb().collection('articles').doc(articleDocId(slug)).get();
+    return snap.exists ? (snap.data() as StoredArticle) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** True if any article was already published on `date` (the one-per-day gate). */
+export async function articleExistsOnDate(date: string): Promise<boolean> {
+  if (isDemoMode()) return false;
+  try {
+    const snap = await getDb().collection('articles').where('date', '==', date).limit(1).get();
+    return !snap.empty;
+  } catch {
+    return false;
+  }
+}
+
+/** Write an article only if its slug is new — frozen at publication, never edited. */
+export async function writeArticleIfNew(article: StoredArticle): Promise<boolean> {
+  if (isDemoMode()) return false;
+  const ref = getDb().collection('articles').doc(articleDocId(article.slug));
+  const existing = await ref.get();
+  if (existing.exists) return false;
+  await ref.set(article);
+  return true;
 }
 
 // ---- build meta ----------------------------------------------------------

@@ -110,6 +110,23 @@ export interface StoredCorrection {
   rows: CorrectionRow[]; // was / now / delta per affected school
 }
 
+/** A frozen, generated article (Layer 2). Written once, never edited; a later
+ *  correction adds a banner + link, it does not rewrite the body. */
+export interface StoredArticle {
+  slug: string; // `${season}/${kebab-title}`
+  season: string;
+  date: string; // publication day (SAST), 'YYYY-MM-DD'
+  trigger: string; // A1..A6
+  title: string;
+  dateline: string; // e.g. "ROUND REPORT · 8 AUGUST 2027 · 6 FIXTURES RATED"
+  lead: string; // lead paragraph
+  paragraphs: string[]; // remaining body paragraphs
+  changes: Array<{ name: string; delta: number; rating: number }>; // sidebar, largest first
+  methodVersion: string;
+  generatedAt: string; // ISO
+  supersededBy: string | null; // correction id, when a later correction touches it
+}
+
 export type CadenceMode = 'off-season' | 'ordinary' | 'festival';
 
 /** Build metadata — the single "where the site is right now" record. */

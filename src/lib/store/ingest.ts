@@ -12,14 +12,18 @@ import type { MPMatch } from '../matchpulse/types';
 import { getMethod } from './methodConfig';
 import { buildFromFixtures } from './rebuild';
 import {
+  articleExistsOnDate,
+  listSnapshots,
   readFixtures,
   replaceRatingHistory,
   storeEnabled,
+  writeArticleIfNew,
   writeBuildMeta,
   writeFixtures,
   writeSnapshot,
   writeStandings,
 } from './stateStore';
+import { generateArticle } from '../generate/articles';
 import { TRACK_MASTER } from '../types';
 import type { RatingHistoryRow, StoredFixture } from './types';
 
@@ -114,8 +118,40 @@ export async function runIngestAndRebuild(now: Date = new Date()): Promise<Inges
     }
     await replaceRatingHistory(boundedHistory);
 
+    // Generate an article for today, if a trigger fires and none exists yet.
+    // Read the prior leader BEFORE writing today's snapshot (filter date < today).
+    const captureDate = result.snapshots.find((s) => s.scope === TRACK_MASTER)?.date ?? null;
+    const priorSnaps = (await listSnapshots(TRACK_MASTER)).filter((s) => !captureDate || s.date < captureDate);
+    const priorLeaderId = priorSnaps[0]?.rows[0]?.teamId ?? null;
+    const everLedIds = new Set<string>();
+    for (const s of priorSnaps) {
+      const top = s.rows[0]?.teamId;
+      if (top) everLedIds.add(top);
+    }
+
     await Promise.all(result.snapshots.map((s) => writeSnapshot(s)));
     await writeBuildMeta(result.meta);
+
+    const masterStandings = result.standings.find((s) => s.scope === TRACK_MASTER)?.rows ?? [];
+    const leader = masterStandings[0] ?? null;
+    const leaderHistory = leader ? result.history.get(`${TRACK_MASTER}__${leader.teamId}`) ?? [] : [];
+    const leaderLastMovement =
+      [...leaderHistory].sort((a, b) => b.matchDate.localeCompare(a.matchDate))[0] ?? null;
+
+    if (leader && captureDate && !(await articleExistsOnDate(captureDate))) {
+      const article = generateArticle({
+        now,
+        season: result.latestSeason ?? captureDate.slice(0, 4),
+        cadence: result.meta.cadence,
+        leader,
+        priorLeaderId,
+        everLedIds,
+        standings: masterStandings,
+        leaderLastMovement,
+        methodVersion: result.meta.methodVersion,
+      });
+      if (article) await writeArticleIfNew(article);
+    }
   }
 
   return {

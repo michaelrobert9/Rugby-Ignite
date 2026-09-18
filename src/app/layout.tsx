@@ -41,6 +41,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const navItems = [
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/ranking", label: "Ranking" },
+    { href: "/stories", label: "Stories" },
     { href: "/news", label: "News" },
     { href: "/how-it-works", label: "How the Rankings Work" },
     { href: "/admin", label: "Admin" },
