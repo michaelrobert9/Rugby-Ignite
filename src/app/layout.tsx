@@ -46,14 +46,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        {/* Brand Book v7 typefaces: Instrument Serif (ratings/headlines),
-            Archivo (body/UI/wordmark), JetBrains Mono (labels/movement). */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        {/* Brand Book v7.0 §05 — two families: Archivo Black (wordmark, ratings,
+            headlines), self-hosted via @font-face in globals.css; Helvetica Neue
+            (body / UI / labels) is a system stack with nothing to load. The
+            font files are preloaded so the wordmark never flashes a fallback. */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          href="/fonts/archivo-black-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
         />
       </head>
       <body className="min-h-full flex flex-col">
@@ -95,6 +97,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <SiteNav items={navItems} />
             </div>
           </div>
+          {/* Brand Book v7.0 — a 2px full-width heat rule closes the header. */}
+          <div aria-hidden style={{ height: 2, background: "var(--heat-ramp-h)" }} />
         </header>
         <main className="flex-1">{children}</main>
         <footer style={{ background: "var(--night)" }}>

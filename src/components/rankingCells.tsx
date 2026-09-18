@@ -30,27 +30,29 @@ function NewTag() {
   );
 }
 
-// Rating points gained/lost since the last Thursday 23:59 reset. Plain mono
-// text — green up, Ember down, Dim when flat (deltas signal, never decorate).
+// Rating points gained/lost since the last Thursday 23:59 reset. Brand Book
+// v7.0: an arrow plus a figure, always in coal — never green/red, so the table
+// reads correctly in greyscale and for colour-blind readers.
 export function PointsDelta({ value }: { value: number | null }) {
   if (value === null) return <NewTag />;
-  const rounded = Math.round(value * 10) / 10;
-  if (rounded === 0) return <span className="rir-data" style={{ color: 'var(--dim)' }}>—</span>;
+  const rounded = Math.round(value * 100) / 100;
+  if (rounded === 0) return <span className="rir-data" style={{ color: 'var(--dim)' }}>— 0.00</span>;
   const up = rounded > 0;
   return (
-    <span className="rir-data" style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 700 }}>
-      {up ? '+' : '−'}{Math.abs(rounded).toFixed(1)}
+    <span className="rir-data" style={{ color: 'var(--coal)', fontWeight: 600 }}>
+      {up ? '▲' : '▼'} {Math.abs(rounded).toFixed(2)}
     </span>
   );
 }
 
 // Leaderboard positions gained/lost since the last Thursday 23:59 reset.
+// Arrow plus a figure, in coal only (never colour-coded) — same rule as points.
 export function PositionDelta({ value }: { value: number | null }) {
   if (value === null) return <NewTag />;
   if (value === 0) return <span className="rir-data" style={{ color: 'var(--dim)' }}>—</span>;
   const up = value > 0;
   return (
-    <span className="rir-data" style={{ color: up ? 'var(--color-up)' : 'var(--color-down)', fontWeight: 700 }}>
+    <span className="rir-data" style={{ color: 'var(--coal)', fontWeight: 600 }}>
       {up ? '▲' : '▼'} {Math.abs(value)}
     </span>
   );

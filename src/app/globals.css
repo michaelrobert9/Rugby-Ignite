@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* Archivo Black — self-hosted per Brand Book v7.0 (no file depends on an
+   installed font, and the wordmark never waits on a third-party fetch). */
+@font-face {
+  font-family: "Archivo Black";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/archivo-black-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Archivo Black";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/archivo-black-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /*
  * Rugby Ignite brand system — Brand Book v7.0.
  * Warm-neutral palette with a single functional heat ramp.
@@ -7,9 +26,11 @@
  *   Paper #F6F2EC  default page surface (panels #FFFDFA, rules #E0D8CE)
  *   Ember Deep #A33B06  heat set as type: links, the heat figure, the #1 position
  *   Heat ramp     the mark and the gauge ONLY — never a surface, never buttons
- * Type: Instrument Serif (ratings + headlines), Archivo (body / UI / names /
- * wordmark), JetBrains Mono (labels / movement / data). No green anywhere;
- * movement is coal, arrow + sign, never coloured.
+ * Type: Archivo Black (wordmark / ratings / headlines), Helvetica Neue system
+ * stack (body / UI / school names), and Helvetica caps — the same stack at
+ * 600, uppercase, tracked — for labels / movement / data. No serif, no mono.
+ * No green anywhere; movement is coal, an arrow + a figure, never coloured.
+ * Every corner is square (no border radius).
  */
 :root {
   /* v7 palette */
@@ -33,6 +54,8 @@
   --heat-4: #f5a623;
   --heat-5: #ffe0b2; /* white-hot tip */
   --heat-ramp: linear-gradient(to top, var(--heat-1) 0%, var(--heat-2) 38%, var(--heat-3) 68%, var(--heat-4) 88%, var(--heat-5) 100%);
+  /* Horizontal variant — for the full-width heat rule under the header. */
+  --heat-ramp-h: linear-gradient(to right, var(--heat-1) 0%, var(--heat-2) 38%, var(--heat-3) 68%, var(--heat-4) 88%, var(--heat-5) 100%);
 
   /* Existing component token names, repointed to v7 so every component inherits it */
   --night: var(--coal);
@@ -57,14 +80,21 @@
   --color-down: var(--coal);
   --color-link: var(--ember-deep);
 
-  /* Radius scale — crisp. */
-  --radius-sm: 2px;
-  --radius: 4px;
-  --radius-lg: 8px;
+  /* Radius scale — Brand Book v7.0: no border radius anywhere, every corner square. */
+  --radius-sm: 0;
+  --radius: 0;
+  --radius-lg: 0;
 
-  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif; /* ratings + headlines */
-  --font-sans: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* body / UI / names / wordmark */
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; /* labels / movement / data */
+  /* Type — Brand Book v7.0 §05: two families, three roles.
+     Archivo Black makes the claims and the numbers (wordmark, ratings,
+     headlines). Helvetica Neue does everything else — the institutions in
+     sentence case, and a 600 / uppercase / tracked "caps" role for labels,
+     data and movement. The retired serif/mono roles alias onto these so
+     existing components inherit the change from here. */
+  --font-display: "Archivo Black", "Helvetica Neue", Helvetica, Arial, sans-serif; /* wordmark / ratings / headlines */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif; /* body / UI / school names */
+  --font-serif: var(--font-display); /* retired role → Archivo Black */
+  --font-mono: var(--font-sans); /* retired role → Helvetica caps */
 }
 
 @theme inline {
@@ -79,27 +109,28 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Instrument Serif makes the claims. */
+/* Archivo Black makes the claims: headlines and statements. */
 h1,
 h2,
 h3,
 .rir-serif {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: 0;
+  font-family: var(--font-display);
+  font-weight: 400; /* Archivo Black is a single (black) weight */
+  letter-spacing: -0.02em;
 }
 
-/* JetBrains Mono for readings: results, win%, movement. */
+/* Helvetica caps for readings: results, win%, movement — tracked tabular figures. */
 .rir-data {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
 }
 
-/* The Ignite Rating — Instrument Serif, coal, tabular, never coloured. */
+/* The Ignite Rating — Archivo Black, coal, tabular, never coloured. */
 .rir-rating {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
   font-size: 1.15rem;
+  letter-spacing: -0.02em;
   color: var(--coal);
 }
 
@@ -141,17 +172,17 @@ table.rir-table {
   font-size: 0.875rem;
 }
 
-/* Header: coal bar, mono uppercase labels. */
+/* Header: coal bar, Helvetica caps labels. */
 table.rir-table thead th {
   background: var(--coal);
   color: var(--on-coal);
   text-align: left;
   padding: 0.6rem 0.75rem;
-  font-family: var(--font-mono);
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-weight: 600;
   white-space: nowrap;
   font-size: 0.68rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -162,11 +193,12 @@ table.rir-table tbody td {
 table.rir-table .rir-data {
   white-space: nowrap;
 }
-/* Position: Instrument Serif numeral, coal (Ember Deep on the leader). */
+/* Position: Archivo Black numeral, coal (Ember Deep on the leader). */
 table.rir-table tbody td:first-child {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 1.2rem;
   line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--coal);
 }
 
@@ -218,12 +250,13 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
 .rir-nav-link {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--on-coal-label);
   font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
   padding: 0.85rem 0;
   border-bottom: 2px solid transparent;
 }
@@ -303,9 +336,10 @@ select.rir-input:focus {
   flex-shrink: 0;
 }
 .rir-wordmark {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  letter-spacing: 0.11em;
+  font-family: var(--font-display); /* Archivo Black — the wordmark is never set in another face */
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em; /* balance the tracking so the mark-to-word gap reads evenly */
   font-size: 1.4rem;
   line-height: 1;
   color: var(--paper);
