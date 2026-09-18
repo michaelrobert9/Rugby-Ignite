@@ -5,6 +5,7 @@ import { HeatGaugeVertical } from '@/components/FormGauge';
 import { getSchoolBySlug, getSeasonRow, getTeamHistory, getSiteBuild } from '@/lib/store/read';
 import { HEAT_BAND_LABEL } from '@/lib/store/methodConfig';
 import { MATCHPULSE } from '@/lib/matchpulseLinks';
+import { movementSentence } from '@/lib/generate/sentences';
 import type { RatingHistoryRow } from '@/lib/store/types';
 
 export const dynamic = 'force-dynamic';
@@ -134,7 +135,7 @@ export default async function SchoolPage(props: PageProps<'/school/[slug]'>) {
                 Last movement
               </div>
               <div style={{ fontSize: 17, lineHeight: 1.55, color: 'var(--coal)', marginTop: 11 }}>
-                {lastMovementSentence(row.name, last)}
+                {movementSentence(row.name, last)}
               </div>
               <div className="rir-subline" style={{ marginTop: 14, borderTop: '1px solid var(--rule)', paddingTop: 11 }}>
                 {last.matchDate}
@@ -182,15 +183,3 @@ function BigFigure({ value, label, ember }: { value: string; label: string; embe
   );
 }
 
-// A factual last-movement line. (Phase 5 centralises the sentence templates.)
-function lastMovementSentence(school: string, r: RatingHistoryRow): string {
-  const delta = Math.abs(r.ratingChange).toFixed(2);
-  if (r.outcome === 'draw') {
-    return `Drew ${r.pointsFor}–${r.pointsAgainst} with ${r.opponentName}, rated ${r.opponentRatingBefore.toFixed(2)} going in.`;
-  }
-  const verb = r.outcome === 'win' ? 'Gained' : 'Lost';
-  const vs = r.outcome === 'win' ? 'beating' : 'losing to';
-  const cost = r.outcome === 'win' ? 'the win moved' : 'the defeat cost';
-  const rel = r.opponentRatingBefore >= r.ratingBefore ? 'more' : 'less';
-  return `${verb} ${delta} rating points ${vs} ${r.opponentName} ${r.pointsFor}–${r.pointsAgainst}. ${r.opponentName} were rated ${r.opponentRatingBefore.toFixed(2)} going in, so ${cost} ${rel} than a result against a ${r.opponentRatingBefore >= r.ratingBefore ? 'lower' : 'higher'}-rated side would.`;
-}
