@@ -94,36 +94,44 @@ The engine already produces `matchRatings` (→ `rating_history`) and `teamRatin
 (→ `ratings` + `snapshots`); the work is persisting them idempotently and reading
 them back, not re-deriving them.
 
-## 3. Decisions needed before build (these gate scope)
+## 3. Decisions
 
-These are product/brand calls, not engineering ones. Several materially change the
-size of the build, so they come first.
+### Resolved (owner, 2026-09-18)
 
-1. **Monetisation — a real conflict.** The README states *"There is no advertising
-   and no social channel"* and makes the **sponsor band** (between page title and
-   table) the only commercial slot. That contradicts the AdSense units we shipped.
-   Options: (a) keep AdSense, (b) switch to the sponsor-band model, (c) run both.
-   This decides whether AdSense code stays.
-2. **One rating or three tables?** The brief describes a **single Ignite Rating**
-   (0–100, leader > 90) plus Form Heat. The current site publishes **Master +
-   Season** tracks and **provincial win-% tables**. Does the 2027 site collapse to
-   the single Ignite Rating (brief-faithful), or keep the two-track + provincial
-   model we have? This is the biggest scope fork.
-3. **Scale calibration.** The brief assumes the leader sits above 90. Today's
-   defaults (baseline 50, caps) likely put the best school in the 60s. If so, the
-   "out of 100" claim is unreadable and the method needs recalibrating before
-   launch (README open item #2).
-4. **Form Heat thresholds.** Sign off the five bands (prototype assumes Cold 0–19,
-   Cool 20–39, Warm 40–59, Hot 60–79, White Hot 80–100) against the method.
+1. **Monetisation — keep both.** AdSense stays as the primary revenue generator at
+   this stage; the sponsor band is added as an **additional** stream. Both must
+   exist — not one instead of the other. The README's "no advertising" line is
+   overridden by the owner; the sponsor band sits between page title and table (per
+   the brand book), AdSense units keep their current placements, and neither goes
+   inside a row, a rating, the mark, or the nav.
+2. **Merge the old and new into one site — additive, not a replacement.** Keep the
+   **Master (All-Time)** and **Season** tracks and the **provincial win-% tables**
+   we publish today, and add the brief's new surface on top: the single Ignite
+   Rating framing (the Master rating is the Ignite Rating), Form Heat, `/school`,
+   `/how-it-works`, `/corrections`, articles and archive snapshots. Nothing that is
+   live today is dropped; the generated-site architecture wraps it.
+3. **Don't engineer the rating magnitude; Form Heat is form, not the rating.** We do
+   not recalibrate the method to force the leader above 90 — the rating is whatever
+   the results make it, and copy must not lean on an assumed ">90" leader. **Form
+   Heat is derived from recent results / recent form (opponent-weighted), not from
+   the rating value and not from match scores.** A low-ranked school on a good run
+   can read hot; the table leader can read cold.
+
+### Still open
+
+4. **Form Heat definition + bands.** Given decision 3, pin the exact recent-form
+   window and weighting (e.g. last N rated fixtures, opponent-strength weighted) and
+   the five band thresholds (prototype assumes Cold 0–19, Cool 20–39, Warm 40–59,
+   Hot 60–79, White Hot 80–100). Sign off with the method owner.
 5. **Match Pulse contract.** Confirm the source exposes, per fixture: a stable
    `fixture_id`, `status` (only `complete`/`final` rated), `amended_at` (drives
-   corrections), and a **province per school** (the brief generates province pages
-   only for provinces present in data). Confirm webhook vs poll for ingestion.
-   Today's read uses `homeOrgId/awayOrgId/scores/date/season` and hard-codes
-   `ageGroup='1st'` — `amended_at` and per-school province are not read yet.
+   corrections), and a **province per school** (province pages are generated only for
+   provinces present in data). Confirm webhook vs poll for ingestion. Today's read
+   uses `homeOrgId/awayOrgId/scores/date/season` and hard-codes `ageGroup='1st'` —
+   `amended_at` and per-school province are not read yet.
 6. **Custodian.** Named brand + method custodians to publish on `/how-it-works`.
 7. **Rollout.** Build the 2027 site behind a preview/branch and cut over at season
-   start, rather than mutating the live site in place.
+   start, rather than mutating the live site in place (recommended).
 
 ## 4. Phased roadmap
 
@@ -162,8 +170,10 @@ is the "design-only" lane we've already been using.
 - Wire `runFullRecalculation` as the writer (rebuild from the fixture log must
   reproduce the store exactly). Persist `ratings`, append `rating_history`, write a
   `snapshot` at round close.
-- Add **Form Heat** (0–100, from rating-point movement since the season opened) —
-  a genuine engine addition (today's movement is vs Thursday, not season open).
+- Add **Form Heat** (0–100) as a genuine engine addition, computed from **recent
+  results / recent form** (opponent-weighted), per decision 3 — not from the rating
+  value and not from match scores. Persist a `form_heat` + band per school; withhold
+  it in off-season and festival mode.
 - Fold `config.ts` into `method_config` with a version + changelog.
 - **Exit:** a full rebuild from the log is byte-identical to incremental writes;
   `/how-it-works` worked example (latest fixture) matches the calculator.
@@ -172,10 +182,13 @@ is the "design-only" lane we've already been using.
 Server-rendered from the store, ISR-revalidated on ingest.
 - `/` (This Week — hero + top 5 + largest gain + next-round stakes),
   `/ranking` (full 184, 6 columns POS/FIRST XV/WIN%/HEAT/RATING/RTG PTS, sponsor
-  band, province filter chips from provinces present), `/ranking/{province}`,
+  band + AdSense, province filter chips from provinces present), `/ranking/{province}`,
   `/school/{slug}` (×184 — vertical Form Heat gauge, three figures, every rating
   change with citations, sparkline, "matches live on Match Pulse"),
   `/how-it-works` (printed from `method_config`), `/corrections`.
+- **Merge (decision 2):** retain the current Master + Season track tabs and the
+  provincial win-% tables as views within this set — the Ignite Rating is the
+  Master rating; Season and provincial are additional reads, not replaced.
 - Mobile: table drops to **three columns** (pos, school, rating) with win% + delta
   under the name; nothing clips; 44px tap targets.
 - **Exit:** all figures in initial HTML; structured data matches; phone layout per
@@ -253,12 +266,14 @@ Phases 7–9 ~1–2 weeks. This is a v2 rebuild, not a tweak.
 
 ## 7. Open items for the client (consolidated)
 
-1. Monetisation: AdSense, sponsor band, or both?
-2. One Ignite Rating, or keep Master + Season + provincial tables?
-3. Scale calibration — is the leader expected above 90, and does the current
-   formula get there?
-4. Form Heat band thresholds — confirm the five bands.
-5. Match Pulse contract — `fixture_id`, `status`, `amended_at`, per-school province,
+Resolved 2026-09-18: monetisation (both AdSense + sponsor band), merge (keep
+Master/Season/provincial + add the new surface), and rating scale / Form Heat basis
+(don't engineer the magnitude; Form Heat = recent form, not the rating value). Still
+open:
+
+1. Form Heat definition — recent-form window + weighting, and the five band
+   thresholds.
+2. Match Pulse contract — `fixture_id`, `status`, `amended_at`, per-school province,
    webhook vs poll.
-6. Named brand + method custodians for `/how-it-works`.
-7. Rollout — build behind a preview and cut over at season start? (recommended)
+3. Named brand + method custodians for `/how-it-works`.
+4. Rollout — build behind a preview and cut over at season start? (recommended)
