@@ -15,15 +15,20 @@ import {
   articleExistsOnDate,
   listSnapshots,
   readFixtures,
+  readStandings,
   replaceRatingHistory,
   storeEnabled,
+  supersedeArticlesFrom,
+  supersedeSnapshotsFrom,
   writeArticleIfNew,
   writeBuildMeta,
+  writeCorrection,
   writeFixtures,
   writeSnapshot,
   writeStandings,
 } from './stateStore';
 import { generateArticle } from '../generate/articles';
+import { buildCorrection, type AmendedFixture } from '../generate/corrections';
 import { TRACK_MASTER } from '../types';
 import type { RatingHistoryRow, StoredFixture } from './types';
 
@@ -70,12 +75,14 @@ function toStoredFixture(m: MPMatch, ingestedAt: string): StoredFixture {
  */
 export async function runIngestAndRebuild(now: Date = new Date()): Promise<IngestSummary> {
   const ingestedAt = now.toISOString();
-  const [{ matches, orgs }, method, existing] = await Promise.all([
+  const [{ matches, orgs }, method, existing, priorMasterStandings] = await Promise.all([
     loadSportData('rugby'),
     getMethod(),
     readFixtures(),
+    readStandings(TRACK_MASTER), // captured BEFORE the rebuild, for correction "was" values
   ]);
 
+  const orgById = new Map(orgs.map((o) => [o.id, o]));
   const existingByKey = new Map(existing.map((f) => [f.fixtureId, f]));
   const incoming = matches.map((m) => toStoredFixture(m, ingestedAt));
 
@@ -151,6 +158,43 @@ export async function runIngestAndRebuild(now: Date = new Date()): Promise<Inges
         methodVersion: result.meta.methodVersion,
       });
       if (article) await writeArticleIfNew(article);
+    }
+
+    // Corrections: an amended fixture was re-rated in this build. Publish what
+    // changed (was → now) and banner every superseded snapshot and article.
+    if (amendedFixtureIds.length > 0 && priorMasterStandings) {
+      const amendedSet = new Set(amendedFixtureIds);
+      const amended: AmendedFixture[] = incoming
+        .filter((f) => amendedSet.has(f.fixtureId))
+        .map((f) => ({
+          fixtureId: f.fixtureId,
+          homeName: orgById.get(f.homeSchool)?.matchName || orgById.get(f.homeSchool)?.name || f.homeSchool,
+          awayName: orgById.get(f.awaySchool)?.matchName || orgById.get(f.awaySchool)?.name || f.awaySchool,
+          homeScore: f.homeScore,
+          awayScore: f.awayScore,
+          date: f.date,
+        }));
+      const fromDate = amended.map((a) => a.date).sort((a, b) => a.localeCompare(b))[0] ?? (captureDate ?? now.toISOString().slice(0, 10));
+      const toDate = captureDate ?? now.toISOString().slice(0, 10);
+      const priorMaster = new Map(
+        priorMasterStandings.rows.map((r) => [r.teamId, { name: r.name, rating: r.rating }] as const),
+      );
+      const correction = buildCorrection({
+        now,
+        id: `corr-${toDate}-${amendedFixtureIds[0].slice(0, 8)}`,
+        amended,
+        priorMaster,
+        nowMaster: masterStandings,
+        fromDate,
+        toDate,
+        methodVersion: result.meta.methodVersion,
+      });
+      if (correction) {
+        await writeCorrection(correction);
+        // Supersede everything published before today's corrected build.
+        await supersedeSnapshotsFrom(fromDate, toDate, correction.id);
+        await supersedeArticlesFrom(fromDate, toDate, correction.id);
+      }
     }
   }
 

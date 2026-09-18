@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { readSnapshot } from '@/lib/store/stateStore';
 
@@ -27,6 +28,14 @@ export default async function ArchivePage(props: PageProps<'/archive/[season]/[d
         This is the ranking exactly as it stood on {snapshot.date}. Snapshots are immutable — if a later result
         was amended on Match Pulse, this page keeps its numbers and gains a link to the correction.
       </p>
+
+      {snapshot.supersededBy && (
+        <div className="rir-card p-4 text-sm" style={{ marginTop: 16, background: '#fbeee6', borderColor: '#e3c9bb' }}>
+          A result was later amended on Match Pulse, so a ranking published after this snapshot superseded it. The
+          numbers below are left exactly as they were.{' '}
+          <Link href="/corrections" className="rir-link">See the correction →</Link>
+        </div>
+      )}
 
       <div className="rir-table-wrap" style={{ marginTop: 20 }}>
         <table className="rir-table">

@@ -182,6 +182,40 @@ export async function writeCorrection(correction: StoredCorrection): Promise<voi
   await getDb().collection('corrections').doc(correction.id).set(correction);
 }
 
+/** Banner snapshots in [fromDate, beforeDate) with the correction id (never edit content). */
+export async function supersedeSnapshotsFrom(
+  fromDate: string,
+  beforeDate: string,
+  correctionId: string,
+): Promise<void> {
+  if (isDemoMode()) return;
+  const snap = await getDb()
+    .collection('snapshots')
+    .where('date', '>=', fromDate)
+    .where('date', '<', beforeDate)
+    .get();
+  const batch = getDb().batch();
+  for (const d of snap.docs) batch.update(d.ref, { supersededBy: correctionId });
+  if (!snap.empty) await batch.commit();
+}
+
+/** Banner articles in [fromDate, beforeDate) with the correction id (body untouched). */
+export async function supersedeArticlesFrom(
+  fromDate: string,
+  beforeDate: string,
+  correctionId: string,
+): Promise<void> {
+  if (isDemoMode()) return;
+  const snap = await getDb()
+    .collection('articles')
+    .where('date', '>=', fromDate)
+    .where('date', '<', beforeDate)
+    .get();
+  const batch = getDb().batch();
+  for (const d of snap.docs) batch.update(d.ref, { supersededBy: correctionId });
+  if (!snap.empty) await batch.commit();
+}
+
 // ---- articles (frozen, never edited) -------------------------------------
 
 function articleDocId(slug: string): string {

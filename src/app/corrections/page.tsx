@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { listCorrections } from '@/lib/store/stateStore';
 import { MATCHPULSE } from '@/lib/matchpulseLinks';
 
@@ -65,6 +66,11 @@ export default async function CorrectionsPage() {
                   ))}
                 </tbody>
               </table>
+              <div className="rir-subline" style={{ padding: '13px 22px' }}>
+                <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" className="rir-link">Source fixture on Match Pulse</a>
+                {' · '}
+                <Link href={`/archive/${c.fromDate.slice(0, 4)}/${c.fromDate}`} className="rir-link">Superseded snapshot</Link>
+              </div>
             </div>
           ))}
         </div>
