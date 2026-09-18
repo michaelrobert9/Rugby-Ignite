@@ -225,11 +225,44 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
   }
 }
 
-/* On phones the table shows only the essentials so nothing scrolls sideways. */
+/* Secondary line under a school name: province · match count (and, on phones,
+   the demoted win% + movement). Helvetica caps, small and quiet. */
+.rir-subline {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--body-2);
+  margin-top: 3px;
+}
+.rir-subline .rir-data {
+  font-size: 0.62rem;
+}
+
+/* School-name link in a ranking row — inherits colour, underlines on hover. */
+.rir-school-link {
+  color: inherit;
+  text-decoration: none;
+}
+.rir-school-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* On phones the table shows only the essentials so nothing scrolls sideways:
+   position, school and rating. Win%, Heat and Rtg Pts are hidden and the win%
+   + movement move under the school name instead. */
+.rir-mobile-only {
+  display: none;
+}
 @media (max-width: 640px) {
   .rir-col-wdl,
   .rir-col-sec {
     display: none;
+  }
+  .rir-mobile-only {
+    display: block;
   }
 }
 

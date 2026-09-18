@@ -35,8 +35,12 @@ export interface StoredFixture {
 
 /** A row of the append-only rating history — one per team per rated fixture per scope. */
 export type RatingHistoryRow = MatchRating & {
-  /** Denormalised for cheap history queries; equals matchRating.matchDate. */
+  /** Season of the fixture, denormalised for cheap history queries. */
   season: string;
+  /** The opponent's rating going into this fixture (for the "rated N going in" line). */
+  opponentRatingBefore: number;
+  /** The opponent's display name, denormalised so a school page is self-contained. */
+  opponentName: string;
 };
 
 export type HeatBand = 'cold' | 'cool' | 'warm' | 'hot' | 'white-hot';
@@ -81,6 +85,29 @@ export interface StoredSnapshot {
   methodVersion: string;
   /** Set when a later correction supersedes this snapshot (banner, never edit). */
   supersededBy: string | null; // correction id
+}
+
+/** A per-school row of what a correction changed. */
+export interface CorrectionRow {
+  teamId: string;
+  name: string;
+  was: number;
+  now: number;
+  delta: number;
+}
+
+/** A correction event — published automatically when a rated fixture is amended. */
+export interface StoredCorrection {
+  id: string;
+  detectedAt: string; // ISO
+  fixtureId: string;
+  headline: string; // "Score amended at source"
+  summary: string; // the human sentence (from the correction template)
+  scope: string;
+  fromDate: string; // superseded window start
+  toDate: string; // superseded window end
+  affected: number; // schools whose rating changed
+  rows: CorrectionRow[]; // was / now / delta per affected school
 }
 
 export type CadenceMode = 'off-season' | 'ordinary' | 'festival';

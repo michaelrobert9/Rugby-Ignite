@@ -20,6 +20,7 @@ import { isDemoMode } from '../data/store';
 import type {
   BuildMeta,
   RatingHistoryRow,
+  StoredCorrection,
   StoredFixture,
   StoredSnapshot,
   StoredStandings,
@@ -77,6 +78,17 @@ export async function readStandings(scope: string): Promise<StoredStandings | nu
 export async function writeStandings(standings: StoredStandings): Promise<void> {
   if (isDemoMode()) return;
   await getDb().collection('standings').doc(standings.scope).set(standings);
+}
+
+/** Every persisted standings doc (all scopes). Empty when the store is unbuilt. */
+export async function readAllStandings(): Promise<StoredStandings[]> {
+  if (isDemoMode()) return [];
+  try {
+    const snap = await getDb().collection('standings').get();
+    return snap.docs.map((d) => d.data() as StoredStandings);
+  } catch {
+    return [];
+  }
 }
 
 // ---- rating history (one doc per team×scope) -----------------------------
@@ -148,6 +160,25 @@ export async function listSnapshots(scope?: string): Promise<StoredSnapshot[]> {
   } catch {
     return [];
   }
+}
+
+// ---- corrections ---------------------------------------------------------
+
+export async function listCorrections(): Promise<StoredCorrection[]> {
+  if (isDemoMode()) return [];
+  try {
+    const snap = await getDb().collection('corrections').get();
+    return snap.docs
+      .map((d) => d.data() as StoredCorrection)
+      .sort((a, b) => b.detectedAt.localeCompare(a.detectedAt));
+  } catch {
+    return [];
+  }
+}
+
+export async function writeCorrection(correction: StoredCorrection): Promise<void> {
+  if (isDemoMode()) return;
+  await getDb().collection('corrections').doc(correction.id).set(correction);
 }
 
 // ---- build meta ----------------------------------------------------------

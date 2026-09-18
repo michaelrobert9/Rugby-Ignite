@@ -36,11 +36,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // "How the Rankings Work" (methodology) sits after News, near the end.
   const METHODOLOGY_ID = "school-rugby-rankings-methodology";
   const primary = nav.filter((page) => page.id !== METHODOLOGY_ID);
-  const methodology = nav.find((page) => page.id === METHODOLOGY_ID);
+  // "How the Rankings Work" now points at the method page rendered from the live
+  // configuration (/how-it-works), not the CMS copy.
   const navItems = [
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
+    { href: "/ranking", label: "Ranking" },
     { href: "/news", label: "News" },
-    ...(methodology ? [{ href: pageHref(methodology), label: methodology.navLabel }] : []),
+    { href: "/how-it-works", label: "How the Rankings Work" },
     { href: "/admin", label: "Admin" },
   ];
   return (
@@ -109,11 +111,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <span>The complete record of South African school rugby.</span>
             </div>
             <div className="mt-2">
-              Rankings built from verified results on{" "}
+              Match data from{" "}
               <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" style={{ color: "var(--chalk)", textDecoration: "underline" }}>
-                Match Pulse Rugby
+                Match Pulse
               </a>{" "}
-              — live scores, fixtures &amp; results.
+              — Rugby Ignite does not record scores. First teams only. Not an official ranking, and not affiliated
+              with or endorsed by World Rugby.
+            </div>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/ranking" style={{ color: "var(--chalk)", textDecoration: "underline" }}>The full ranking</Link>
+              <Link href="/how-it-works" style={{ color: "var(--chalk)", textDecoration: "underline" }}>How the rating works</Link>
+              <Link href="/corrections" style={{ color: "var(--chalk)", textDecoration: "underline" }}>Corrections</Link>
             </div>
           </div>
         </footer>

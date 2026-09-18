@@ -132,11 +132,23 @@ export function buildFromFixtures(
   }
 
   const seasonByMatch = new Map(rated.map((f) => [f.fixtureId, f.season]));
+  const nameFor = (id: string) => orgById.get(id)?.matchName || orgById.get(id)?.name || id;
+  // Index each team's rating-going-in per match×scope, so a history row can carry
+  // its opponent's before-rating without a second lookup at read time.
+  const beforeByMatchScopeTeam = new Map<string, number>();
+  for (const mr of matchRatings) {
+    beforeByMatchScopeTeam.set(`${mr.matchId}__${mr.scope}__${mr.teamId}`, mr.ratingBefore);
+  }
   const history = new Map<string, RatingHistoryRow[]>();
   for (const mr of matchRatings) {
     const key = `${mr.scope}__${mr.teamId}`;
     if (!history.has(key)) history.set(key, []);
-    history.get(key)!.push({ ...mr, season: seasonByMatch.get(mr.matchId) ?? mr.matchDate.slice(0, 4) });
+    history.get(key)!.push({
+      ...mr,
+      season: seasonByMatch.get(mr.matchId) ?? mr.matchDate.slice(0, 4),
+      opponentRatingBefore: beforeByMatchScopeTeam.get(`${mr.matchId}__${mr.scope}__${mr.opponentId}`) ?? 0,
+      opponentName: nameFor(mr.opponentId),
+    });
   }
 
   const date = captureDay(now);
