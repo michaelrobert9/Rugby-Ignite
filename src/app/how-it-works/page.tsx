@@ -133,6 +133,20 @@ export default async function HowItWorksPage() {
               ))}
             </div>
           </div>
+
+          <div className="rir-card" style={{ padding: 22 }}>
+            <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--body-2)' }}>
+              Custody
+            </div>
+            <p className="text-sm" style={{ marginTop: 11, lineHeight: 1.7 }}>
+              The method and the sentence templates change only with the custodian&apos;s sign-off, and sponsorship
+              cannot influence a rating.
+            </p>
+            <div className="rir-subline" style={{ marginTop: 12, borderTop: '1px solid var(--rule)', paddingTop: 11, lineHeight: 1.9 }}>
+              Brand custodian · {meta.brandCustodian}<br />
+              Method custodian · {meta.methodCustodian}
+            </div>
+          </div>
         </div>
       </div>
     </div>

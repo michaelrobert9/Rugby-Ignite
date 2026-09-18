@@ -34,6 +34,9 @@ export interface MethodMeta {
   publishedAt: string; // 'YYYY-MM-DD'
   heat: HeatParams;
   changelog: ChangelogEntry[];
+  /** Named custodians published on /how-it-works (brief open item). */
+  brandCustodian: string;
+  methodCustodian: string;
 }
 
 /** Form Heat reads recent form, opponent-weighted (via rating-point movement), never the rating value. */
@@ -50,6 +53,8 @@ export const DEFAULT_METHOD_META: MethodMeta = {
   changelog: [
     { version: '1.0', date: '2027-01-12', note: 'First publication.' },
   ],
+  brandCustodian: 'To be named',
+  methodCustodian: 'To be named',
 };
 
 const METHOD_META = 'methodMeta';
@@ -66,6 +71,8 @@ function withHeatDefaults(raw: Partial<MethodMeta> | null | undefined): MethodMe
       bands: { ...DEFAULT_HEAT.bands, ...(m.heat?.bands ?? {}) },
     },
     changelog: m.changelog?.length ? m.changelog : DEFAULT_METHOD_META.changelog,
+    brandCustodian: m.brandCustodian ?? DEFAULT_METHOD_META.brandCustodian,
+    methodCustodian: m.methodCustodian ?? DEFAULT_METHOD_META.methodCustodian,
   };
 }
 

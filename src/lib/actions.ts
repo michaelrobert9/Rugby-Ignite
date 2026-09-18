@@ -104,6 +104,8 @@ export async function saveSiteSettingsAction(formData: FormData) {
       slotMid: str(formData, 'slotMid').replace(/\D/g, ''),
       slotBottom: str(formData, 'slotBottom').replace(/\D/g, ''),
     },
+    sponsorName: str(formData, 'sponsorName'),
+    sponsorUrl: str(formData, 'sponsorUrl'),
   });
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');

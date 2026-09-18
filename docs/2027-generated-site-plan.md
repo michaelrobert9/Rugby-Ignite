@@ -1,8 +1,52 @@
 # Rugby Ignite — 2027 Generated-Site Implementation Plan
 
-Status: **draft for review.** This is a plan, not a change. Nothing here is built
-yet. It maps the authoritative 2027 brief onto the codebase as it stands and
-proposes a sequenced way to get there.
+Status: **built.** Phases 1–9 are implemented on `claude/firebase-config-setup-e5hxkz`
+(PR #45), design-only through to the full generated-site architecture. This
+document is kept as the record of intent; the "Build status" section below tracks
+what shipped and what the owner still needs to do to switch it on.
+
+## Build status (2026-09-18)
+
+- **Phase 1 — Design system:** done. Archivo Black (self-hosted) + Helvetica Neue,
+  square corners, ▲/▼ movement, heat rule.
+- **Phase 2 — State store + ingestion:** done. `src/lib/store/*`, idempotent
+  ingest, `POST /api/ingest`, admin "Rebuild from source".
+- **Phase 3 — Derive-on-write + Form Heat:** done. Standings, rating history,
+  snapshots, Form Heat (recent-form), method config.
+- **Phase 4 — Evergreen pages:** done. `/ranking`, `/school/[slug]`,
+  `/how-it-works`, `/corrections`; the table carries the Form Heat gauge; the
+  Master/Season/provincial views are kept (merge).
+- **Phase 5 — Generation engine:** done. Lead-story ladder L1–L9 + sentence
+  templates; the home "This Week" hero.
+- **Phase 6 — Articles + cadence + archive:** done. `/stories`, per-story pages,
+  `/archive/[season]/[date]`; A3/A4 triggers; cadence from data density.
+- **Phase 7 — Corrections:** done. Amend → recompute → publish `/corrections/{id}`
+  → banner superseded snapshots/articles.
+- **Phase 8 — SEO/share/structured data:** done. OG cards, JSON-LD, sitemap, robots.
+- **Phase 9 — Launch finishing:** done. Sponsor band editable in admin, custodians
+  on `/how-it-works`, footer disclaimers.
+
+### Owner steps to switch it on (ops, not code)
+1. **Set `INGEST_SECRET`** (Secret Manager) and wire it in `apphosting.yaml`, then
+   schedule `POST /api/ingest` (Cloud Scheduler, hourly is plenty) — or just press
+   **Admin → Rebuild from source** to build the store the first time.
+2. **Confirm the Match Pulse amend field.** Ingestion reads `amendedAt` /
+   `updatedAt` / `lastModified` / `modifiedAt`; if Match Pulse uses another name,
+   tell me and I'll map it (corrections depend on it).
+3. **Sign off Form Heat** — window (default last 5 fixtures) and the five band
+   thresholds — in `methodMeta`.
+4. **Name the custodians** (brand + method) shown on `/how-it-works`.
+5. **Add a sponsor** in Admin → Ads when one is signed (the band stays hidden until
+   then; AdSense is unaffected).
+6. **Afrikaans glyph check** across macOS/Windows/Android before go-live.
+
+Everything degrades safely until step 1: with no persisted store the pages
+live-build from Match Pulse (Form Heat and all), so the site is fully functional
+before the first rebuild — the store just makes snapshots, articles and
+corrections possible.
+
+---
+
 
 ## 0. Source of truth
 
