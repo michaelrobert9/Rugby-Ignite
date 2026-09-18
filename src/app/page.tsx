@@ -9,6 +9,7 @@ import { rankingShortcodes } from '@/components/rankingShortcodes';
 import RankingTabs from '@/components/RankingTabs';
 import RankingTable, { LastUpdatedLine } from '@/components/RankingTable';
 import MatchPulseCTA from '@/components/MatchPulseCTA';
+import ThisWeekHero from '@/components/ThisWeekHero';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +36,9 @@ export default async function HomePage() {
   const years = Array.from(new Set([...matches.map((m) => m.season), season])).sort();
 
   return (
-    <div className="rir-container py-8 space-y-8">
+    <div>
+      <ThisWeekHero />
+      <div className="rir-container py-8 space-y-8">
       <RankingTabs
         master={{
           heading: withSeason(config.masterHeading, season),
@@ -57,6 +60,7 @@ export default async function HomePage() {
           <RichText body={withSeason(page.body, season)} renderShortcode={rankingShortcodes} />
         </div>
       )}
+      </div>
     </div>
   );
 }

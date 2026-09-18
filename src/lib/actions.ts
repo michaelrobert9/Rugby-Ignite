@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { RANKINGS_TAG } from './matchpulse/cachedSource';
+import { STORE_TAG } from './store/tags';
 import { getSportConfig, saveSportConfig } from './data/config';
 import { getSiteSettings, saveSiteSettings } from './data/siteSettings';
 import type { SportKey } from './matchpulse/types';
@@ -103,6 +104,8 @@ export async function saveSiteSettingsAction(formData: FormData) {
       slotMid: str(formData, 'slotMid').replace(/\D/g, ''),
       slotBottom: str(formData, 'slotBottom').replace(/\D/g, ''),
     },
+    sponsorName: str(formData, 'sponsorName'),
+    sponsorUrl: str(formData, 'sponsorUrl'),
   });
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');
@@ -130,6 +133,22 @@ export async function refreshRankingsAction() {
   revalidateTag(RANKINGS_TAG, { expire: 0 });
   revalidatePath('/', 'layout');
   redirect('/admin?refreshed=1');
+}
+
+/**
+ * Full rebuild: ingest the six Match Pulse fields into the persisted state store
+ * and derive standings, rating history, snapshots and Form Heat from them. This
+ * is the real "rebuild from beginning to end" — it persists, unlike the cache
+ * refresh above. Safe to run repeatedly (idempotent on fixture + amend time).
+ */
+export async function rebuildFromSourceAction() {
+  await assertAdmin();
+  const { runIngestAndRebuild } = await import('./store/ingest');
+  await runIngestAndRebuild();
+  revalidateTag(RANKINGS_TAG, { expire: 0 });
+  revalidateTag(STORE_TAG, { expire: 0 });
+  revalidatePath('/', 'layout');
+  redirect('/admin?rebuilt=1');
 }
 
 // ---------------- Pages (CMS) ----------------

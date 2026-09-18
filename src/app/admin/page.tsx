@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { refreshRankingsAction } from '@/lib/actions';
+import { refreshRankingsAction, rebuildFromSourceAction } from '@/lib/actions';
+import { readBuildMeta } from '@/lib/store/stateStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ const CARDS = [
 
 export default async function AdminDashboard(props: PageProps<'/admin'>) {
   const searchParams = await props.searchParams;
+  const build = await readBuildMeta();
 
   return (
     <div className="space-y-6">
@@ -21,16 +23,35 @@ export default async function AdminDashboard(props: PageProps<'/admin'>) {
           Rankings refreshed from Match Pulse.
         </div>
       )}
+      {searchParams.rebuilt === '1' && (
+        <div className="rir-card p-4 text-sm" style={{ background: '#e9f7ee', borderColor: '#bfe3cc', color: 'var(--color-up)' }}>
+          Full rebuild complete — fixtures ingested and standings, history, snapshots and Form Heat rewritten.
+        </div>
+      )}
 
       <div className="rir-card p-5">
         <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Rugby Ignite admin</h2>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
           The rankings are captured from Match Pulse and cached for speed, refreshing automatically every few
-          minutes. Use the button below to pull the latest results immediately.
+          minutes. Use <strong>Refresh</strong> to re-read the live data immediately, or <strong>Rebuild</strong> to
+          ingest every result into the state store and recompute standings, rating history, snapshots and Form Heat
+          from beginning to end (needed after a back-dated result or a new school).
         </p>
-        <form action={refreshRankingsAction} className="mt-3">
-          <button type="submit" className="rir-btn rir-btn-secondary">Refresh rankings now</button>
-        </form>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <form action={refreshRankingsAction}>
+            <button type="submit" className="rir-btn rir-btn-secondary">Refresh rankings now</button>
+          </form>
+          <form action={rebuildFromSourceAction}>
+            <button type="submit" className="rir-btn rir-btn-primary">Rebuild from source</button>
+          </form>
+        </div>
+        {build && (
+          <p className="text-xs mt-3" style={{ color: 'var(--color-text-muted)' }}>
+            Last rebuild: {new Date(build.builtAt).toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })} ·
+            {' '}{build.ratedFixtures} fixtures rated · cadence {build.cadence} · method v{build.methodVersion}
+            {build.queuedFixtures > 0 ? ` · ${build.queuedFixtures} queued` : ''}
+          </p>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

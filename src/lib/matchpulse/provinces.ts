@@ -34,6 +34,11 @@ function regionMatches(region: string | null | undefined, aliases: string[]): bo
   return aliases.some((a) => r.includes(a.toLowerCase()));
 }
 
+/** Map an organisation's free-text region to a province, or undefined if none match. */
+export function provinceForRegion(region: string | null | undefined): ProvinceDef | undefined {
+  return PROVINCES.find((p) => regionMatches(region, p.aliases));
+}
+
 export interface ProvinceRow {
   entityId: string;
   name: string;

@@ -22,7 +22,9 @@ function pageHref(page: Page): string {
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
   const season = getCurrentSeason();
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://rugbyignite.co.za").replace(/\/$/, "");
   return {
+    metadataBase: new URL(base),
     title: withSeason(site.seoTitle || "Rugby Ignite — School Rugby Rankings", season),
     description: withSeason(site.seoDescription || "The complete record of South African school rugby.", season),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
@@ -36,24 +38,29 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // "How the Rankings Work" (methodology) sits after News, near the end.
   const METHODOLOGY_ID = "school-rugby-rankings-methodology";
   const primary = nav.filter((page) => page.id !== METHODOLOGY_ID);
-  const methodology = nav.find((page) => page.id === METHODOLOGY_ID);
+  // "How the Rankings Work" now points at the method page rendered from the live
+  // configuration (/how-it-works), not the CMS copy.
   const navItems = [
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
+    { href: "/ranking", label: "Ranking" },
+    { href: "/stories", label: "Stories" },
     { href: "/news", label: "News" },
-    ...(methodology ? [{ href: pageHref(methodology), label: methodology.navLabel }] : []),
+    { href: "/how-it-works", label: "How the Rankings Work" },
     { href: "/admin", label: "Admin" },
   ];
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        {/* Brand Book v7 typefaces: Instrument Serif (ratings/headlines),
-            Archivo (body/UI/wordmark), JetBrains Mono (labels/movement). */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        {/* Brand Book v7.0 §05 — two families: Archivo Black (wordmark, ratings,
+            headlines), self-hosted via @font-face in globals.css; Helvetica Neue
+            (body / UI / labels) is a system stack with nothing to load. The
+            font files are preloaded so the wordmark never flashes a fallback. */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          href="/fonts/archivo-black-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
         />
       </head>
       <body className="min-h-full flex flex-col">
@@ -95,6 +102,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <SiteNav items={navItems} />
             </div>
           </div>
+          {/* Brand Book v7.0 — a 2px full-width heat rule closes the header. */}
+          <div aria-hidden style={{ height: 2, background: "var(--heat-ramp-h)" }} />
         </header>
         <main className="flex-1">{children}</main>
         <footer style={{ background: "var(--night)" }}>
@@ -105,11 +114,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <span>The complete record of South African school rugby.</span>
             </div>
             <div className="mt-2">
-              Rankings built from verified results on{" "}
+              Match data from{" "}
               <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" style={{ color: "var(--chalk)", textDecoration: "underline" }}>
-                Match Pulse Rugby
+                Match Pulse
               </a>{" "}
-              — live scores, fixtures &amp; results.
+              — Rugby Ignite does not record scores. First teams only. Not an official ranking, and not affiliated
+              with or endorsed by World Rugby.
+            </div>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/ranking" style={{ color: "var(--chalk)", textDecoration: "underline" }}>The full ranking</Link>
+              <Link href="/how-it-works" style={{ color: "var(--chalk)", textDecoration: "underline" }}>How the rating works</Link>
+              <Link href="/corrections" style={{ color: "var(--chalk)", textDecoration: "underline" }}>Corrections</Link>
             </div>
           </div>
         </footer>

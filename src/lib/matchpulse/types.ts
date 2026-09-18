@@ -38,6 +38,8 @@ export interface MPMatch {
   // Rugby only, when known — reserved for future bonus-point tuning.
   homeTries?: number | null;
   awayTries?: number | null;
+  /** Source amend timestamp (ISO), when Match Pulse exposes one — drives corrections. */
+  amendedAt?: string | null;
 }
 
 export type Track = 'master' | 'season';

@@ -1,21 +1,23 @@
-// A live School Rugby Rankings table (Elo), for one track, rendered from live
-// Match Pulse data. Used by the home page and other pages via the [rankings]
-// shortcode. Read-only.
+// The School Rugby Rankings table, rendered from the persisted state store (with
+// a live-build fallback). Brand Book v7.0 §06 layout: POS · FIRST XV (province +
+// match count beneath) · WIN% · HEAT (Form Heat gauge) · RATING · RTG PTS. On a
+// phone it collapses to three columns — position, school, rating — with win% and
+// movement demoted under the school name. Read-only.
 
-import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
-import { computeLiveLadder } from '@/lib/matchpulse/liveRankings';
-import { getSportConfig } from '@/lib/data/config';
 import { getSiteSettings } from '@/lib/data/siteSettings';
 import { getCurrentSeason } from '@/lib/season';
+import Link from 'next/link';
+import { getStandings, schoolSlug } from '@/lib/store/read';
 import { DEFAULT_AD_SLOTS } from '@/lib/adsense';
-import { PointsDelta, PositionDelta, fmtUpdated, rankClass } from './rankingCells';
+import { PointsDelta, fmtUpdated, rankClass } from './rankingCells';
 import { TeamCell } from './TeamCell';
+import { HeatGauge } from './FormGauge';
 import AdUnit from './AdUnit';
+import { getSiteBuild } from '@/lib/store/read';
 
-const RANKING_TABLE_COLS = 10; // Pos, Team, P, W, D, L, Win%, Rating, +/-Pts, +/-
+const RANKING_TABLE_COLS = 6; // POS, FIRST XV, WIN%, HEAT, RATING, RTG PTS
 const MID_AFTER_ROW = 20; // insert the MID ad after this row
 
-// One reserved ad slot; renders nothing when the slot id is an empty string.
 function AdBlock({ slot }: { slot: string }) {
   if (!slot) return null;
   return (
@@ -26,10 +28,11 @@ function AdBlock({ slot }: { slot: string }) {
 }
 
 export async function LastUpdatedLine() {
-  const { lastUpdated } = await getCachedSportData('rugby');
+  const build = await getSiteBuild();
+  const iso = build.meta?.builtAt ?? null;
   return (
     <p className="text-sm" style={{ color: 'var(--dim)' }}>
-      Last updated: {lastUpdated ? fmtUpdated(lastUpdated) : 'awaiting the first verified result'}
+      Last updated: {iso ? fmtUpdated(iso) : 'awaiting the first verified result'}
     </p>
   );
 }
@@ -39,26 +42,23 @@ export default async function RankingTable({
   season,
   limit,
   ads = false,
+  province,
 }: {
   track?: 'season' | 'master';
-  season?: string; // season year for the season track; defaults to currentSeason
-  limit?: number; // omit for no cap (show every team)
-  ads?: boolean; // render the explicit rankings ad units (TOP / MID / BOTTOM)
+  season?: string;
+  limit?: number;
+  ads?: boolean;
+  province?: string; // filter to one province (by name), re-ranked within it
 }) {
-  const [{ matches, orgs }, config, site] = await Promise.all([
-    getCachedSportData('rugby'),
-    getSportConfig('rugby'),
+  const scope = track === 'master' ? 'master' : season || getCurrentSeason();
+  const [allRows, site] = await Promise.all([
+    getStandings(scope), // cap AFTER any province filter
     ads ? getSiteSettings() : Promise.resolve(null),
   ]);
+  const filtered = province ? allRows.filter((r) => r.province === province) : allRows;
+  const rows = typeof limit === 'number' && limit > 0 ? filtered.slice(0, limit) : filtered;
 
-  const ages = Array.from(new Set(matches.map((m) => m.ageGroup)));
-  const age = ages.includes('1st') ? '1st' : (ages[0] ?? '1st');
-  const seasonYear = season || getCurrentSeason();
-
-  const { rows } = computeLiveLadder(matches, orgs, age, track, seasonYear, config);
-  const shown = typeof limit === 'number' && limit > 0 ? rows.slice(0, limit) : rows;
-
-  if (shown.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="rir-card p-6 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>
         No results are available yet.
@@ -66,30 +66,36 @@ export default async function RankingTable({
     );
   }
 
-  // Slot ids from settings, falling back to the defaults; '' means no ad.
   const slots = {
     top: site?.adsense?.slotTop ?? DEFAULT_AD_SLOTS.top,
     mid: site?.adsense?.slotMid ?? DEFAULT_AD_SLOTS.mid,
     bottom: site?.adsense?.slotBottom ?? DEFAULT_AD_SLOTS.bottom,
   };
 
-  const bodyRows = shown.map((r, i) => (
-    <tr key={r.entityId} className={rankClass(i)}>
-      <td className="rir-data font-semibold">{i + 1}</td>
-      <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
-      <td className="rir-data rir-dim rir-col-sec">{r.played}</td>
-      <td className="rir-data rir-dim rir-col-wdl">{r.wins}</td>
-      <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
-      <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
-      <td className="rir-data rir-dim">{r.winPercent.toFixed(1)}%</td>
-      <td className="rir-rating">{r.rating.toFixed(2)}</td>
-      <td className="rir-data rir-col-sec"><PointsDelta value={r.weekPoints} /></td>
-      <td className="rir-col-sec"><PositionDelta value={r.movement} /></td>
+  const bodyRows = rows.map((r, i) => (
+    <tr key={r.teamId} className={rankClass(i)}>
+      <td>{i + 1}</td>
+      <td>
+        <Link href={`/school/${schoolSlug(r.name)}`} className="rir-school-link">
+          <TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} />
+        </Link>
+        <div className="rir-subline">
+          {[r.province, `${r.played} ${r.played === 1 ? 'match' : 'matches'}`].filter(Boolean).join(' · ')}
+        </div>
+        <div className="rir-subline rir-mobile-only">
+          {r.winPercent.toFixed(1)}% · <PointsDelta value={r.weekPoints} />
+        </div>
+      </td>
+      <td className="rir-data rir-dim rir-col-sec" style={{ textAlign: 'right' }}>{r.winPercent.toFixed(1)}%</td>
+      <td className="rir-col-sec" style={{ textAlign: 'center' }}>
+        <div style={{ display: 'inline-flex' }}><HeatGauge heat={r.formHeat} /></div>
+      </td>
+      <td className="rir-rating" style={{ textAlign: 'right' }}>{r.rating.toFixed(2)}</td>
+      <td className="rir-col-sec" style={{ textAlign: 'right' }}><PointsDelta value={r.weekPoints} /></td>
     </tr>
   ));
 
-  // MID ad as a full-width row spanning all columns, after row 20.
-  if (ads && slots.mid && shown.length > MID_AFTER_ROW) {
+  if (ads && slots.mid && rows.length > MID_AFTER_ROW) {
     bodyRows.splice(
       MID_AFTER_ROW,
       0,
@@ -109,15 +115,11 @@ export default async function RankingTable({
         <thead>
           <tr>
             <th>Pos</th>
-            <th>Team</th>
-            <th className="rir-col-sec">P</th>
-            <th className="rir-col-wdl">W</th>
-            <th className="rir-col-wdl">D</th>
-            <th className="rir-col-wdl">L</th>
-            <th>Win%</th>
-            <th>Rating</th>
-            <th className="rir-col-sec">+/- Pts</th>
-            <th className="rir-col-sec">+/-</th>
+            <th>First XV</th>
+            <th className="rir-col-sec" style={{ textAlign: 'right' }}>Win%</th>
+            <th className="rir-col-sec" style={{ textAlign: 'center' }}>Heat</th>
+            <th style={{ textAlign: 'right' }}>Rating</th>
+            <th className="rir-col-sec" style={{ textAlign: 'right' }}>Rtg Pts</th>
           </tr>
         </thead>
         <tbody>{bodyRows}</tbody>

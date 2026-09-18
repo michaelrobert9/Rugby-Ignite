@@ -59,6 +59,19 @@ export default async function AdsSettingsPage(props: PageProps<'/admin/ads'>) {
               row 20, Bottom below. Leave a box <strong>blank</strong> to hide that position.
             </p>
           </div>
+          <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 16 }}>
+            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+              Ranking sponsor (naming partner)
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input className="rir-input" name="sponsorName" defaultValue={site.sponsorName ?? ''} placeholder="Sponsor name" />
+              <input className="rir-input" name="sponsorUrl" defaultValue={site.sponsorUrl ?? ''} placeholder="https://sponsor.example (optional)" />
+            </div>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              Shown in the band between a ranking&apos;s title and its table — never inside a row, a rating, the logo
+              or the nav. Leave the name blank to hide the band. This is separate from and additional to AdSense.
+            </p>
+          </div>
           <button type="submit" className="rir-btn rir-btn-primary">Save ad settings</button>
         </div>
       </form>
