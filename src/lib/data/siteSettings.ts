@@ -18,6 +18,8 @@ export interface SiteSettings {
   seoTitle: string;
   seoDescription: string;
   seoKeywords: string;
+  /** Google Analytics measurement id (e.g. "G-XXXXXXXXXX"). Empty = analytics off. */
+  gaMeasurementId?: string;
   /** Ranking sponsor. Shown in the band between the page title and the table;
    *  never inside a row, a rating, the mark or the nav. Empty = band collapses. */
   sponsorName?: string;
@@ -35,6 +37,7 @@ const DEFAULTS: SiteSettings = {
     'View the latest South African school rugby rankings for the {season} season — 1st XV form, ranking points, movement and results, plus the All-Time School Rugby Ratings.',
   seoKeywords:
     'school rugby rankings, South African school rugby, 1st XV rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
+  gaMeasurementId: '',
   sponsorName: '',
   sponsorUrl: '',
 };
