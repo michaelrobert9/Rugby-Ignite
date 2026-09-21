@@ -120,6 +120,8 @@ export async function saveSeoAction(formData: FormData) {
     seoTitle: str(formData, 'seoTitle') || current.seoTitle,
     seoDescription: str(formData, 'seoDescription') || current.seoDescription,
     seoKeywords: str(formData, 'seoKeywords'),
+    // Google Analytics measurement id — keep only the id characters (G-…, UA-…, AW-…).
+    gaMeasurementId: str(formData, 'gaMeasurementId').replace(/[^A-Za-z0-9-]/g, ''),
   });
   revalidatePath('/', 'layout');
   redirect('/admin/seo?saved=1');

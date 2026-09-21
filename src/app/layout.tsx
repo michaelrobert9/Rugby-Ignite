@@ -8,6 +8,7 @@ import { ADSENSE_CLIENT } from "@/lib/adsense";
 import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
+import Analytics from "@/components/Analytics";
 
 // Route for a nav page: home -> '/', otherwise its stored slug.
 function pageHref(page: Page): string {
@@ -72,6 +73,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(site.adsenseClient || ADSENSE_CLIENT)}`}
           crossOrigin="anonymous"
         />
+        {/* Google Analytics (GA4) — loads only when a measurement id is set, and
+            not in the admin area. */}
+        <Analytics id={site.gaMeasurementId ?? ""} />
         <header className="relative">
           {/* Top band — coal, carrying the mark + wordmark (the reversed lockup). */}
           <div style={{ background: "var(--coal)" }}>

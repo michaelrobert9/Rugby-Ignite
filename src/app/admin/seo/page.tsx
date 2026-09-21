@@ -30,6 +30,17 @@ export default async function SeoSettingsPage(props: PageProps<'/admin/seo'>) {
           <Field label="Meta title" name="seoTitle" defaultValue={site.seoTitle} preview={withSeason(site.seoTitle, season)} />
           <TextArea label="Meta description" name="seoDescription" defaultValue={site.seoDescription} preview={withSeason(site.seoDescription, season)} />
           <TextArea label="Keywords (comma-separated)" name="seoKeywords" defaultValue={site.seoKeywords} preview={site.seoKeywords ? withSeason(site.seoKeywords, season) : '—'} />
+          <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 16 }}>
+            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+              Google Analytics measurement ID
+            </label>
+            <input className="rir-input" name="gaMeasurementId" defaultValue={site.gaMeasurementId ?? ''} placeholder="G-XXXXXXXXXX" />
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              From your Google Analytics 4 property (Admin → Data streams → your web stream). Paste just the
+              measurement ID — <code>G-XXXXXXXXXX</code>. When set, the analytics tag loads across the whole site
+              (except the admin area). Leave blank to turn analytics off.
+            </p>
+          </div>
           <button type="submit" className="rir-btn rir-btn-primary">Save SEO settings</button>
         </div>
       </form>
