@@ -5,6 +5,27 @@ Status: **built.** Phases 1–9 are implemented on `claude/firebase-config-setup
 document is kept as the record of intent; the "Build status" section below tracks
 what shipped and what the owner still needs to do to switch it on.
 
+## Brand Book v8 (2026-09-22)
+
+The brand was revised to v8 and a Website Brief was issued; both applied in full.
+This simplifies the earlier build:
+
+- **Mark:** flame-in-shield icon + Archivo Black wordmark (`components/Mark.tsx`,
+  new favicons). The v7 heat-stroke is retired.
+- **Palette:** Paper `#FDF9F2` is the default ground, Ink `#1C1917` the text,
+  Ember `#E8360A` the mark only, Ember Deep `#C2410C` links + the leader rating,
+  Navy `#0F1923` for the occasional dark panel — never a page. The header, footer
+  and table header are now light.
+- **Home = the ranking.** No hero, no tabs. A search field + the four-column
+  table (POS · 1ST TEAM · RATING · CHANGE); the leader's rating is Ember Deep,
+  movement is ink. Tapping a row expands the reason, the match citation and the
+  season shape — **there are no school pages** (removed) and **Form Heat is
+  removed** from display (still computed, dormant).
+- **Province view** at `/ranking/{province}` — filters rows, positions stay
+  national. `/ranking` redirects to `/`.
+- **Stories** move to `/{season}/{slug}`; `/stories` removed. Ad placement per the
+  brief (in-feed after row 10, below table, in stories; never above the ranking).
+
 ## Build status (2026-09-18)
 
 - **Phase 1 — Design system:** done. Archivo Black (self-hosted) + Helvetica Neue,

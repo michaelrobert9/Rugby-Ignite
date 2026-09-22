@@ -86,7 +86,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
       className="px-4 py-2 text-sm font-semibold"
       style={{
         color: active ? 'var(--color-navy-900)' : 'var(--color-text-muted)',
-        borderBottom: `3px solid ${active ? 'var(--ember)' : 'transparent'}`,
+        borderBottom: `3px solid ${active ? 'var(--ember-deep)' : 'transparent'}`,
         marginBottom: -1,
         background: 'none',
         cursor: 'pointer',

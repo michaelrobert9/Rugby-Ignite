@@ -86,6 +86,27 @@ export function buildFromFixtures(
 
   const { teamRatings, matchRatings } = runFullRecalculation(matches, teams, config, now);
 
+  // Most recent rated fixture per scope×team, for the row-expansion citation.
+  const nameOf = (id: string) => orgById.get(id)?.matchName || orgById.get(id)?.name || id;
+  const beforeByMatchScopeTeamTmp = new Map<string, number>();
+  for (const mr of matchRatings) beforeByMatchScopeTeamTmp.set(`${mr.matchId}__${mr.scope}__${mr.teamId}`, mr.ratingBefore);
+  const lastMoveByKey = new Map<string, NonNullable<StandingRow['lastMovement']>>();
+  for (const mr of matchRatings) {
+    const key = `${mr.scope}__${mr.teamId}`;
+    const prev = lastMoveByKey.get(key);
+    if (prev && prev.date >= mr.matchDate) continue;
+    lastMoveByKey.set(key, {
+      opponentName: nameOf(mr.opponentId),
+      opponentRatingBefore: beforeByMatchScopeTeamTmp.get(`${mr.matchId}__${mr.scope}__${mr.opponentId}`) ?? 0,
+      ratingBefore: mr.ratingBefore,
+      pointsFor: mr.pointsFor,
+      pointsAgainst: mr.pointsAgainst,
+      ratingChange: mr.ratingChange,
+      outcome: mr.outcome,
+      date: mr.matchDate,
+    });
+  }
+
   const seasons = Array.from(new Set(rated.map((f) => f.season))).sort();
   const latestSeason = seasons.length ? seasons[seasons.length - 1] : null;
 
@@ -124,7 +145,11 @@ export function buildFromFixtures(
 
   const standings: StoredStandings[] = [];
   for (const [scope, map] of teamRatings) {
-    const rows = Array.from(map.values()).map((tr) => makeRow(tr.teamId, tr));
+    const rows = Array.from(map.values()).map((tr) => {
+      const row = makeRow(tr.teamId, tr);
+      row.lastMovement = lastMoveByKey.get(`${scope}__${tr.teamId}`) ?? null;
+      return row;
+    });
     rows.sort(
       (a, b) => b.rating - a.rating || b.winPercent - a.winPercent || a.name.localeCompare(b.name),
     );

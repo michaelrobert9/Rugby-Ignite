@@ -8,7 +8,7 @@ export interface NavItem {
   label: string;
 }
 
-const HAIRLINE = '1px solid rgba(244, 239, 230, 0.1)';
+const HAIRLINE = '1px solid var(--rule)';
 
 export default function SiteNav({ items }: { items: NavItem[] }) {
   const [open, setOpen] = useState(false);
@@ -27,8 +27,8 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
       {/* Mobile: hamburger button */}
       <button
         type="button"
-        className="md:hidden inline-flex items-center gap-2 ml-auto py-3 rounded"
-        style={{ color: 'var(--chalk)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+        className="md:hidden inline-flex items-center gap-2 ml-auto py-3"
+        style={{ color: 'var(--ink)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
         aria-controls="mobile-nav"
@@ -63,7 +63,7 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
           <nav
             id="mobile-nav"
             className="md:hidden absolute left-0 right-0 top-full z-50 shadow-lg"
-            style={{ background: 'var(--night)', borderTop: HAIRLINE }}
+            style={{ background: 'var(--paper)', borderTop: HAIRLINE }}
           >
             <div className="rir-container flex flex-col py-1">
               {items.map((item) => (
@@ -72,7 +72,7 @@ export default function SiteNav({ items }: { items: NavItem[] }) {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className="py-3 text-sm font-medium"
-                  style={{ color: 'var(--chalk)', borderBottom: HAIRLINE }}
+                  style={{ color: 'var(--ink)', borderBottom: HAIRLINE }}
                 >
                   {item.label}
                 </Link>

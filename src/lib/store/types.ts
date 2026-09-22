@@ -61,9 +61,21 @@ export interface StandingRow {
   winPercent: number;
   movement: number | null; // positions vs the Thursday cutoff
   weekPoints: number | null; // rating points vs the Thursday cutoff
-  /** Form Heat 0–100 (recent form, opponent-weighted) — null when withheld. */
+  /** Form Heat 0–100 (recent form, opponent-weighted) — null when withheld.
+   *  Retired from display in v8 but still computed; kept for continuity. */
   formHeat: number | null;
   formHeatBand: HeatBand | null;
+  /** The most recent rated fixture on this scope — powers the row expansion. */
+  lastMovement?: {
+    opponentName: string;
+    opponentRatingBefore: number;
+    ratingBefore: number;
+    pointsFor: number;
+    pointsAgainst: number;
+    ratingChange: number;
+    outcome: 'win' | 'loss' | 'draw';
+    date: string;
+  } | null;
 }
 
 /** The persisted standings for one scope (Master or a season year). */

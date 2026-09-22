@@ -9,6 +9,7 @@ import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 import Analytics from "@/components/Analytics";
+import Mark from "@/components/Mark";
 
 // Route for a nav page: home -> '/', otherwise its stored slug.
 function pageHref(page: Page): string {
@@ -43,8 +44,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // configuration (/how-it-works), not the CMS copy.
   const navItems = [
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
-    { href: "/ranking", label: "Ranking" },
-    { href: "/stories", label: "Stories" },
     { href: "/news", label: "News" },
     { href: "/how-it-works", label: "How the Rankings Work" },
     { href: "/admin", label: "Admin" },
@@ -76,59 +75,39 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Google Analytics (GA4) — loads only when a measurement id is set, and
             not in the admin area. */}
         <Analytics id={site.gaMeasurementId ?? ""} />
-        <header className="relative">
-          {/* Top band — coal, carrying the mark + wordmark (the reversed lockup). */}
-          <div style={{ background: "var(--coal)" }}>
-            <div className="rir-container flex items-center py-6">
-              <Link href="/" className="flex items-center shrink-0" style={{ gap: 14 }} aria-label="Rugby Ignite home">
-                <span className="rir-mark" aria-hidden />
-                <span className="flex flex-col" style={{ gap: 6 }}>
-                  <span className="rir-wordmark">RUGBY IGNITE</span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "clamp(9px, 2.6vw, 11px)",
-                      color: "var(--on-coal-label)",
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    The ranking system school rugby deserves
-                  </span>
-                </span>
-              </Link>
-            </div>
+        <header className="relative" style={{ background: "var(--paper)", borderBottom: "1px solid var(--rule)" }}>
+          {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
+          <div className="rir-container flex items-center py-4">
+            <Link href="/" className="flex items-center shrink-0" style={{ gap: 12 }} aria-label="Rugby Ignite home">
+              <Mark size={38} />
+              <span className="rir-wordmark">RUGBY IGNITE</span>
+            </Link>
           </div>
-          {/* Menu bar — coal, sitting below the mark. */}
-          <div style={{ background: "var(--coal)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ borderTop: "1px solid var(--rule)" }}>
             <div className="rir-container">
               <SiteNav items={navItems} />
             </div>
           </div>
-          {/* Brand Book v7.0 — a 2px full-width heat rule closes the header. */}
-          <div aria-hidden style={{ height: 2, background: "var(--heat-ramp-h)" }} />
         </header>
         <main className="flex-1">{children}</main>
-        <footer style={{ background: "var(--night)" }}>
-          <div className="rir-container py-6 text-xs" style={{ color: "var(--muted)" }}>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span style={{ color: "var(--chalk)", fontWeight: 600 }}>Ignite the passion.</span>
-              <span style={{ color: "var(--ember)", fontWeight: 600 }}>Honour the game.</span>
-              <span>The complete record of South African school rugby.</span>
+        <footer style={{ background: "var(--paper)", borderTop: "1px solid var(--rule)" }}>
+          <div className="rir-container py-8 text-xs" style={{ color: "var(--body-2)" }}>
+            <div className="flex items-center" style={{ gap: 10, marginBottom: 10 }}>
+              <Mark size={26} />
+              <span className="rir-wordmark" style={{ fontSize: "1rem" }}>RUGBY IGNITE</span>
             </div>
-            <div className="mt-2">
+            <div style={{ maxWidth: "62ch", lineHeight: 1.8 }}>
               Match data from{" "}
-              <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" style={{ color: "var(--chalk)", textDecoration: "underline" }}>
+              <a href={MATCHPULSE.rugby} target="_blank" rel="noopener" className="rir-link" style={{ textDecoration: "underline" }}>
                 Match Pulse
               </a>{" "}
               — Rugby Ignite does not record scores. First teams only. Not an official ranking, and not affiliated
               with or endorsed by World Rugby.
             </div>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-              <Link href="/ranking" style={{ color: "var(--chalk)", textDecoration: "underline" }}>The full ranking</Link>
-              <Link href="/how-it-works" style={{ color: "var(--chalk)", textDecoration: "underline" }}>How the rating works</Link>
-              <Link href="/corrections" style={{ color: "var(--chalk)", textDecoration: "underline" }}>Corrections</Link>
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+              <Link href="/ranking" className="rir-link" style={{ textDecoration: "underline" }}>The ranking</Link>
+              <Link href="/how-it-works" className="rir-link" style={{ textDecoration: "underline" }}>How the rating works</Link>
+              <Link href="/corrections" className="rir-link" style={{ textDecoration: "underline" }}>Corrections</Link>
             </div>
           </div>
         </footer>

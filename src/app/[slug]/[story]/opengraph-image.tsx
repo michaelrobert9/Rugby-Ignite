@@ -6,9 +6,9 @@ export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 export const alt = 'Rugby Ignite story';
 
-export default async function Image(props: { params: Promise<{ season: string; slug: string }> }) {
-  const { season, slug } = await props.params;
-  const a = await readArticle(`${season}/${slug}`);
+export default async function Image(props: { params: Promise<{ slug: string; story: string }> }) {
+  const { slug, story } = await props.params;
+  const a = await readArticle(`${slug}/${story}`);
   if (!a) return renderCard({ eyebrow: 'RUGBY IGNITE · STORIES', title: 'School Rugby Rankings' });
   return renderCard({ eyebrow: a.dateline, title: a.title });
 }
