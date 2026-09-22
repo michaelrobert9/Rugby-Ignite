@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
           <div className="rir-container flex items-center py-4">
             <Link href="/" className="shrink-0" aria-label="Rugby Ignite home">
-              <Logo height={46} />
+              <Logo height={78} />
             </Link>
           </div>
           <div style={{ borderTop: "1px solid var(--rule)" }}>
@@ -90,7 +90,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <footer style={{ background: "var(--paper)", borderTop: "1px solid var(--rule)" }}>
           <div className="rir-container py-8 text-xs" style={{ color: "var(--body-2)" }}>
             <div style={{ marginBottom: 12 }}>
-              <Logo height={34} />
+              <Logo variant="horizontal" height={34} />
             </div>
             <div style={{ maxWidth: "62ch", lineHeight: 1.8 }}>
               Match data from{" "}

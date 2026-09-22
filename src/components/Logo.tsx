@@ -1,11 +1,28 @@
-// The Rugby Ignite lockup — the supplied master artwork. Imported as a module
-// asset (not referenced from /public), so it is emitted to /_next/static/media
-// and served through the same pipeline as the CSS/JS. Firebase App Hosting does
-// not serve /public files for this app, so a bare "/logo-stacked.png" 404s.
+// The Rugby Ignite lockup — the supplied master artwork. Imported as module
+// assets (not referenced from /public), so they are emitted to
+// /_next/static/media and served through the same pipeline as the CSS/JS.
+// Firebase App Hosting does not serve /public files for this app, so a bare
+// "/logo-stacked.png" 404s.
+//
+// Two lockups:
+//   stacked     — shield + RUGBY / IGNITE on two lines (the main/header mark)
+//   horizontal  — shield + RUGBY IGNITE on one line (compact — footer, inline)
 
-import logo from '../../public/logo-stacked.png';
+import stacked from '../../public/logo-stacked.png';
+import horizontal from '../../public/logo-horizontal.png';
 
-export default function Logo({ height = 44, className }: { height?: number; className?: string }) {
+const SOURCES = { stacked, horizontal } as const;
+
+export default function Logo({
+  height = 44,
+  variant = 'stacked',
+  className,
+}: {
+  height?: number;
+  variant?: 'stacked' | 'horizontal';
+  className?: string;
+}) {
+  const logo = SOURCES[variant];
   const width = Math.round((height * logo.width) / logo.height);
   return (
     // eslint-disable-next-line @next/next/no-img-element
