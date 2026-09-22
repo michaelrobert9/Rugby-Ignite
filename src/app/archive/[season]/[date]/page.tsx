@@ -42,7 +42,7 @@ export default async function ArchivePage(props: PageProps<'/archive/[season]/[d
           <thead>
             <tr>
               <th>Pos</th>
-              <th>First XV</th>
+              <th>First Team</th>
               <th style={{ textAlign: 'right' }}>Rating</th>
               <th className="rir-col-sec" style={{ textAlign: 'right' }}>+/-</th>
             </tr>

@@ -13,9 +13,9 @@ const HOME: Page = {
   navOrder: 0,
   showInNav: true,
   title: 'South African School Rugby Rankings',
-  metaTitle: 'School Rugby Rankings {season} | South African 1st XV Rankings — Rugby Ignite',
+  metaTitle: 'School Rugby Rankings {season} | South African First Team Rankings — Rugby Ignite',
   metaDescription:
-    'View the latest South African school rugby rankings for the {season} season — current 1st XV form, ranking points, movement and recent results, plus the All-Time School Rugby Ratings.',
+    'View the latest South African school rugby rankings for the {season} season — current first team form, ranking points, movement and recent results, plus the All-Time School Rugby Ratings.',
   rankingScope: 'master',
   // The Season / All-Time headings, intros and tables are rendered by the tabbed
   // component (their copy lives in Settings). This body is the explainer shown
@@ -29,7 +29,7 @@ const HOME: Page = {
     '',
     'The Season Rankings focus on current form this season, while the All-Time School Rugby Ratings show longer-term strength across seasons.',
     '',
-    'Every ranking here is built from verified 1st XV results captured on [Match Pulse](https://matchpulse.co.za). For upcoming matches, live scores and full results, visit [Match Pulse Rugby](https://rugby.matchpulse.co.za).',
+    'Every ranking here is built from verified first team results captured on [Match Pulse](https://matchpulse.co.za). For upcoming matches, live scores and full results, visit [Match Pulse Rugby](https://rugby.matchpulse.co.za).',
     '',
     '[Learn more about how the Rugby Ignite school rugby rankings work](/school-rugby-rankings-methodology)',
   ].join('\n'),
@@ -47,7 +47,7 @@ const METHODOLOGY: Page = {
     'The methodology behind the Rugby Ignite school rugby rankings: a points-based system adapted from World Rugby, why opponent strength matters, and the two ranking tables.',
   rankingScope: 'master',
   body: [
-    'Rugby Ignite ranks South African school 1st XV teams with a points-based system adapted from the World Rugby ranking model. Here is exactly how it works.',
+    'Rugby Ignite ranks South African school first team sides with a points-based system adapted from the World Rugby ranking model. Here is exactly how it works.',
     '',
     '## The rankings are not based only on win percentage',
     '',
@@ -78,7 +78,7 @@ const METHODOLOGY: Page = {
     '',
     '## How results are recorded',
     '',
-    'Results, teams and match data are captured and verified on [Match Pulse](https://matchpulse.co.za), the live scoring platform that powers South African school sport. Rugby Ignite reads those verified 1st XV results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host match schedules, player profiles or venue data.',
+    'Results, teams and match data are captured and verified on [Match Pulse](https://matchpulse.co.za), the live scoring platform that powers South African school sport. Rugby Ignite reads those verified first team results and turns them into the rankings you see here. To add or correct a result, it is done on Match Pulse — Rugby Ignite itself does not host match schedules, player profiles or venue data.',
     '',
     'Upcoming matches, live scores and full results are on [Match Pulse Rugby](https://rugby.matchpulse.co.za) — with fixtures, standings and results by [competition](https://rugby.matchpulse.co.za/competitions) and by [school](https://rugby.matchpulse.co.za/schools).',
     '',

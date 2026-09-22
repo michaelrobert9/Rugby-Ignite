@@ -110,6 +110,7 @@ export async function loadSportLive(sport: SportKey): Promise<SportData> {
       homeTries: numOrNull(d.homeTries),
       awayTries: numOrNull(d.awayTries),
       amendedAt,
+      path: typeof d.path === 'string' ? d.path : null,
     });
 
     usedOrgIds.add(homeOrgId);

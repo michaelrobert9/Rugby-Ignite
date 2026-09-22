@@ -46,7 +46,7 @@ export function evaluateLeadStory(i: LeadStoryInputs): LeadStory {
     return {
       ruleId: 'L9',
       eyebrow: 'No fixtures yet',
-      headline: 'No first XV rugby has been rated yet.',
+      headline: 'No first team rugby has been rated yet.',
       standfirst: 'The rankings publish the moment the first verified result is captured on Match Pulse.',
     };
   }
@@ -107,7 +107,7 @@ export function evaluateLeadStory(i: LeadStoryInputs): LeadStory {
   return {
     ruleId: 'L9',
     eyebrow: 'Off-season',
-    headline: `No first XV rugby has been played for ${weeks} ${weeks === 1 ? 'week' : 'weeks'}.`,
+    headline: `No first team rugby has been played for ${weeks} ${weeks === 1 ? 'week' : 'weeks'}.`,
     standfirst: offSeasonSentence(weeks, leader.name, leader.rating, round),
   };
 }

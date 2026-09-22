@@ -16,7 +16,7 @@ export default function MatchPulseCTA() {
         Fixtures, live scores &amp; results
       </h2>
       <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--muted)', maxWidth: '52rem' }}>
-        Rugby Ignite&apos;s rankings are built from verified 1st XV results captured on{' '}
+        Rugby Ignite&apos;s rankings are built from verified first team results captured on{' '}
         <a href={MATCHPULSE.main} target="_blank" rel="noopener" style={{ color: 'var(--chalk)', textDecoration: 'underline' }}>
           Match Pulse
         </a>

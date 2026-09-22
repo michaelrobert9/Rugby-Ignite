@@ -47,7 +47,7 @@ export default async function CorrectionsPage() {
               <table className="rir-table" style={{ border: 'none' }}>
                 <thead>
                   <tr>
-                    <th>First XV</th>
+                    <th>First Team</th>
                     <th style={{ textAlign: 'right' }}>Was</th>
                     <th style={{ textAlign: 'right' }}>Now</th>
                     <th style={{ textAlign: 'right' }}>Change</th>

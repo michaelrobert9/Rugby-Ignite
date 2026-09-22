@@ -11,6 +11,7 @@ import type { Match, Team, TeamRating } from '../types';
 import { TRACK_MASTER } from '../types';
 import type { MPOrg } from '../matchpulse/types';
 import { provinceForRegion } from '../matchpulse/provinces';
+import { matchUrl } from '../matchpulseLinks';
 import { computeFormHeat } from './formHeat';
 import { heatBand, type Method } from './methodConfig';
 import { deriveCadence } from './cadence';
@@ -88,6 +89,7 @@ export function buildFromFixtures(
 
   // Most recent rated fixture per scope×team, for the row-expansion citation.
   const nameOf = (id: string) => orgById.get(id)?.matchName || orgById.get(id)?.name || id;
+  const fixtureById = new Map(rated.map((f) => [f.fixtureId, f] as const));
   const beforeByMatchScopeTeamTmp = new Map<string, number>();
   for (const mr of matchRatings) beforeByMatchScopeTeamTmp.set(`${mr.matchId}__${mr.scope}__${mr.teamId}`, mr.ratingBefore);
   const lastMoveByKey = new Map<string, NonNullable<StandingRow['lastMovement']>>();
@@ -95,6 +97,7 @@ export function buildFromFixtures(
     const key = `${mr.scope}__${mr.teamId}`;
     const prev = lastMoveByKey.get(key);
     if (prev && prev.date >= mr.matchDate) continue;
+    const fx = fixtureById.get(mr.matchId);
     lastMoveByKey.set(key, {
       opponentName: nameOf(mr.opponentId),
       opponentRatingBefore: beforeByMatchScopeTeamTmp.get(`${mr.matchId}__${mr.scope}__${mr.opponentId}`) ?? 0,
@@ -104,6 +107,12 @@ export function buildFromFixtures(
       ratingChange: mr.ratingChange,
       outcome: mr.outcome,
       date: mr.matchDate,
+      matchHref: matchUrl({
+        path: fx?.matchPath ?? null,
+        date: fx?.date ?? null,
+        homeName: fx ? nameOf(fx.homeSchool) : null,
+        awayName: fx ? nameOf(fx.awaySchool) : null,
+      }),
     });
   }
 

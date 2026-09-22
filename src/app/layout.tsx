@@ -9,7 +9,7 @@ import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 import Analytics from "@/components/Analytics";
-import Mark from "@/components/Mark";
+import Logo from "@/components/Logo";
 
 // Route for a nav page: home -> '/', otherwise its stored slug.
 function pageHref(page: Page): string {
@@ -78,9 +78,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="relative" style={{ background: "var(--paper)", borderBottom: "1px solid var(--rule)" }}>
           {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
           <div className="rir-container flex items-center py-4">
-            <Link href="/" className="flex items-center shrink-0" style={{ gap: 12 }} aria-label="Rugby Ignite home">
-              <Mark size={38} />
-              <span className="rir-wordmark">RUGBY IGNITE</span>
+            <Link href="/" className="shrink-0" aria-label="Rugby Ignite home">
+              <Logo height={46} />
             </Link>
           </div>
           <div style={{ borderTop: "1px solid var(--rule)" }}>
@@ -92,9 +91,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <footer style={{ background: "var(--paper)", borderTop: "1px solid var(--rule)" }}>
           <div className="rir-container py-8 text-xs" style={{ color: "var(--body-2)" }}>
-            <div className="flex items-center" style={{ gap: 10, marginBottom: 10 }}>
-              <Mark size={26} />
-              <span className="rir-wordmark" style={{ fontSize: "1rem" }}>RUGBY IGNITE</span>
+            <div style={{ marginBottom: 12 }}>
+              <Logo height={34} />
             </div>
             <div style={{ maxWidth: "62ch", lineHeight: 1.8 }}>
               Match data from{" "}

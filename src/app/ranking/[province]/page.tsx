@@ -15,7 +15,7 @@ export async function generateMetadata(props: PageProps<'/ranking/[province]'>):
   const s = getCurrentSeason();
   return {
     title: withSeason(`${def.name} School Rugby Rankings {season} | Rugby Ignite`, s),
-    description: `The ${def.name} first XVs on the Ignite Rating. A province view — positions stay national, so fourth in ${def.name} still means fourth in the country.`,
+    description: `The ${def.name} first teams on the Ignite Rating. A province view — positions stay national, so fourth in ${def.name} still means fourth in the country.`,
   };
 }
 
@@ -32,7 +32,7 @@ export default async function ProvinceRankingPage(props: PageProps<'/ranking/[pr
         </div>
         <h1 className="text-2xl">{def.name} School Rugby Rankings</h1>
         <p className="text-sm" style={{ color: 'var(--body-2)', maxWidth: '60ch' }}>
-          The {def.name} first XVs, in their national order — fourth here still means fourth in the country.{' '}
+          The {def.name} first teams, in their national order — fourth here still means fourth in the country.{' '}
           <Link href="/" className="rir-link">See the full national ranking →</Link>
         </p>
       </div>

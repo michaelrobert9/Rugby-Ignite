@@ -40,6 +40,8 @@ export interface MPMatch {
   awayTries?: number | null;
   /** Source amend timestamp (ISO), when Match Pulse exposes one — drives corrections. */
   amendedAt?: string | null;
+  /** Canonical Match Pulse match path (e.g. "/match/2027-08-08/home-vs-away"), for deep links. */
+  path?: string | null;
 }
 
 export type Track = 'master' | 'season';

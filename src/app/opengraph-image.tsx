@@ -9,6 +9,6 @@ export default async function Image() {
   return renderCard({
     eyebrow: 'SOUTH AFRICAN SCHOOL RUGBY',
     title: 'The ranking system school rugby deserves.',
-    figureLabel: 'THE IGNITE RATING · FIRST XV',
+    figureLabel: 'THE IGNITE RATING · FIRST TEAM',
   });
 }

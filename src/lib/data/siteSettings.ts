@@ -32,11 +32,11 @@ const DEFAULTS: SiteSettings = {
   adsenseClient: '',
   adsTxt: '',
   adsense: { slotTop: '3417521276', slotMid: '1896556042', slotBottom: '1367529272' },
-  seoTitle: 'School Rugby Rankings {season} | South African 1st XV Rankings — Rugby Ignite',
+  seoTitle: 'School Rugby Rankings {season} | South African First Team Rankings — Rugby Ignite',
   seoDescription:
-    'View the latest South African school rugby rankings for the {season} season — 1st XV form, ranking points, movement and results, plus the All-Time School Rugby Ratings.',
+    'View the latest South African school rugby rankings for the {season} season — first team form, ranking points, movement and results, plus the All-Time School Rugby Ratings.',
   seoKeywords:
-    'school rugby rankings, South African school rugby, 1st XV rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
+    'school rugby rankings, South African school rugby, first team rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
   gaMeasurementId: '',
   sponsorName: '',
   sponsorUrl: '',

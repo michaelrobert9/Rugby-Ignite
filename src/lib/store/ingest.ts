@@ -63,6 +63,7 @@ function toStoredFixture(m: MPMatch, ingestedAt: string): StoredFixture {
     season: m.season,
     status: 'complete',
     amendedAt,
+    matchPath: m.path ?? null,
     ingestKey: ingestKeyFor(m.id, amendedAt),
     queued: false,
     ingestedAt,
