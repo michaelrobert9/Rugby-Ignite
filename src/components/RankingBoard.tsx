@@ -50,7 +50,7 @@ export default function RankingBoard({
             <tr>
               <th className="rir-col-pos">Pos</th>
               <th>1st Team</th>
-              <th style={{ textAlign: 'right' }}>Rating</th>
+              <th className="rir-col-rating" style={{ textAlign: 'right' }}>Rating</th>
               <th className="rir-col-change" style={{ textAlign: 'right' }}>Change</th>
             </tr>
           </thead>
