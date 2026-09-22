@@ -7,6 +7,7 @@ export interface ExpandRow {
   teamId: string;
   rank: number; // national position — stays national even in a province view
   name: string;
+  logoUrl: string | null; // school crest from Match Pulse, when set
   province: string | null;
   rating: number;
   change: number | null; // rating-point movement since the Thursday cutoff
@@ -47,8 +48,22 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
       >
         <td>{r.rank}</td>
         <td>
-          <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{r.name}</span>
-          <span aria-hidden style={{ color: 'var(--body-2)', marginLeft: 8, fontSize: '0.8em' }}>{isOpen ? '▾' : '▸'}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            {r.logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={r.logoUrl}
+                alt=""
+                aria-hidden
+                width={24}
+                height={24}
+                loading="lazy"
+                style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }}
+              />
+            )}
+            <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{r.name}</span>
+            <span aria-hidden style={{ color: 'var(--body-2)', marginLeft: 4, fontSize: '0.8em' }}>{isOpen ? '▾' : '▸'}</span>
+          </span>
         </td>
         <td
           className="rir-rating"
