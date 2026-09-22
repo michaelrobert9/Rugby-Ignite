@@ -48,10 +48,10 @@ export default function RankingBoard({
         <table className="rir-table">
           <thead>
             <tr>
-              <th style={{ width: 44 }}>Pos</th>
+              <th className="rir-col-pos">Pos</th>
               <th>1st Team</th>
               <th style={{ textAlign: 'right' }}>Rating</th>
-              <th style={{ textAlign: 'right', width: 90 }}>Change</th>
+              <th className="rir-col-change" style={{ textAlign: 'right' }}>Change</th>
             </tr>
           </thead>
           <RankingRows rows={filtered} adSlot={adSlot} />
