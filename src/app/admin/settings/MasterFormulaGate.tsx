@@ -16,7 +16,7 @@ export default function MasterFormulaGate({ children }: { children: React.ReactN
       <input type="hidden" name="masterUnlocked" value={unlocked ? '1' : '0'} />
       <label
         className="flex items-center gap-2 text-sm cursor-pointer mb-3"
-        style={{ color: unlocked ? 'var(--ember)' : 'var(--color-text-muted)' }}
+        style={{ color: unlocked ? 'var(--ember-deep)' : 'var(--color-text-muted)' }}
       >
         <input
           type="checkbox"

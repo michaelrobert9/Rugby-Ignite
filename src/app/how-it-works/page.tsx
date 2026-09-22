@@ -62,8 +62,8 @@ export default async function HowItWorksPage() {
         not affiliated with or endorsed by World Rugby.
       </p>
 
-      <div className="rir-card" style={{ background: 'var(--coal)', padding: 22, margin: '22px 0' }}>
-        <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--heat-4)' }}>
+      <div className="rir-card" style={{ background: 'var(--navy)', padding: 22, margin: '22px 0' }}>
+        <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ember)' }}>
           Why this page cannot go out of date
         </div>
         <p style={{ margin: '11px 0 0', fontSize: 15.5, lineHeight: 1.7, color: 'var(--on-coal)', maxWidth: '76ch' }}>

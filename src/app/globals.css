@@ -20,64 +20,58 @@
 }
 
 /*
- * Rugby Ignite brand system — Brand Book v7.0.
- * Warm-neutral palette with a single functional heat ramp.
- *   Coal #16110F   structure, nav, footer, table header, ratings, names, movement
- *   Paper #F6F2EC  default page surface (panels #FFFDFA, rules #E0D8CE)
- *   Ember Deep #A33B06  heat set as type: links, the heat figure, the #1 position
- *   Heat ramp     the mark and the gauge ONLY — never a surface, never buttons
+ * Rugby Ignite brand system — Brand Book v8.
+ *   Paper #FDF9F2   the default page ground (panels #FFFFFF, rules #E2D9CB)
+ *   Ink #1C1917     headings, ratings, school names, all movement
+ *   Ember #E8360A   the MARK ONLY — never type, never a fill, never a status
+ *   Ember Deep #C2410C  links, and the one figure worth looking at (the leader)
+ *   Navy #0F1923    reversed lockup + the occasional dark panel — never a page
+ * The mark is the flame-in-shield icon; the v7 heat ramp is retired.
  * Type: Archivo Black (wordmark / ratings / headlines), Helvetica Neue system
- * stack (body / UI / school names), and Helvetica caps — the same stack at
- * 600, uppercase, tracked — for labels / movement / data. No serif, no mono.
- * No green anywhere; movement is coal, an arrow + a figure, never coloured.
- * Every corner is square (no border radius).
+ * stack (body / UI / school names), and Helvetica caps — the same stack at 600,
+ * uppercase, tracked — for labels / movement / data. No serif, no mono.
+ * Movement is ink, an arrow + a figure, never coloured. Every corner is square.
  */
 :root {
-  /* v7 palette */
-  --coal: #16110f;
-  --paper: #f6f2ec;
-  --panel: #fffdfa;
-  --rule: #e0d8ce;
-  --body: #332c28;
-  --body-2: #5e544e;
-  --ember-deep: #a33b06;
-  --track: #ede5da;
-  --leader-tint: #fbf5ec;
-  --on-coal: #cfc3b9;
-  --on-coal-label: #8a7a70;
-  /* Heat ramp — Form Heat gauge, the mark and live indicators ONLY (never a
-     surface, never type, never a button). 5 stops, bottom to top, per Brand
-     Book v7.0 §04: coal-ember base heating to a white-hot tip. */
-  --heat-1: #4a1f06; /* base */
-  --heat-2: #c64a0a;
-  --heat-3: #e86a12;
-  --heat-4: #f5a623;
-  --heat-5: #ffe0b2; /* white-hot tip */
-  --heat-ramp: linear-gradient(to top, var(--heat-1) 0%, var(--heat-2) 38%, var(--heat-3) 68%, var(--heat-4) 88%, var(--heat-5) 100%);
-  /* Horizontal variant — for the full-width heat rule under the header. */
-  --heat-ramp-h: linear-gradient(to right, var(--heat-1) 0%, var(--heat-2) 38%, var(--heat-3) 68%, var(--heat-4) 88%, var(--heat-5) 100%);
+  /* Brand Book v8 palette */
+  --ink: #1c1917; /* headings, ratings, school names, all movement */
+  --paper: #fdf9f2; /* the default page ground */
+  --panel: #ffffff; /* cards */
+  --rule: #e2d9cb; /* hairlines */
+  --body: #463e37; /* copy */
+  --body-2: #6b6158; /* secondary labels */
+  --ember: #e8360a; /* THE MARK ONLY — never type, never a fill, never a status */
+  --ember-deep: #c2410c; /* links, and the one figure worth looking at (the leader) */
+  --navy: #0f1923; /* reversed lockup + the occasional dark panel — never a page */
+  --on-dark: #efe7db; /* copy on a navy panel */
+  --on-dark-label: #9a8f82; /* labels on a navy panel */
 
-  /* Existing component token names, repointed to v7 so every component inherits it */
-  --night: var(--coal);
+  /* Compat aliases so every existing component inherits v8 from one place. */
+  --coal: var(--ink);
+  --night: var(--navy);
   --chalk: var(--paper);
-  --ember: var(--ember-deep); /* accents: tab underline, #1 edge, focus ring */
+  --ember-legacy: var(--ember-deep);
   --offwhite: var(--paper);
-  --light: var(--track);
+  --light: var(--rule);
   --flint: var(--body-2);
   --dim: var(--body-2);
-  --muted: var(--on-coal);
-  --gold: var(--ember-deep); /* no gold in v7 */
+  --muted: var(--on-dark);
+  --gold: var(--ember-deep);
+  --on-coal: var(--on-dark);
+  --on-coal-label: var(--on-dark-label);
+  --leader-tint: transparent; /* v8 does not tint the leader row */
+  --track: #efe7db;
   --color-navy-950: #000000;
-  --color-navy-900: var(--coal);
-  --color-navy-800: #241d19;
-  --color-navy-700: #241d19;
+  --color-navy-900: var(--ink);
+  --color-navy-800: #2a2320;
+  --color-navy-700: #2a2320;
   --color-bg: var(--paper);
   --color-surface: var(--panel);
   --color-border: var(--rule);
   --color-text: var(--body);
   --color-text-muted: var(--body-2);
-  --color-up: var(--coal); /* movement is coal only — never green/red */
-  --color-down: var(--coal);
+  --color-up: var(--ink); /* movement is ink only — never green/red */
+  --color-down: var(--ink);
   --color-link: var(--ember-deep);
 
   /* Radius scale — Brand Book v7.0: no border radius anywhere, every corner square. */
@@ -117,6 +111,7 @@ h3,
   font-family: var(--font-display);
   font-weight: 400; /* Archivo Black is a single (black) weight */
   letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 /* Helvetica caps for readings: results, win%, movement — tracked tabular figures. */
@@ -172,18 +167,19 @@ table.rir-table {
   font-size: 0.875rem;
 }
 
-/* Header: coal bar, Helvetica caps labels. */
+/* Header (v8): no dark bar — quiet Helvetica caps labels on paper, over a rule. */
 table.rir-table thead th {
-  background: var(--coal);
-  color: var(--on-coal);
+  background: transparent;
+  color: var(--body-2);
   text-align: left;
   padding: 0.6rem 0.75rem;
   font-family: var(--font-sans);
   font-weight: 600;
   white-space: nowrap;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
 }
 
 table.rir-table tbody td {
@@ -203,21 +199,64 @@ table.rir-table tbody td:first-child {
 }
 
 table.rir-table tbody tr:hover {
-  background: rgba(22, 17, 15, 0.03);
+  background: rgba(28, 25, 23, 0.03);
 }
 
-/* The leader row is the only tinted row; its position figure is Ember Deep. */
-table.rir-table tbody tr.rir-rank-1 td {
-  background: var(--leader-tint);
-}
-table.rir-table tbody tr.rir-rank-1 td:first-child {
-  color: var(--ember-deep);
+/* v8 does not tint the leader row; the leader's RATING carries the one Ember
+   Deep figure (set on the cell in the table component). */
+
+/* The lockup sits at the top of the ranking card (Brand Book v8 §05). */
+.rir-table-lockup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
 }
 
-/* Ad slot reservation — hold the space so nothing shifts when an ad fills. */
+/* Expanded row: the reason, the citation and the season shape, on paper. */
+.rir-expand td {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.rir-expand-inner {
+  padding: 2px 2px 10px;
+}
+.rir-expand-reason {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0 0 8px;
+  max-width: 72ch;
+}
+.rir-expand-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+/* Ad slot reservation — hold the space so nothing shifts when an ad fills.
+   Always visually separate: paper tint, hairlines, an ADVERTISEMENT label. */
 .rir-ad {
   width: 100%;
   min-height: 280px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.rir-adrow td {
+  padding: 0 !important;
+}
+.rir-ad-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--body-2);
+  padding: 5px 12px 0;
 }
 @media (max-width: 640px) {
   .rir-ad {
@@ -279,12 +318,13 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
   font-weight: 500;
 }
 
-/* Menu-bar links on coal: mono, tracked, Ember-Deep underline when active. */
+/* Menu-bar links on paper (v8): Helvetica caps, tracked, Ember-Deep underline
+   when active. */
 .rir-nav-link {
   display: inline-flex;
   align-items: center;
   font-family: var(--font-sans);
-  color: var(--on-coal-label);
+  color: var(--body-2);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -296,7 +336,7 @@ table.rir-table tbody tr.rir-rank-1 td:first-child {
 
 .rir-nav-link:hover,
 .rir-nav-link.active {
-  color: var(--paper);
+  color: var(--ink);
   border-bottom-color: var(--ember-deep);
 }
 
@@ -339,14 +379,14 @@ select.rir-input:focus {
   background: #8a3105;
 }
 
-/* Secondary = Coal outline. */
+/* Secondary = Ink outline. */
 .rir-btn-secondary {
   background: transparent;
-  color: var(--coal);
-  border-color: var(--coal);
+  color: var(--ink);
+  border-color: var(--ink);
 }
 .rir-btn-secondary:hover {
-  background: var(--track);
+  background: var(--rule);
 }
 
 .rir-btn-danger {
@@ -358,22 +398,15 @@ select.rir-input:focus {
   background: #f6e9e1;
 }
 
-/* The mark: a single upright stroke that heats from a coal-ember base to a
-   white-hot tip. A rising measure — not a flame, not a shield, not a crest. */
-.rir-mark {
-  display: inline-block;
-  width: 11px;
-  height: 44px;
-  border-radius: 1px;
-  background: var(--heat-ramp);
-  flex-shrink: 0;
-}
+/* The mark is the flame-in-shield icon (see components/Mark.tsx) — the heat
+   stroke is retired in v8. The wordmark sits beside it in Archivo Black, one
+   colour, both words the same size, no tagline. Ink on paper by default. */
 .rir-wordmark {
-  font-family: var(--font-display); /* Archivo Black — the wordmark is never set in another face */
+  font-family: var(--font-display); /* Archivo Black — never set in another face */
   font-weight: 400;
-  letter-spacing: 0.14em;
-  text-indent: 0.14em; /* balance the tracking so the mark-to-word gap reads evenly */
-  font-size: 1.4rem;
-  line-height: 1;
-  color: var(--paper);
+  letter-spacing: 0.06em;
+  font-size: 1.25rem;
+  line-height: 0.95;
+  color: var(--ink);
+  text-transform: none;
 }

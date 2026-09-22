@@ -23,7 +23,12 @@ async function archivoBlack(): Promise<ArrayBuffer> {
   return fontPromise;
 }
 
-const RAMP = 'linear-gradient(to top, #4A1F06 0%, #C64A0A 38%, #E86A12 68%, #F5A623 88%, #FFE0B2 100%)';
+// The flame-in-shield mark as an inline SVG data URI (ember), for the card.
+const MARK_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="71" viewBox="0 0 44 52" fill="none">' +
+  '<path d="M22 2.5 L40 9.5 V25 C40 37 32 46 22 49.5 C12 46 4 37 4 25 V9.5 Z" stroke="#e8360a" stroke-width="3.2" stroke-linejoin="round"/>' +
+  '<g transform="translate(6.4 10.2) scale(1.28)" fill="#e8360a"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-0.36 3.6-1.21 4.62-2.58 0.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></g></svg>';
+const MARK_URI = `data:image/svg+xml;base64,${Buffer.from(MARK_SVG).toString('base64')}`;
 
 export interface CardProps {
   eyebrow: string; // e.g. "FIRST XV · WESTERN CAPE"
@@ -44,37 +49,38 @@ export async function renderCard(props: CardProps): Promise<ImageResponse> {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: '#16110F',
+          background: '#0F1923',
           padding: '64px 72px',
           fontFamily: 'Archivo Black',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ width: 16, height: 64, background: RAMP, marginRight: 20 }} />
-          <div style={{ fontSize: 30, letterSpacing: 6, color: '#F6F2EC' }}>RUGBY IGNITE</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={MARK_URI} width={60} height={71} alt="" style={{ marginRight: 18 }} />
+          <div style={{ fontSize: 30, letterSpacing: 2, color: '#FDF9F2' }}>RUGBY IGNITE</div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontSize: 22, letterSpacing: 4, color: '#8A7A70' }}>{props.eyebrow}</div>
-          <div style={{ fontSize: 68, lineHeight: 1.02, color: '#F6F2EC', marginTop: 16, maxWidth: 1050 }}>
+          <div style={{ fontSize: 22, letterSpacing: 4, color: '#9A8F82' }}>{props.eyebrow}</div>
+          <div style={{ fontSize: 68, lineHeight: 1.02, color: '#FDF9F2', marginTop: 16, maxWidth: 1050 }}>
             {props.title}
           </div>
           {props.figure && (
             <div style={{ display: 'flex', alignItems: 'flex-end', marginTop: 28 }}>
-              <div style={{ fontSize: 120, lineHeight: 0.9, color: '#F6F2EC' }}>{props.figure}</div>
+              <div style={{ fontSize: 120, lineHeight: 0.9, color: '#FDF9F2' }}>{props.figure}</div>
               {props.delta && (
-                <div style={{ fontSize: 40, color: '#CFC3B9', marginLeft: 24, marginBottom: 12 }}>{props.delta}</div>
+                <div style={{ fontSize: 40, color: '#EFE7DB', marginLeft: 24, marginBottom: 12 }}>{props.delta}</div>
               )}
             </div>
           )}
           {props.figureLabel && (
-            <div style={{ fontSize: 22, letterSpacing: 4, color: '#8A7A70', marginTop: 10 }}>{props.figureLabel}</div>
+            <div style={{ fontSize: 22, letterSpacing: 4, color: '#9A8F82', marginTop: 10 }}>{props.figureLabel}</div>
           )}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: 24, letterSpacing: 3, color: '#CFC3B9' }}>rugbyignite.co.za</div>
-          <div style={{ width: 220, height: 6, background: 'linear-gradient(to right, #4A1F06, #C64A0A, #E86A12, #F5A623, #FFE0B2)' }} />
+          <div style={{ fontSize: 24, letterSpacing: 3, color: '#EFE7DB' }}>rugbyignite.co.za</div>
+          <div style={{ width: 200, height: 6, background: '#E8360A' }} />
         </div>
       </div>
     ),
