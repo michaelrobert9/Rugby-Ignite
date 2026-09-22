@@ -188,6 +188,42 @@ table.rir-table tbody tr:hover {
   background: rgba(28, 25, 23, 0.03);
 }
 
+/* Keep POS and CHANGE tight so the school-name column takes the slack. */
+.rir-col-pos {
+  width: 2.75rem;
+}
+.rir-col-change {
+  width: 5.5rem;
+}
+
+/* Phones: the four columns must fit without a horizontal scroll. Trim the cell
+   padding and the display-face sizes, and let the school crest and name column
+   absorb what's left. */
+@media (max-width: 480px) {
+  table.rir-table {
+    font-size: 0.8125rem;
+  }
+  table.rir-table thead th,
+  table.rir-table tbody td {
+    padding: 0.5rem 0.4rem;
+  }
+  table.rir-table tbody td:first-child {
+    font-size: 1rem;
+  }
+  .rir-rating {
+    font-size: 0.95rem;
+  }
+  .rir-col-pos {
+    width: 2rem;
+  }
+  .rir-col-change {
+    width: 4rem;
+  }
+  .rir-table-lockup {
+    padding: 12px;
+  }
+}
+
 /* v8 does not tint the leader row; the leader's RATING carries the one Ember
    Deep figure (set on the cell in the table component). */
 
