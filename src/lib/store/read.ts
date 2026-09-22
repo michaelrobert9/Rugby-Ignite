@@ -49,6 +49,7 @@ function liveToFixtures(matches: MPMatch[], ingestedAt: string): StoredFixture[]
     season: m.season,
     status: 'complete' as const,
     amendedAt: m.amendedAt ?? null,
+    matchPath: m.path ?? null,
     ingestKey: `${m.id}@${m.amendedAt ?? '0'}`,
     queued: false,
     ingestedAt,

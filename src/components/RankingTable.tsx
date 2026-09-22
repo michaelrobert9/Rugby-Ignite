@@ -91,7 +91,7 @@ export default async function RankingTable({
       isLeader: i === 0,
       reason: lm ? reasonFor(r.name, lm) : null,
       citationLabel: lm ? `${lm.opponentName} ${lm.pointsFor}–${lm.pointsAgainst} · ${longDate(lm.date)}` : null,
-      citationHref: MATCHPULSE.rugby,
+      citationHref: lm?.matchHref ?? MATCHPULSE.rugby,
       seasonOpen: season ? season.startingRating : null,
       seasonNow: season ? season.rating : null,
     };

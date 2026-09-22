@@ -17,20 +17,20 @@ export function fmtDelta(n: number): string {
   return Math.abs(n).toFixed(2);
 }
 
-/** The most-read sentence on the site — one movement, one line of method. */
+/** The most-read sentence on the site — plain and factual: what moved, and the
+ *  match that moved it. No "more/less than a … side" clause (it read the same
+ *  for every result and confused more than it explained). */
 export function movementSentence(school: string, r: RatingHistoryRow): string {
   if (r.outcome === 'draw') {
-    return `${school} drew ${r.pointsFor}–${r.pointsAgainst} with ${r.opponentName}, who were rated ${fmtRating(r.opponentRatingBefore)} going in.`;
+    if (Math.abs(r.ratingChange) < 0.005) {
+      return `${school} drew ${r.pointsFor}–${r.pointsAgainst} with ${r.opponentName} — no rating points changed.`;
+    }
+    const dd = r.ratingChange > 0 ? 'gained' : 'lost';
+    return `${school} ${dd} ${fmtDelta(r.ratingChange)} rating points drawing ${r.pointsFor}–${r.pointsAgainst} with ${r.opponentName}.`;
   }
   const gainedLost = r.outcome === 'win' ? 'gained' : 'lost';
   const vs = r.outcome === 'win' ? 'beating' : 'losing to';
-  const winDefeat = r.outcome === 'win' ? 'win' : 'defeat';
-  // "moved more/less than a result against a lower/higher-rated side would" —
-  // relative to the opponent's strength, never a value judgement of the rugby.
-  const stronger = r.opponentRatingBefore >= r.ratingBefore;
-  const moreLess = stronger ? 'more' : 'less';
-  const lowerHigher = stronger ? 'lower' : 'higher';
-  return `${school} ${gainedLost} ${fmtDelta(r.ratingChange)} rating points ${vs} ${r.opponentName} ${r.pointsFor}–${r.pointsAgainst}. ${r.opponentName} were rated ${fmtRating(r.opponentRatingBefore)} going in, so the ${winDefeat} moved ${moreLess} than a result against a ${lowerHigher}-rated side would.`;
+  return `${school} ${gainedLost} ${fmtDelta(r.ratingChange)} rating points ${vs} ${r.opponentName} ${r.pointsFor}–${r.pointsAgainst}.`;
 }
 
 /** Fixture stakes — suppressed in festival mode (caller decides). */
@@ -46,7 +46,7 @@ export function formHeatSentence(school: string, ordinalRank: string): string {
 /** Off-season — states the silence with a live count. */
 export function offSeasonSentence(weeks: number, leader: string, rating: number, round: number | null): string {
   const r = round != null ? ` since round ${round}` : '';
-  return `No first XV rugby has been played for ${weeks} ${weeks === 1 ? 'week' : 'weeks'}. Ratings are unchanged${r} and will stay unchanged until the next recorded fixture. ${leader} finished the season on ${fmtRating(rating)}.`;
+  return `No first team rugby has been played for ${weeks} ${weeks === 1 ? 'week' : 'weeks'}. Ratings are unchanged${r} and will stay unchanged until the next recorded fixture. ${leader} finished the season on ${fmtRating(rating)}.`;
 }
 
 /** Correction — states what changed at source and what it superseded. */

@@ -26,6 +26,7 @@ export interface StoredFixture {
   season: string; // e.g. '2027'
   status: 'complete' | 'incomplete'; // only 'complete' is rated
   amendedAt: string | null; // source amend timestamp; drives corrections
+  matchPath: string | null; // canonical Match Pulse match path, for deep links
   /** Idempotency key: `${fixtureId}@${amendedAt ?? '0'}`. */
   ingestKey: string;
   /** True when a required field was missing, so the fixture is queued not rated. */
@@ -75,6 +76,7 @@ export interface StandingRow {
     ratingChange: number;
     outcome: 'win' | 'loss' | 'draw';
     date: string;
+    matchHref: string; // deep link to the fixture on Match Pulse
   } | null;
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Mark from './Mark';
+import Logo from './Logo';
 import RankingRows, { type ExpandRow } from './RankingRows';
 
 // The ranking board: an optional search field above the table, then the lockup
@@ -43,8 +43,7 @@ export default function RankingBoard({
       )}
       <div className="rir-table-wrap">
         <div className="rir-table-lockup">
-          <Mark size={22} />
-          <span className="rir-wordmark" style={{ fontSize: '0.95rem' }}>RUGBY IGNITE</span>
+          <Logo height={30} />
         </div>
         <table className="rir-table">
           <thead>

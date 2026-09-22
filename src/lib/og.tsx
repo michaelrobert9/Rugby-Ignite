@@ -31,7 +31,7 @@ const MARK_SVG =
 const MARK_URI = `data:image/svg+xml;base64,${Buffer.from(MARK_SVG).toString('base64')}`;
 
 export interface CardProps {
-  eyebrow: string; // e.g. "FIRST XV · WESTERN CAPE"
+  eyebrow: string; // e.g. "FIRST TEAM · WESTERN CAPE"
   title: string; // school or story headline
   figure?: string; // e.g. "91.40"
   figureLabel?: string; // e.g. "IGNITE RATING · 2ND OF 184"
