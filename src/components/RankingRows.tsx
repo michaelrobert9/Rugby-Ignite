@@ -48,7 +48,7 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
       >
         <td>{r.rank}</td>
         <td>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
             {r.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -61,8 +61,7 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
                 style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }}
               />
             )}
-            <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{r.name}</span>
-            <span aria-hidden style={{ color: 'var(--body-2)', marginLeft: 4, fontSize: '0.8em' }}>{isOpen ? '▾' : '▸'}</span>
+            <span style={{ fontWeight: 500, color: 'var(--ink)', minWidth: 0, overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.name}</span>
           </span>
         </td>
         <td
