@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import localFont from "next/font/local";
 import "./globals.css";
 import { navPages } from "@/lib/data/pages";
 import { getSiteSettings } from "@/lib/data/siteSettings";
@@ -17,9 +18,19 @@ function pageHref(page: Page): string {
   return page.slug || "/";
 }
 
-// Deliberately not using next/font/google here: it fetches from Google Fonts
-// at build time, which fails in offline/sandboxed environments. System fonts
-// look clean for a data-table-heavy site like this and need no network call.
+// Archivo Black (the wordmark / ratings / headline face) is self-hosted and
+// loaded with next/font/local: it reads the font file from disk at build time
+// (no network call, unlike next/font/google) and — crucially — emits it to
+// /_next/static/media, which IS served on Firebase App Hosting. Referencing the
+// file from /public via @font-face 404s there, so the CSS var falls through to
+// the variable this exposes.
+const archivoBlack = localFont({
+  src: "../../public/fonts/archivo-black-latin.woff2",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  variable: "--font-archivo-black",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteSettings();
@@ -49,20 +60,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { href: "/admin", label: "Admin" },
   ];
   return (
-    <html lang="en" className="h-full antialiased">
-      <head>
-        {/* Brand Book v7.0 §05 — two families: Archivo Black (wordmark, ratings,
-            headlines), self-hosted via @font-face in globals.css; Helvetica Neue
-            (body / UI / labels) is a system stack with nothing to load. The
-            font files are preloaded so the wordmark never flashes a fallback. */}
-        <link
-          rel="preload"
-          href="/fonts/archivo-black-latin.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
+    <html lang="en" className={`h-full antialiased ${archivoBlack.variable}`}>
       <body className="min-h-full flex flex-col">
         {/* AdSense loader — loaded once, site-wide, so both Auto ads and the
             explicit rankings units can fill. Uses the configured publisher id,
