@@ -85,6 +85,7 @@ export default async function RankingTable({
       teamId: r.teamId,
       rank: i + 1,
       name: r.name,
+      logoUrl: r.logoUrl,
       province: r.province,
       rating: r.rating,
       change: r.weekPoints,

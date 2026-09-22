@@ -43,7 +43,7 @@ export default function RankingBoard({
       )}
       <div className="rir-table-wrap">
         <div className="rir-table-lockup">
-          <Logo variant="horizontal" height={30} />
+          <Logo variant="horizontal" height={36} />
         </div>
         <table className="rir-table">
           <thead>
