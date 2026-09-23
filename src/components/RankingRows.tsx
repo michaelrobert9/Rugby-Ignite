@@ -17,6 +17,12 @@ export interface ExpandRow {
   citationHref: string;
   seasonOpen: number | null;
   seasonNow: number | null;
+  // Record columns — only rendered in the province ("stats") table.
+  played: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  winPercent: number;
 }
 
 function Change({ value }: { value: number | null }) {
@@ -33,8 +39,17 @@ function Change({ value }: { value: number | null }) {
 // school, never above the ranking or between the top ten (Website Brief §04).
 const AD_AFTER_ROW = 10;
 
-export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; adSlot?: string }) {
+export default function RankingRows({
+  rows,
+  adSlot = '',
+  stats = false,
+}: {
+  rows: ExpandRow[];
+  adSlot?: string;
+  stats?: boolean; // province table: add Played / Won / Drawn / Lost / Win %
+}) {
   const [open, setOpen] = useState<string | null>(null);
+  const cols = stats ? 9 : 4; // colSpan for the full-width expand / ad rows
 
   const out: React.ReactNode[] = [];
   rows.forEach((r, i) => {
@@ -64,6 +79,15 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
             <span style={{ fontWeight: 500, color: 'var(--ink)', minWidth: 0, overflowWrap: 'anywhere', lineHeight: 1.25 }}>{r.name}</span>
           </span>
         </td>
+        {stats && (
+          <>
+            <td className="rir-col-pwdl rir-data" style={{ textAlign: 'right' }}>{r.played}</td>
+            <td className="rir-col-pwdl rir-data" style={{ textAlign: 'right' }}>{r.wins}</td>
+            <td className="rir-col-pwdl rir-data" style={{ textAlign: 'right' }}>{r.draws}</td>
+            <td className="rir-col-pwdl rir-data" style={{ textAlign: 'right' }}>{r.losses}</td>
+            <td className="rir-data" style={{ textAlign: 'right' }}>{Math.round(r.winPercent)}%</td>
+          </>
+        )}
         <td
           className="rir-rating"
           style={{ textAlign: 'right', color: r.isLeader ? 'var(--ember-deep)' : 'var(--ink)' }}
@@ -77,7 +101,7 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
     if (isOpen) {
       out.push(
         <tr key={`${r.teamId}-x`} className="rir-expand">
-          <td colSpan={4}>
+          <td colSpan={cols}>
             <div className="rir-expand-inner">
               {r.reason && <p className="rir-expand-reason">{r.reason}</p>}
               <div className="rir-expand-meta">
@@ -101,7 +125,7 @@ export default function RankingRows({ rows, adSlot = '' }: { rows: ExpandRow[]; 
     if (adSlot && i + 1 === AD_AFTER_ROW && rows.length > AD_AFTER_ROW) {
       out.push(
         <tr key="ad-infeed" className="rir-adrow">
-          <td colSpan={4}>
+          <td colSpan={cols}>
             <div className="rir-ad" aria-label="Advertisement">
               <span className="rir-ad-label">Advertisement</span>
               <AdUnit slot={adSlot} />

@@ -9,7 +9,8 @@ const NAV = [
   { href: '/admin/news', label: 'News' },
   { href: '/admin/settings', label: 'Rankings' },
   { href: '/admin/seo', label: 'SEO' },
-  { href: '/admin/ads', label: 'Ads' },
+  { href: '/admin/ads', label: 'Ads (AdSense)' },
+  { href: '/admin/sponsorship', label: 'Sponsorship' },
 ];
 
 export default async function AdminLayout({ children }: LayoutProps<'/admin'>) {

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getStandings, getSiteBuild } from '@/lib/store/read';
 import { listArticles } from '@/lib/store/stateStore';
 import { PROVINCES } from '@/lib/matchpulse/provinces';
+import { seasonYears } from '@/lib/season';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +23,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/corrections`, lastModified: lastmod, changeFrequency: 'weekly', priority: 0.4 },
   ];
 
-  const provinces: MetadataRoute.Sitemap = PROVINCES.filter((p) => present.has(p.name)).map((p) => ({
+  const activeProvinces = PROVINCES.filter((p) => present.has(p.name));
+  const years = seasonYears(build.seasons);
+
+  const provinces: MetadataRoute.Sitemap = activeProvinces.map((p) => ({
     url: `${SITE}/ranking/${p.key}`,
     lastModified: lastmod,
     changeFrequency: 'weekly',
     priority: 0.7,
   }));
+
+  // Each season year is its own page (national + per province) so it can rank on its own.
+  const seasonPages: MetadataRoute.Sitemap = years.map((y) => ({
+    url: `${SITE}/rankings/${y}`,
+    lastModified: lastmod,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+  const provinceSeasonPages: MetadataRoute.Sitemap = activeProvinces.flatMap((p) =>
+    years.map((y) => ({
+      url: `${SITE}/ranking/${p.key}/${y}`,
+      lastModified: lastmod,
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    })),
+  );
 
   const stories: MetadataRoute.Sitemap = articles.map((a) => {
     const slug = a.slug.split('/')[1];
@@ -39,5 +59,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  return [...evergreen, ...provinces, ...stories];
+  return [...evergreen, ...seasonPages, ...provinces, ...provinceSeasonPages, ...stories];
 }

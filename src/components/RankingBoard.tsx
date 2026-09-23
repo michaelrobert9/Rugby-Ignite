@@ -1,21 +1,22 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Logo from './Logo';
 import RankingRows, { type ExpandRow } from './RankingRows';
 
-// The ranking board: an optional search field above the table, then the lockup
-// and the four-column table. Search matches every way a school is written
+// The ranking board: an optional search field above the four-column table.
+// Search matches every way a school is written
 // (Paarl Gim, Gimnasium, Gym) so it can replace a browse tree and an A–Z. The
 // province filter is applied server-side; positions stay national.
 export default function RankingBoard({
   rows,
   adSlot = '',
   search = false,
+  stats = false,
 }: {
   rows: ExpandRow[];
   adSlot?: string;
   search?: boolean;
+  stats?: boolean; // province table: add Played / Won / Drawn / Lost / Win %
 }) {
   const [q, setQ] = useState('');
 
@@ -42,19 +43,25 @@ export default function RankingBoard({
         </div>
       )}
       <div className="rir-table-wrap">
-        <div className="rir-table-lockup">
-          <Logo variant="horizontal" height={36} />
-        </div>
         <table className="rir-table">
           <thead>
             <tr>
               <th className="rir-col-pos">Pos</th>
               <th>1st Team</th>
+              {stats && (
+                <>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>P</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>W</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>D</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>L</th>
+                  <th className="rir-col-win" style={{ textAlign: 'right' }}>Win %</th>
+                </>
+              )}
               <th className="rir-col-rating" style={{ textAlign: 'right' }}>Rating</th>
               <th className="rir-col-change" style={{ textAlign: 'right' }}>Change</th>
             </tr>
           </thead>
-          <RankingRows rows={filtered} adSlot={adSlot} />
+          <RankingRows rows={filtered} adSlot={adSlot} stats={stats} />
         </table>
         {search && filtered.length === 0 && (
           <div className="p-6 text-center text-sm" style={{ color: 'var(--body-2)' }}>

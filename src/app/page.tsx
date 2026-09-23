@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import { getSiteSettings } from '@/lib/data/siteSettings';
-import { getSportConfig } from '@/lib/data/config';
 import { getPage } from '@/lib/data/pages';
 import { getStandings, getSiteBuild, schoolSlug } from '@/lib/store/read';
-import { getCurrentSeason, withSeason } from '@/lib/season';
+import { getCurrentSeason, withSeason, seasonYears } from '@/lib/season';
 import { DEFAULT_AD_SLOTS } from '@/lib/adsense';
 import { RichText } from '@/lib/content';
 import { rankingShortcodes } from '@/components/rankingShortcodes';
-import RankingTabs from '@/components/RankingTabs';
+import RankingScopeNav from '@/components/RankingScopeNav';
 import RankingTable, { LastUpdatedLine } from '@/components/RankingTable';
+import SponsorBand from '@/components/SponsorBand';
 import MatchPulseCTA from '@/components/MatchPulseCTA';
 import StoriesStrip from '@/components/StoriesStrip';
 import AdUnit from '@/components/AdUnit';
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: withSeason(site.seoTitle || 'South African School Rugby Rankings {season} | Rugby Ignite', season),
     description: withSeason(
       site.seoDescription ||
-        'Every South African school first team rated 0–100 on the Ignite Rating. Tap a school to see the match that moved its rating.',
+        "South African school rugby rankings for every first team, powered by a points-exchange system modelled on World Rugby's. See each school's rating, weekly movement and the match that last moved it.",
       season,
     ),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
@@ -33,17 +33,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [site, config, page, build] = await Promise.all([
+  const [site, page, build] = await Promise.all([
     getSiteSettings(),
-    getSportConfig('rugby'),
     getPage('home'),
     getSiteBuild(),
   ]);
   const season = getCurrentSeason();
   const bottom = site.adsense?.slotBottom ?? DEFAULT_AD_SLOTS.bottom;
 
-  // Every season present in the data, plus the current one, oldest → newest.
-  const years = Array.from(new Set([...build.seasons, season])).sort((a, b) => a.localeCompare(b));
+  // Every season year gets its own page (/rankings/{year}); this is the All-Time
+  // page, so the scope nav links out to each of them. Newest first.
+  const years = seasonYears(build.seasons).map((year) => ({ year, href: `/rankings/${year}` }));
 
   // Structured data (top 25), mirroring the visible table.
   const master = await getStandings('master');
@@ -72,24 +72,20 @@ export default async function HomePage() {
         </div>
         <h1 className="text-4xl">South African School Rugby Rankings</h1>
         <p className="text-sm" style={{ color: 'var(--body-2)', maxWidth: '60ch' }}>
-          Every first team rated 0 to 100. Tap a school to see the match that moved its rating.
+          Every South African school first team, ranked with a points-exchange
+          system modelled on World Rugby&apos;s: schools trade rating points with
+          every result — win and you take points off your opponent, lose and you
+          give them up. Tap any school to see the match that last moved it.
         </p>
       </div>
 
-      <RankingTabs
-        master={{
-          heading: withSeason(config.masterHeading, season),
-          intro: withSeason(config.masterIntro, season),
-          table: <RankingTable track="master" ads search />,
-        }}
-        season={{
-          heading: withSeason(config.seasonHeading, season),
-          intro: withSeason(config.seasonIntro, season),
-          years: years.map((year) => ({ year, table: <RankingTable track="season" season={year} ads search /> })),
-        }}
-        lastUpdated={<LastUpdatedLine />}
-        headingLevel="h2"
-      />
+      <SponsorBand />
+
+      <div className="space-y-4">
+        <RankingScopeNav allTimeHref="/" years={years} active="all" />
+        <LastUpdatedLine />
+        <RankingTable track="master" ads search />
+      </div>
 
       {bottom && (
         <div className="rir-ad" aria-label="Advertisement">
