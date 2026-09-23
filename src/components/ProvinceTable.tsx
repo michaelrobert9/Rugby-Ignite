@@ -4,7 +4,6 @@
 import { getCachedSportData } from '@/lib/matchpulse/cachedSource';
 import { computeProvinceTable, provinceByKey } from '@/lib/matchpulse/provinces';
 import { getCurrentSeason } from '@/lib/season';
-import { rankClass } from './rankingCells';
 import { TeamCell } from './TeamCell';
 
 export default async function ProvinceTable({
@@ -37,7 +36,7 @@ export default async function ProvinceTable({
         <thead>
           <tr>
             <th className="rir-col-pos">Pos</th>
-            <th>Team</th>
+            <th>1st Team</th>
             <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>P</th>
             <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>W</th>
             <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>D</th>
@@ -47,14 +46,14 @@ export default async function ProvinceTable({
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.entityId} className={rankClass(i)}>
-              <td className="rir-data font-semibold">{i + 1}</td>
+            <tr key={r.entityId}>
+              <td>{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
               <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.played}</td>
               <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.wins}</td>
               <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.draws}</td>
               <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.losses}</td>
-              <td className="rir-data font-semibold rir-col-win" style={{ textAlign: 'right' }}>{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-rating rir-col-win" style={{ textAlign: 'right', color: i === 0 ? 'var(--ember-deep)' : 'var(--ink)' }}>{r.winPercent.toFixed(1)}%</td>
             </tr>
           ))}
         </tbody>
