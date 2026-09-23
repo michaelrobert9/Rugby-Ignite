@@ -1,17 +1,46 @@
-// A generated story at /{season}/{slug} (Website Brief §03). Frozen at
-// publication and never edited; a later correction adds a banner only. The
-// first path segment is the season, the second the story slug.
+// Two things live at /{a}/{b}:
+//   1. A province SEASON ranking, when {a} is a province page and {b} is a year
+//      (e.g. /gauteng-school-rugby-ranking/2026). Mirrors the home season pages.
+//   2. Otherwise, a generated story at /{season}/{slug} (Website Brief §03),
+//      frozen at publication and never edited; a correction adds a banner only.
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { readArticle } from '@/lib/store/stateStore';
+import { getPage } from '@/lib/data/pages';
+import { RichText } from '@/lib/content';
+import { provincePageShortcodes } from '@/components/rankingShortcodes';
+import MatchPulseCTA from '@/components/MatchPulseCTA';
+import { getSiteBuild } from '@/lib/store/read';
+import { PROVINCES } from '@/lib/matchpulse/provinces';
+import { withSeason, seasonYears } from '@/lib/season';
 import { MATCHPULSE } from '@/lib/matchpulseLinks';
 
 export const dynamic = 'force-dynamic';
 
+const PROVINCE_NAMES = new Set(PROVINCES.map((p) => p.name));
+
+// Is /{slug}/{story} a province page + a known season year?
+async function provinceSeason(slug: string, story: string) {
+  if (!/^\d{4}$/.test(story)) return null;
+  const page = await getPage(slug);
+  // rankingScope is a province NAME only on province pages (home/method use 'master').
+  if (!page || !PROVINCE_NAMES.has(page.rankingScope)) return null;
+  const build = await getSiteBuild();
+  if (!seasonYears(build.seasons).includes(story)) return null;
+  return page;
+}
+
 export async function generateMetadata(props: PageProps<'/[slug]/[story]'>): Promise<Metadata> {
   const { slug, story } = await props.params;
+  const page = await provinceSeason(slug, story);
+  if (page) {
+    return {
+      title: `${withSeason(page.title, story)} ${story} | Rugby Ignite`,
+      description: withSeason(page.metaDescription, story),
+    };
+  }
   const a = await readArticle(`${slug}/${story}`);
   if (!a) return {};
   return { title: `${a.title} | Rugby Ignite`, description: a.lead };
@@ -19,6 +48,22 @@ export async function generateMetadata(props: PageProps<'/[slug]/[story]'>): Pro
 
 export default async function StoryPage(props: PageProps<'/[slug]/[story]'>) {
   const { slug, story } = await props.params;
+
+  // 1. Province season ranking page.
+  const page = await provinceSeason(slug, story);
+  if (page) {
+    return (
+      <div className="rir-container py-8">
+        <div className="space-y-5" style={{ maxWidth: '52rem' }}>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, story)}</h1>
+          <RichText body={withSeason(page.body, story)} renderShortcode={provincePageShortcodes(slug, story)} />
+          <MatchPulseCTA />
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Generated story.
   const a = await readArticle(`${slug}/${story}`);
   if (!a) notFound();
 

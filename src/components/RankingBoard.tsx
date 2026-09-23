@@ -43,7 +43,7 @@ export default function RankingBoard({
         </div>
       )}
       <div className="rir-table-wrap">
-        <table className="rir-table">
+        <table className={`rir-table${stats ? ' rir-table--stats' : ''}`}>
           <thead>
             <tr>
               <th className="rir-col-pos">Pos</th>

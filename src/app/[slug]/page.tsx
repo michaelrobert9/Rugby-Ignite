@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getPage } from '@/lib/data/pages';
 import { RichText } from '@/lib/content';
-import { rankingShortcodes } from '@/components/rankingShortcodes';
+import { provincePageShortcodes } from '@/components/rankingShortcodes';
 import MatchPulseCTA from '@/components/MatchPulseCTA';
 import { getCurrentSeason, withSeason } from '@/lib/season';
 
@@ -28,7 +28,7 @@ export default async function CmsPage(props: PageProps<'/[slug]'>) {
     <div className="rir-container py-8">
       <div className="space-y-5" style={{ maxWidth: '52rem' }}>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, season)}</h1>
-        <RichText body={withSeason(page.body, season)} renderShortcode={rankingShortcodes} />
+        <RichText body={withSeason(page.body, season)} renderShortcode={provincePageShortcodes(slug, 'all')} />
         <MatchPulseCTA />
       </div>
     </div>

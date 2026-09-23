@@ -236,6 +236,37 @@ table.rir-table tbody tr:hover {
 .rir-col-win {
   width: 4rem;
 }
+/* The stats tables pack more columns, so tighter fixed widths keep POS small
+   and give the Team column room to breathe (mirrors the home layout). */
+.rir-table--stats .rir-col-pos {
+  width: 2.5rem;
+}
+.rir-table--stats .rir-col-stat {
+  width: 2.25rem;
+}
+.rir-table--stats .rir-col-win {
+  width: 3.75rem;
+}
+.rir-table--stats .rir-col-rating {
+  width: 4.75rem;
+}
+.rir-table--stats .rir-col-change {
+  width: 4.75rem;
+}
+@media (max-width: 480px) {
+  .rir-table--stats .rir-col-pos {
+    width: 2rem;
+  }
+  .rir-table--stats .rir-col-win {
+    width: 3.25rem;
+  }
+  .rir-table--stats .rir-col-rating {
+    width: 4rem;
+  }
+  .rir-table--stats .rir-col-change {
+    width: 4rem;
+  }
+}
 table.rir-table tbody td:nth-child(2) {
   white-space: normal;
   overflow-wrap: anywhere;

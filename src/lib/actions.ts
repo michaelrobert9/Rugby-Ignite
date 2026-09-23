@@ -117,14 +117,27 @@ export async function saveSiteSettingsAction(formData: FormData) {
 export async function saveSponsorAction(formData: FormData) {
   await assertAdmin();
   const current = await getSiteSettings();
-  await saveSiteSettings({
-    ...current,
-    sponsorName: str(formData, 'sponsorName'),
-    sponsorUrl: str(formData, 'sponsorUrl'),
-  });
+  const scope = str(formData, 'scope') || 'main'; // 'main' or a province key
+  const sponsor = {
+    name: str(formData, 'sponsorName'),
+    logoUrl: str(formData, 'sponsorLogoUrl'),
+    url: str(formData, 'sponsorUrl'),
+    label: str(formData, 'sponsorLabel'),
+  };
+
+  const next = { ...current };
+  if (scope === 'main') {
+    next.sponsor = sponsor;
+    // Keep the legacy flat fields in step so nothing else reads a stale sponsor.
+    next.sponsorName = sponsor.name;
+    next.sponsorUrl = sponsor.url;
+  } else {
+    next.provinceSponsors = { ...(current.provinceSponsors ?? {}), [scope]: sponsor };
+  }
+  await saveSiteSettings(next);
   // The band shows site-wide (home + province rankings), so refresh the layout.
   revalidatePath('/', 'layout');
-  redirect('/admin/sponsorship?saved=1');
+  redirect(`/admin/sponsorship?saved=1&scope=${encodeURIComponent(scope)}`);
 }
 
 export async function saveSeoAction(formData: FormData) {

@@ -1,11 +1,28 @@
-import { getSiteSettings } from '@/lib/data/siteSettings';
-import { saveSponsorAction } from '@/lib/actions';
+import { getSiteSettings, type Sponsor } from '@/lib/data/siteSettings';
+import { PROVINCES } from '@/lib/matchpulse/provinces';
+import SponsorshipEditor from './SponsorshipEditor';
 
 export const dynamic = 'force-dynamic';
+
+const EMPTY: Sponsor = { name: '', logoUrl: '', url: '', label: '' };
 
 export default async function SponsorshipSettingsPage(props: PageProps<'/admin/sponsorship'>) {
   const searchParams = await props.searchParams;
   const site = await getSiteSettings();
+
+  const mainSponsor: Sponsor =
+    site.sponsor ?? { name: site.sponsorName ?? '', logoUrl: '', url: site.sponsorUrl ?? '', label: '' };
+
+  const scopes = [
+    { key: 'main', label: 'Main', sponsor: mainSponsor },
+    ...PROVINCES.map((p) => ({
+      key: p.key,
+      label: p.name,
+      sponsor: site.provinceSponsors?.[p.key] ?? EMPTY,
+    })),
+  ];
+
+  const initialScope = typeof searchParams.scope === 'string' ? searchParams.scope : 'main';
 
   return (
     <div className="space-y-6">
@@ -18,53 +35,21 @@ export default async function SponsorshipSettingsPage(props: PageProps<'/admin/s
       <div>
         <h1 className="text-xl font-bold" style={{ color: 'var(--color-navy-900)' }}>Sponsorship</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-          The ranking naming partner. When set, a band — “In association with [Sponsor]” — appears between a
-          ranking&apos;s title and its table, on the home page and every province page. It never sits inside a row, a
-          rating, the logo or the nav. This is separate from and additional to AdSense.
+          The ranking naming partner. A band — “In association with [Sponsor]” — sits between a ranking&apos;s title
+          and its table. Set a <strong>Main</strong> sponsor for the home page (and as the default for every
+          province), or sell a single province to its own sponsor on that province&apos;s tab. Each sponsor can be a
+          name or an uploaded logo (via image URL), with its own lead-in text. Separate from and additional to
+          AdSense.
         </p>
       </div>
 
-      <form action={saveSponsorAction} className="space-y-6">
-        <div className="rir-card p-5 space-y-4">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
-              Sponsor name
-            </label>
-            <input className="rir-input" name="sponsorName" defaultValue={site.sponsorName ?? ''} placeholder="e.g. Acme Sports" />
-            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              Leave blank to hide the sponsor band everywhere.
-            </p>
-          </div>
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
-              Sponsor link (optional)
-            </label>
-            <input className="rir-input" name="sponsorUrl" defaultValue={site.sponsorUrl ?? ''} placeholder="https://sponsor.example" />
-            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              If set, the sponsor name links here (opens in a new tab). Leave blank for plain text.
-            </p>
-          </div>
-          <button type="submit" className="rir-btn rir-btn-primary">Save sponsorship</button>
-        </div>
-      </form>
-
-      <div className="rir-card p-5 text-sm space-y-2" style={{ color: 'var(--color-text-muted)' }}>
-        <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Live preview</h2>
-        {site.sponsorName?.trim() ? (
-          <p>
-            The band currently reads <strong>In association with {site.sponsorName.trim()}</strong>
-            {site.sponsorUrl?.trim() ? <> (linked to {site.sponsorUrl.trim()})</> : null}.
-          </p>
-        ) : (
-          <p>No sponsor set — the band is hidden. Add a name above to show it.</p>
-        )}
-      </div>
+      <SponsorshipEditor scopes={scopes} initialScope={initialScope} />
 
       <div className="rir-card p-5 text-sm space-y-2" style={{ color: 'var(--color-text-muted)' }}>
         <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Coming later: paid sponsorship</h2>
         <p>
-          A payment gateway can be added here so a sponsor can pay for the naming slot directly. Not built yet —
-          for now, set the name and link manually above when a sponsor comes on board.
+          A payment gateway can be added here so a sponsor can pay for a naming slot (main or a specific province)
+          directly. Not built yet — for now, set the name/logo and link manually when a sponsor comes on board.
         </p>
       </div>
     </div>
