@@ -1,11 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Logo from './Logo';
 import RankingRows, { type ExpandRow } from './RankingRows';
 
-// The ranking board: an optional search field above the table, then the lockup
-// and the four-column table. Search matches every way a school is written
+// The ranking board: an optional search field above the four-column table.
+// Search matches every way a school is written
 // (Paarl Gim, Gimnasium, Gym) so it can replace a browse tree and an A–Z. The
 // province filter is applied server-side; positions stay national.
 export default function RankingBoard({
@@ -42,9 +41,6 @@ export default function RankingBoard({
         </div>
       )}
       <div className="rir-table-wrap">
-        <div className="rir-table-lockup">
-          <Logo variant="horizontal" height={36} />
-        </div>
         <table className="rir-table">
           <thead>
             <tr>

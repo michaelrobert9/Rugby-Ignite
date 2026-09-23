@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: withSeason(site.seoTitle || 'South African School Rugby Rankings {season} | Rugby Ignite', season),
     description: withSeason(
       site.seoDescription ||
-        'Every South African school first team rated 0–100 on the Ignite Rating. Tap a school to see the match that moved its rating.',
+        "South African school rugby rankings for every first team, powered by a points-exchange system modelled on World Rugby's. See each school's rating, weekly movement and the match that last moved it.",
       season,
     ),
     keywords: site.seoKeywords ? withSeason(site.seoKeywords, season) : undefined,
@@ -72,7 +72,10 @@ export default async function HomePage() {
         </div>
         <h1 className="text-4xl">South African School Rugby Rankings</h1>
         <p className="text-sm" style={{ color: 'var(--body-2)', maxWidth: '60ch' }}>
-          Every first team rated 0 to 100. Tap a school to see the match that moved its rating.
+          Every South African school first team, ranked with a points-exchange
+          system modelled on World Rugby&apos;s: schools trade rating points with
+          every result — win and you take points off your opponent, lose and you
+          give them up. Tap any school to see the match that last moved it.
         </p>
       </div>
 
