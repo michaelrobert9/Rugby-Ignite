@@ -33,16 +33,16 @@ export default async function ProvinceTable({
 
   return (
     <div className="rir-table-wrap">
-      <table className="rir-table">
+      <table className="rir-table rir-table--stats">
         <thead>
           <tr>
-            <th>Pos</th>
+            <th className="rir-col-pos">Pos</th>
             <th>Team</th>
-            <th className="rir-col-sec">P</th>
-            <th className="rir-col-wdl">W</th>
-            <th className="rir-col-wdl">D</th>
-            <th className="rir-col-wdl">L</th>
-            <th>Win%</th>
+            <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>P</th>
+            <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>W</th>
+            <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>D</th>
+            <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>L</th>
+            <th className="rir-col-win" style={{ textAlign: 'right' }}>Win %</th>
           </tr>
         </thead>
         <tbody>
@@ -50,11 +50,11 @@ export default async function ProvinceTable({
             <tr key={r.entityId} className={rankClass(i)}>
               <td className="rir-data font-semibold">{i + 1}</td>
               <td><TeamCell name={r.name} logoUrl={r.logoUrl} primaryColor={r.primaryColor} /></td>
-              <td className="rir-data rir-dim rir-col-sec">{r.played}</td>
-              <td className="rir-data rir-dim rir-col-wdl">{r.wins}</td>
-              <td className="rir-data rir-dim rir-col-wdl">{r.draws}</td>
-              <td className="rir-data rir-dim rir-col-wdl">{r.losses}</td>
-              <td className="rir-data font-semibold">{r.winPercent.toFixed(1)}%</td>
+              <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.played}</td>
+              <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.wins}</td>
+              <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.draws}</td>
+              <td className="rir-data rir-dim rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>{r.losses}</td>
+              <td className="rir-data font-semibold rir-col-win" style={{ textAlign: 'right' }}>{r.winPercent.toFixed(1)}%</td>
             </tr>
           ))}
         </tbody>

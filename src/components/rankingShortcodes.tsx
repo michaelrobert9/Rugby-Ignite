@@ -2,6 +2,7 @@ import type { ShortcodeRenderer } from '@/lib/content';
 import RankingTable, { LastUpdatedLine } from './RankingTable';
 import ProvinceTable from './ProvinceTable';
 import ProvinceRankingTabs from './ProvinceRankingTabs';
+import ProvinceRankingView from './ProvinceRankingView';
 import AdCard from './AdCard';
 
 // Shortcodes usable in editable page bodies:
@@ -31,3 +32,16 @@ export const rankingShortcodes: ShortcodeRenderer = (name, attrs, key) => {
   }
   return null;
 };
+
+// Shortcode renderer for a province PAGE: the [province_tabs] shortcode becomes
+// the home-style scope view (All-Time + one link per year, real URLs) for the
+// given scope. `slug` is the province page's own path (for the year links);
+// `active` is 'all' or a season year. All other shortcodes fall through.
+export function provincePageShortcodes(slug: string, active: 'all' | string): ShortcodeRenderer {
+  return (name, attrs, key) => {
+    if (name === 'province_tabs') {
+      return <ProvinceRankingView key={key} province={attrs.province ?? ''} slug={slug} active={active} />;
+    }
+    return rankingShortcodes(name, attrs, key);
+  };
+}

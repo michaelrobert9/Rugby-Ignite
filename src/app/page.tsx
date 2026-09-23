@@ -41,9 +41,9 @@ export default async function HomePage() {
   const season = getCurrentSeason();
   const bottom = site.adsense?.slotBottom ?? DEFAULT_AD_SLOTS.bottom;
 
-  // Every season year gets its own page (/rankings/{year}); this is the All-Time
-  // page, so the scope nav links out to each of them. Newest first.
-  const years = seasonYears(build.seasons).map((year) => ({ year, href: `/rankings/${year}` }));
+  // Every season year gets its own page (/school-rugby-rankings/{year}); this is
+  // the All-Time page, so the scope nav links out to each of them. Newest first.
+  const years = seasonYears(build.seasons).map((year) => ({ year, href: `/school-rugby-rankings/${year}` }));
 
   // Structured data (top 25), mirroring the visible table.
   const master = await getStandings('master');

@@ -1,17 +1,20 @@
-// The ranking sponsor band — Brand Book v7.0: a naming partner sits between the
-// page title and the table, never inside a row, a rating, the mark or the nav.
-// It collapses to nothing when no sponsor is set. This is an ADDITIONAL revenue
-// stream alongside AdSense (owner decision, 2026-09-18), not a replacement.
+// The ranking sponsor band — a naming partner between the page title and the
+// table, never inside a row, a rating, the mark or the nav. It collapses to
+// nothing when no sponsor is set. Additional to AdSense, not a replacement.
+//
+// Pass `province` (a province key) on a province page: that province's own
+// sponsor shows if set, otherwise it inherits the main sponsor. A sponsor may be
+// a logo image (logoUrl) or plain text (name), with an editable lead-in label.
 
-import { getSiteSettings } from '@/lib/data/siteSettings';
+import { getSiteSettings, resolveSponsor } from '@/lib/data/siteSettings';
 
-export default async function SponsorBand() {
+export default async function SponsorBand({ province }: { province?: string }) {
   const site = await getSiteSettings();
-  const name = site.sponsorName?.trim();
-  if (!name) return null; // band collapses when empty
+  const s = resolveSponsor(site, province);
+  if (!s) return null; // band collapses when empty
 
-  const label = (
-    <>
+  const content = (
+    <div className="flex items-center gap-3" style={{ flexWrap: 'wrap' }}>
       <span
         style={{
           fontFamily: 'var(--font-sans)',
@@ -23,34 +26,40 @@ export default async function SponsorBand() {
           flex: 'none',
         }}
       >
-        In association with
+        {s.label}
       </span>
-      <span
-        style={{
-          fontFamily: 'var(--font-sans)',
-          fontWeight: 600,
-          fontSize: 13,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'var(--coal)',
-        }}
-      >
-        {name}
-      </span>
-    </>
+      {s.logoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={s.logoUrl}
+          alt={s.name || 'Sponsor'}
+          style={{ height: 30, width: 'auto', maxWidth: 200, objectFit: 'contain', display: 'block' }}
+        />
+      ) : (
+        <span
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontWeight: 600,
+            fontSize: 13,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: 'var(--coal)',
+          }}
+        >
+          {s.name}
+        </span>
+      )}
+    </div>
   );
 
   return (
-    <div
-      className="flex items-center gap-3"
-      style={{ padding: '13px 0', borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}
-    >
-      {site.sponsorUrl?.trim() ? (
-        <a href={site.sponsorUrl.trim()} target="_blank" rel="noopener" className="flex items-center gap-3">
-          {label}
+    <div style={{ padding: '13px 0', borderTop: '1px solid var(--rule)', borderBottom: '1px solid var(--rule)' }}>
+      {s.url ? (
+        <a href={s.url} target="_blank" rel="noopener" aria-label={s.name || 'Sponsor'}>
+          {content}
         </a>
       ) : (
-        label
+        content
       )}
     </div>
   );

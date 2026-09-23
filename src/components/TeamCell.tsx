@@ -12,7 +12,7 @@ export function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUr
   const showLogo = Boolean(logoUrl) && !failed;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
       {showLogo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -35,7 +35,7 @@ export function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUr
           {monogram(name)}
         </span>
       )}
-      <span className="font-medium" style={{ color: 'var(--color-navy-900)' }}>{name}</span>
+      <span className="font-medium" style={{ color: 'var(--color-navy-900)', minWidth: 0, overflowWrap: 'anywhere', lineHeight: 1.25 }}>{name}</span>
     </div>
   );
 }

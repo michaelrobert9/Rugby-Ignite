@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import RankingTable, { LastUpdatedLine } from '@/components/RankingTable';
-import RankingScopeNav from '@/components/RankingScopeNav';
+import RankingTable from '@/components/RankingTable';
 import SponsorBand from '@/components/SponsorBand';
 import { provinceByKey } from '@/lib/matchpulse/provinces';
-import { getSiteBuild } from '@/lib/store/read';
-import { getCurrentSeason, withSeason, seasonYears } from '@/lib/season';
+import { getCurrentSeason, withSeason } from '@/lib/season';
 
 export const dynamic = 'force-dynamic';
 
+// A secondary, national-order view of one province's teams (ratings-based).
+// The main province experience — win %, All-Time/Season, per-year pages — lives
+// on the editable province pages (e.g. /gauteng-school-rugby-ranking).
 export async function generateMetadata(props: PageProps<'/ranking/[province]'>): Promise<Metadata> {
   const { province } = await props.params;
   const def = provinceByKey(province);
@@ -26,9 +27,6 @@ export default async function ProvinceRankingPage(props: PageProps<'/ranking/[pr
   const def = provinceByKey(province);
   if (!def) notFound();
 
-  const build = await getSiteBuild();
-  const years = seasonYears(build.seasons).map((year) => ({ year, href: `/ranking/${province}/${year}` }));
-
   return (
     <div className="rir-container py-8 space-y-5">
       <div className="space-y-1">
@@ -42,13 +40,9 @@ export default async function ProvinceRankingPage(props: PageProps<'/ranking/[pr
         </p>
       </div>
 
-      <SponsorBand />
+      <SponsorBand province={province} />
 
-      <div className="space-y-4">
-        <RankingScopeNav allTimeHref={`/ranking/${province}`} years={years} active="all" />
-        <LastUpdatedLine />
-        <RankingTable track="master" province={def.name} stats />
-      </div>
+      <RankingTable track="master" province={def.name} />
     </div>
   );
 }
