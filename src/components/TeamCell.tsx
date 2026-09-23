@@ -21,13 +21,13 @@ export function TeamCell({ name, logoUrl, primaryColor }: { name: string; logoUr
           width={24}
           height={24}
           onError={() => setFailed(true)}
-          style={{ width: 24, height: 24, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }}
+          style={{ width: 24, height: 24, objectFit: 'contain', flexShrink: 0 }}
         />
       ) : (
         <span
           aria-hidden
           style={{
-            width: 24, height: 24, borderRadius: 4, flexShrink: 0,
+            width: 24, height: 24, flexShrink: 0,
             background: primaryColor || 'var(--night)', color: 'var(--chalk)',
             fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           }}
