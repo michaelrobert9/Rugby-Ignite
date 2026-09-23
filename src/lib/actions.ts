@@ -104,12 +104,27 @@ export async function saveSiteSettingsAction(formData: FormData) {
       slotMid: str(formData, 'slotMid').replace(/\D/g, ''),
       slotBottom: str(formData, 'slotBottom').replace(/\D/g, ''),
     },
-    sponsorName: str(formData, 'sponsorName'),
-    sponsorUrl: str(formData, 'sponsorUrl'),
+    // sponsorName / sponsorUrl are managed on the Sponsorship tab; leaving them
+    // out here (rather than reading absent fields as '') preserves them.
   });
   revalidatePath('/', 'layout');
   revalidatePath('/ads.txt');
   redirect('/admin/ads?saved=1');
+}
+
+// ---------------- Sponsorship (ranking naming partner) ----------------
+
+export async function saveSponsorAction(formData: FormData) {
+  await assertAdmin();
+  const current = await getSiteSettings();
+  await saveSiteSettings({
+    ...current,
+    sponsorName: str(formData, 'sponsorName'),
+    sponsorUrl: str(formData, 'sponsorUrl'),
+  });
+  // The band shows site-wide (home + province rankings), so refresh the layout.
+  revalidatePath('/', 'layout');
+  redirect('/admin/sponsorship?saved=1');
 }
 
 export async function saveSeoAction(formData: FormData) {

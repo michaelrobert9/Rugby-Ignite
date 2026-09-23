@@ -15,3 +15,9 @@ export function getCurrentSeason(): string {
 export function withSeason(text: string, season: string = getCurrentSeason()): string {
   return text.replace(/\{season\}/gi, season).replace(/\{year\}/gi, season);
 }
+
+/** Every season year to publish as its own page — the years present in the data
+ *  plus the current one — newest first (the order the year links appear in). */
+export function seasonYears(buildSeasons: string[]): string[] {
+  return Array.from(new Set([...buildSeasons, getCurrentSeason()])).sort((a, b) => b.localeCompare(a));
+}

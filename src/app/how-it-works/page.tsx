@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'How a school gets its rating — Method | Rugby Ignite',
   description:
-    'The points-exchange method behind the Ignite Rating, adapted for school rugby. Every number on this page is printed from the live configuration, so the published method can never drift from the calculator.',
+    'The points-exchange method behind the Ignite Rating, explained in plain terms — baseline rating, K factor, rating divisor, margin and more — adapted for South African school rugby.',
 };
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -18,8 +18,41 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+// Plain-English definitions of the method's terms — deliberately NO configured
+// values (owner decision: explain the ideas, don't publish the numbers).
+const TERMS: Array<{ term: string; body: string }> = [
+  {
+    term: 'Baseline rating',
+    body: 'The score every school starts from before any results are counted — a common starting line so ratings are comparable from day one.',
+  },
+  {
+    term: 'K factor',
+    body: 'How much a single result can move a rating. A bigger K makes ratings react faster to recent matches; a smaller one keeps them steady. The all-time rating moves more slowly than a single season, which is livelier.',
+  },
+  {
+    term: 'Rating divisor',
+    body: 'Sets how much the gap between two teams matters before kick-off. It turns the difference in ratings into an expected result, so beating a stronger side is worth more than beating a weaker one.',
+  },
+  {
+    term: 'Margin',
+    body: 'A comfortable winning margin can earn a little extra, but only past a sensible threshold and with the bonus capped — so a record scoreline nudges the rating without distorting the table.',
+  },
+  {
+    term: 'Upset bonus',
+    body: 'Beating a much higher-rated school is rewarded above an expected win, because the result tells you more about both teams.',
+  },
+  {
+    term: 'Safety cap',
+    body: 'A limit on how far one match can move a rating, so no single result — however unusual — overwhelms a whole season of form.',
+  },
+  {
+    term: 'Season seed',
+    body: 'At the start of each season every school is seeded from its all-time strength, so a new year does not begin from a blank slate.',
+  },
+];
+
 export default async function HowItWorksPage() {
-  const { config, meta } = await getMethod();
+  const { meta } = await getMethod();
 
   // Worked example: the leader's most recent rated fixture (a real one beats an
   // invented one, and it proves the calculator and the page agree).
@@ -38,12 +71,8 @@ export default async function HowItWorksPage() {
       a: 'The method rewards the quality of a result, not just the fact of a win. Points move between the two teams, and how many move depends on the gap between them before kick-off.',
     },
     {
-      q: 'What is the Ignite Rating out of?',
-      a: 'Every school is rated on a 0–100 scale, starting from a baseline of ' + config.baselineRating + '. Whatever one side gains in a match, the other loses.',
-    },
-    {
-      q: 'What is Form Heat?',
-      a: 'A 0–100 reading of recent form over a school’s last ' + meta.heat.window + ' rated fixtures — opponent-weighted, so a good run against strong sides reads hottest. It is separate from the rating: a mid-table school can be the hottest side in the country.',
+      q: 'What does the rating actually measure?',
+      a: 'A school’s strength relative to everyone else. Every school shares one starting baseline, and whatever one side gains in a match the other loses — so the ratings stay anchored to each other over time. It is not a mark out of 100.',
     },
     {
       q: 'Is it official?',
@@ -54,7 +83,7 @@ export default async function HowItWorksPage() {
   return (
     <div className="rir-container py-8">
       <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--body-2)' }}>
-        Method v{meta.version} · published {meta.publishedAt} · rendered from the live configuration
+        Method v{meta.version} · published {meta.publishedAt}
       </div>
       <h1 className="text-3xl" style={{ margin: '9px 0 8px', maxWidth: '22ch' }}>How a school gets its rating</h1>
       <p className="text-base" style={{ maxWidth: '60ch', lineHeight: 1.7 }}>
@@ -64,12 +93,12 @@ export default async function HowItWorksPage() {
 
       <div className="rir-card" style={{ background: 'var(--navy)', padding: 22, margin: '22px 0' }}>
         <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--ember)' }}>
-          Why this page cannot go out of date
+          One method, applied to every result
         </div>
         <p style={{ margin: '11px 0 0', fontSize: 15.5, lineHeight: 1.7, color: 'var(--on-coal)', maxWidth: '76ch' }}>
-          Every number here is printed from the same configuration the calculator reads. Change a setting and this
-          page changes with it, in the same deploy. There is no prose describing the method that a human could
-          forget to update.
+          Every school is measured the same way, from the same starting point. The worked example below is
+          recomputed on every deploy straight from the live calculator, so what you read here always matches the
+          ranking you see on the site.
         </p>
       </div>
 
@@ -86,18 +115,15 @@ export default async function HowItWorksPage() {
         <div className="flex flex-col" style={{ gap: 18 }}>
           <div className="rir-card" style={{ padding: 22, borderColor: 'var(--coal)' }}>
             <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--body-2)' }}>
-              The method, in numbers
+              The method, in plain terms
             </div>
-            <div style={{ marginTop: 12 }}>
-              <Row label="BASELINE RATING" value={String(config.baselineRating)} />
-              <Row label="K FACTOR (ALL-TIME)" value={`×${config.kMaster}`} />
-              <Row label="K FACTOR (SEASON)" value={`×${config.kSeason}`} />
-              <Row label="RATING DIVISOR" value={String(config.ratingDivisor)} />
-              <Row label="MARGIN THRESHOLD" value={`${config.masterMarginThreshold} pts`} />
-              <Row label="MARGIN MULTIPLIER" value={`×${config.masterMarginMultiplier}`} />
-              <Row label="SAFETY CAP (ALL-TIME)" value={String(config.masterSafetyCap)} />
-              <Row label="SEASON SEED FACTOR" value={String(config.seedFactor)} />
-              <Row label="FORM HEAT WINDOW" value={`${meta.heat.window} fixtures`} />
+            <div className="flex flex-col" style={{ marginTop: 14, gap: 14 }}>
+              {TERMS.map((t) => (
+                <div key={t.term}>
+                  <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 13, color: 'var(--coal)' }}>{t.term}</div>
+                  <p className="text-sm" style={{ marginTop: 3, lineHeight: 1.6 }}>{t.body}</p>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -131,20 +157,6 @@ export default async function HowItWorksPage() {
                   v{c.version} · {c.date} · {c.note}
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="rir-card" style={{ padding: 22 }}>
-            <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--body-2)' }}>
-              Custody
-            </div>
-            <p className="text-sm" style={{ marginTop: 11, lineHeight: 1.7 }}>
-              The method and the sentence templates change only with the custodian&apos;s sign-off, and sponsorship
-              cannot influence a rating.
-            </p>
-            <div className="rir-subline" style={{ marginTop: 12, borderTop: '1px solid var(--rule)', paddingTop: 11, lineHeight: 1.9 }}>
-              Brand custodian · {meta.brandCustodian}<br />
-              Method custodian · {meta.methodCustodian}
             </div>
           </div>
         </div>

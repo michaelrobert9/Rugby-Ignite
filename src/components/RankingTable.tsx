@@ -50,6 +50,7 @@ export default async function RankingTable({
   ads = false,
   province,
   search = false,
+  stats = false,
 }: {
   track?: 'season' | 'master';
   season?: string;
@@ -57,6 +58,7 @@ export default async function RankingTable({
   ads?: boolean;
   province?: string;
   search?: boolean;
+  stats?: boolean; // add Played / Won / Drawn / Lost / Win % (province tables)
 }) {
   const scope = track === 'master' ? 'master' : season || getCurrentSeason();
   const build = await getSiteBuild();
@@ -95,6 +97,11 @@ export default async function RankingTable({
       citationHref: lm?.matchHref ?? MATCHPULSE.rugby,
       seasonOpen: season ? season.startingRating : null,
       seasonNow: season ? season.rating : null,
+      played: r.played,
+      wins: r.wins,
+      draws: r.draws,
+      losses: r.losses,
+      winPercent: r.winPercent,
     };
   });
 
@@ -103,5 +110,5 @@ export default async function RankingTable({
 
   const slot = ads ? site?.adsense?.slotMid ?? DEFAULT_AD_SLOTS.mid : '';
 
-  return <RankingBoard rows={rows} adSlot={slot} search={search} />;
+  return <RankingBoard rows={rows} adSlot={slot} search={search} stats={stats} />;
 }

@@ -11,10 +11,12 @@ export default function RankingBoard({
   rows,
   adSlot = '',
   search = false,
+  stats = false,
 }: {
   rows: ExpandRow[];
   adSlot?: string;
   search?: boolean;
+  stats?: boolean; // province table: add Played / Won / Drawn / Lost / Win %
 }) {
   const [q, setQ] = useState('');
 
@@ -46,11 +48,20 @@ export default function RankingBoard({
             <tr>
               <th className="rir-col-pos">Pos</th>
               <th>1st Team</th>
+              {stats && (
+                <>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>P</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>W</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>D</th>
+                  <th className="rir-col-pwdl rir-col-stat" style={{ textAlign: 'right' }}>L</th>
+                  <th className="rir-col-win" style={{ textAlign: 'right' }}>Win %</th>
+                </>
+              )}
               <th className="rir-col-rating" style={{ textAlign: 'right' }}>Rating</th>
               <th className="rir-col-change" style={{ textAlign: 'right' }}>Change</th>
             </tr>
           </thead>
-          <RankingRows rows={filtered} adSlot={adSlot} />
+          <RankingRows rows={filtered} adSlot={adSlot} stats={stats} />
         </table>
         {search && filtered.length === 0 && (
           <div className="p-6 text-center text-sm" style={{ color: 'var(--body-2)' }}>

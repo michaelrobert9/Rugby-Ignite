@@ -140,6 +140,32 @@ a.rir-link,
   border-radius: var(--radius);
 }
 
+/* Scope switcher (All-Time + one link per season year). A quiet row of tabs;
+   the active one carries the Ember Deep underline. Wraps on narrow screens. */
+.rir-scope-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.rir-scope-link {
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--body-2);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+.rir-scope-link:hover {
+  color: var(--ink);
+}
+.rir-scope-link.is-active {
+  color: var(--ink);
+  border-bottom-color: var(--ember-deep);
+}
+
 /* The ranking table is the brand in practice. Crisp, no rounding. */
 .rir-table-wrap {
   overflow-x: auto;
@@ -203,10 +229,26 @@ table.rir-table tbody tr:hover {
 .rir-col-change {
   width: 6rem;
 }
+/* Province ("stats") table extra columns: Played / Won / Drawn / Lost / Win %. */
+.rir-col-stat {
+  width: 2.75rem;
+}
+.rir-col-win {
+  width: 4rem;
+}
 table.rir-table tbody td:nth-child(2) {
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Province table gets cramped once the record columns are in. Below 768px drop
+   Played / Won / Drawn / Lost but KEEP Win % (owner decision) so the table stays
+   readable on phones and small tablets. */
+@media (max-width: 768px) {
+  .rir-col-pwdl {
+    display: none;
+  }
 }
 
 /* Phones: the four columns must fit without a horizontal scroll. Trim the cell
