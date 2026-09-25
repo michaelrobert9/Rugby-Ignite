@@ -152,6 +152,9 @@ export async function saveSeoAction(formData: FormData) {
     seoKeywords: str(formData, 'seoKeywords'),
     // Google Analytics measurement id — keep only the id characters (G-…, UA-…, AW-…).
     gaMeasurementId: str(formData, 'gaMeasurementId').replace(/[^A-Za-z0-9-]/g, ''),
+    // StatCounter: project id is digits; security code is alphanumeric.
+    statCounterProject: str(formData, 'statCounterProject').replace(/\D/g, ''),
+    statCounterSecurity: str(formData, 'statCounterSecurity').replace(/[^A-Za-z0-9]/g, ''),
   });
   revalidatePath('/', 'layout');
   redirect('/admin/seo?saved=1');

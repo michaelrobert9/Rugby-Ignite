@@ -20,6 +20,9 @@ export interface SiteSettings {
   seoKeywords: string;
   /** Google Analytics measurement id (e.g. "G-XXXXXXXXXX"). Empty = analytics off. */
   gaMeasurementId?: string;
+  /** StatCounter project id (digits) and security code. Both required for it to load. */
+  statCounterProject?: string;
+  statCounterSecurity?: string;
   /** Ranking sponsor (main): shown in the band between the page title and the
    *  table, always on the home page. */
   sponsor?: Sponsor;
@@ -103,6 +106,8 @@ const DEFAULTS: SiteSettings = {
   seoKeywords:
     'school rugby rankings, South African school rugby, first team rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
   gaMeasurementId: '',
+  statCounterProject: '',
+  statCounterSecurity: '',
   sponsor: { name: '', logoUrl: '', url: '', label: '' },
   sponsorEverywhere: true,
   provinceSponsors: {},

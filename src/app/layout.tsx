@@ -10,6 +10,7 @@ import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 import Analytics from "@/components/Analytics";
+import StatCounter from "@/components/StatCounter";
 import Logo from "@/components/Logo";
 
 // Route for a nav page: home -> '/', otherwise its stored slug.
@@ -72,6 +73,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Google Analytics (GA4) — loads only when a measurement id is set, and
             not in the admin area. */}
         <Analytics id={site.gaMeasurementId ?? ""} />
+        <StatCounter project={site.statCounterProject ?? ""} security={site.statCounterSecurity ?? ""} />
         <header className="relative" style={{ background: "var(--paper)", borderBottom: "1px solid var(--rule)" }}>
           {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
           <div className="rir-container flex items-center py-4">

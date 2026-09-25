@@ -41,6 +41,21 @@ export default async function SeoSettingsPage(props: PageProps<'/admin/seo'>) {
               (except the admin area). Leave blank to turn analytics off.
             </p>
           </div>
+          <div style={{ borderTop: '1px solid var(--rule)', paddingTop: 16 }}>
+            <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>
+              StatCounter
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input className="rir-input" name="statCounterProject" defaultValue={site.statCounterProject ?? ''} placeholder="Project ID (digits)" inputMode="numeric" />
+              <input className="rir-input" name="statCounterSecurity" defaultValue={site.statCounterSecurity ?? ''} placeholder="Security code" />
+            </div>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              From your StatCounter project (Project → Install Code / Settings): the <strong>Project ID</strong>{' '}
+              (<code>sc_project</code>, digits only) and the <strong>Security code</strong> (<code>sc_security</code>).
+              Both are needed. When set, the StatCounter tracker loads across the whole site (except the admin area).
+              Leave either blank to turn StatCounter off.
+            </p>
+          </div>
           <button type="submit" className="rir-btn rir-btn-primary">Save SEO settings</button>
         </div>
       </form>
