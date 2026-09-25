@@ -21,10 +21,14 @@ export interface SiteSettings {
   /** Google Analytics measurement id (e.g. "G-XXXXXXXXXX"). Empty = analytics off. */
   gaMeasurementId?: string;
   /** Ranking sponsor (main): shown in the band between the page title and the
-   *  table, on the home page and as the fallback on province pages. */
+   *  table, always on the home page. */
   sponsor?: Sponsor;
+  /** When true (default), the main sponsor also shows on EVERY province page and
+   *  overrides any per-province sponsor. When false, the main sponsor shows only
+   *  on the home page and each province shows its own sponsor (or nothing). */
+  sponsorEverywhere?: boolean;
   /** Per-province sponsor overrides, keyed by province key (e.g. "gauteng").
-   *  A province with its own sponsor shows it; otherwise it inherits the main. */
+   *  Used only when `sponsorEverywhere` is false. */
   provinceSponsors?: Record<string, Sponsor>;
   /** Legacy flat fields (pre per-province). Read as a fallback for `sponsor`. */
   sponsorName?: string;
@@ -42,17 +46,22 @@ export interface Sponsor {
 
 export const DEFAULT_SPONSOR_LABEL = 'In association with';
 
-/** The effective sponsor for a scope: a province's own sponsor when it has one,
- *  otherwise the main sponsor (with legacy fields as a last fallback). Returns
- *  null when there is nothing to show (no name and no logo). */
+/** The effective sponsor for a scope. The home page always uses the main
+ *  sponsor. A province page uses the main sponsor when `sponsorEverywhere` is on
+ *  (the default — it overrides every province), otherwise the province's own
+ *  sponsor with NO fallback to main. Returns null when there is nothing to show. */
 export function resolveSponsor(site: SiteSettings, provinceKey?: string): Sponsor | null {
   const main: Sponsor =
     site.sponsor ?? { name: site.sponsorName ?? '', logoUrl: '', url: site.sponsorUrl ?? '', label: '' };
-  let s = main;
-  if (provinceKey) {
-    const p = site.provinceSponsors?.[provinceKey];
-    if (p && (p.name?.trim() || p.logoUrl?.trim())) s = p;
+  const everywhere = site.sponsorEverywhere !== false; // default true
+
+  let s: Sponsor;
+  if (!provinceKey || everywhere) {
+    s = main; // home always; provinces too when "everywhere" is on
+  } else {
+    s = site.provinceSponsors?.[provinceKey] ?? { name: '', logoUrl: '', url: '', label: '' };
   }
+
   if (!s.name?.trim() && !s.logoUrl?.trim()) return null;
   return {
     name: s.name?.trim() ?? '',
@@ -75,6 +84,7 @@ const DEFAULTS: SiteSettings = {
     'school rugby rankings, South African school rugby, first team rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
   gaMeasurementId: '',
   sponsor: { name: '', logoUrl: '', url: '', label: '' },
+  sponsorEverywhere: true,
   provinceSponsors: {},
   sponsorName: '',
   sponsorUrl: '',

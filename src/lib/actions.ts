@@ -128,6 +128,8 @@ export async function saveSponsorAction(formData: FormData) {
   const next = { ...current };
   if (scope === 'main') {
     next.sponsor = sponsor;
+    // Checkbox: on = main sponsor shows on every page and overrides provinces.
+    next.sponsorEverywhere = str(formData, 'sponsorEverywhere') === 'on';
     // Keep the legacy flat fields in step so nothing else reads a stale sponsor.
     next.sponsorName = sponsor.name;
     next.sponsorUrl = sponsor.url;
