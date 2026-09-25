@@ -4,7 +4,10 @@ import { getPage } from '@/lib/data/pages';
 import { RichText } from '@/lib/content';
 import { provincePageShortcodes } from '@/components/rankingShortcodes';
 import MatchPulseCTA from '@/components/MatchPulseCTA';
+import { PROVINCES } from '@/lib/matchpulse/provinces';
 import { getCurrentSeason, withSeason } from '@/lib/season';
+
+const PROVINCE_NAMES = new Set(PROVINCES.map((p) => p.name));
 
 export const dynamic = 'force-dynamic';
 
@@ -23,10 +26,13 @@ export default async function CmsPage(props: PageProps<'/[slug]'>) {
   if (!page || page.id === 'home') notFound();
 
   const season = getCurrentSeason();
+  // Province pages carry a ranking table, which must span the full width like the
+  // home page; plain content pages stay in a comfortable reading measure.
+  const isProvince = PROVINCE_NAMES.has(page.rankingScope);
 
   return (
     <div className="rir-container py-8">
-      <div className="space-y-5" style={{ maxWidth: '52rem' }}>
+      <div className="space-y-5" style={isProvince ? undefined : { maxWidth: '52rem' }}>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, season)}</h1>
         <RichText body={withSeason(page.body, season)} renderShortcode={provincePageShortcodes(slug, 'all')} />
         <MatchPulseCTA />

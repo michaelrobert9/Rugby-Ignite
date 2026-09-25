@@ -12,7 +12,15 @@ interface Scope {
 
 // Tabbed editor: a Main sponsor plus one tab per province, each sold and edited
 // on its own. Every tab posts the same server action with a hidden `scope`.
-export default function SponsorshipEditor({ scopes, initialScope }: { scopes: Scope[]; initialScope: string }) {
+export default function SponsorshipEditor({
+  scopes,
+  initialScope,
+  everywhere,
+}: {
+  scopes: Scope[];
+  initialScope: string;
+  everywhere: boolean; // main sponsor overrides every province
+}) {
   const start = scopes.some((s) => s.key === initialScope) ? initialScope : scopes[0].key;
   const [active, setActive] = useState(start);
   const cur = scopes.find((s) => s.key === active) ?? scopes[0];
@@ -52,10 +60,28 @@ export default function SponsorshipEditor({ scopes, initialScope }: { scopes: Sc
           </h2>
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             {cur.key === 'main'
-              ? 'Shown on the home page and used on any province that has no sponsor of its own.'
-              : `Shown only on the ${cur.label} pages. Leave blank to inherit the main sponsor.`}
+              ? 'Always shown on the home page. Use the tick box below to also apply it to every province.'
+              : `Shown only on the ${cur.label} pages when the main sponsor is not set to apply everywhere.`}
           </p>
         </div>
+
+        {cur.key === 'main' && (
+          <label className="flex items-start gap-2 text-sm" style={{ color: 'var(--color-text)' }}>
+            <input type="checkbox" name="sponsorEverywhere" defaultChecked={everywhere} style={{ marginTop: 3 }} />
+            <span>
+              <strong>Show this sponsor on every page</strong> — rolls across all provinces and overrides each
+              province&apos;s own sponsor. Untick to sponsor only the home page and let each province set its own.
+            </span>
+          </label>
+        )}
+
+        {cur.key !== 'main' && everywhere && (
+          <div className="rir-card p-3 text-xs" style={{ background: '#fbeee6', borderColor: '#e3c9bb', color: 'var(--body)' }}>
+            The main sponsor is currently set to show on every page, so this province&apos;s sponsor is ignored.
+            Untick <strong>“Show this sponsor on every page”</strong> on the <strong>Main</strong> tab to use
+            per-province sponsors.
+          </div>
+        )}
 
         <div>
           <label className="text-xs font-semibold uppercase tracking-wide block mb-1" style={{ color: 'var(--color-text-muted)' }}>

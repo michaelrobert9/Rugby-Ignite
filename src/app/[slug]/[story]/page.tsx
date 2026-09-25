@@ -54,7 +54,7 @@ export default async function StoryPage(props: PageProps<'/[slug]/[story]'>) {
   if (page) {
     return (
       <div className="rir-container py-8">
-        <div className="space-y-5" style={{ maxWidth: '52rem' }}>
+        <div className="space-y-5">
           <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, story)}</h1>
           <RichText body={withSeason(page.body, story)} renderShortcode={provincePageShortcodes(slug, story)} />
           <MatchPulseCTA />

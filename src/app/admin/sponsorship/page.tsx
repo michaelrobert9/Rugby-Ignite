@@ -36,14 +36,14 @@ export default async function SponsorshipSettingsPage(props: PageProps<'/admin/s
         <h1 className="text-xl font-bold" style={{ color: 'var(--color-navy-900)' }}>Sponsorship</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
           The ranking naming partner. A band — “In association with [Sponsor]” — sits between a ranking&apos;s title
-          and its table. Set a <strong>Main</strong> sponsor for the home page (and as the default for every
-          province), or sell a single province to its own sponsor on that province&apos;s tab. Each sponsor can be a
-          name or an uploaded logo (via image URL), with its own lead-in text. Separate from and additional to
-          AdSense.
+          and its table. Set a <strong>Main</strong> sponsor for the home page; tick <em>Show on every page</em> to
+          roll it across all provinces, or untick it to sell each province to its own sponsor on that province&apos;s
+          tab. Each sponsor can be a name or a logo (via image URL), with its own lead-in text. Separate from and
+          additional to AdSense.
         </p>
       </div>
 
-      <SponsorshipEditor scopes={scopes} initialScope={initialScope} />
+      <SponsorshipEditor scopes={scopes} initialScope={initialScope} everywhere={site.sponsorEverywhere !== false} />
 
       <div className="rir-card p-5 text-sm space-y-2" style={{ color: 'var(--color-text-muted)' }}>
         <h2 className="font-semibold" style={{ color: 'var(--color-navy-900)' }}>Coming later: paid sponsorship</h2>

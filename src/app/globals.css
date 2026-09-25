@@ -126,6 +126,12 @@ a.rir-link,
   color: var(--color-link);
 }
 
+/* Keep prose paragraphs at a comfortable reading measure even when the page
+   itself is full width (province pages, so their table can span the page). */
+.rir-prose p {
+  max-width: 65ch;
+}
+
 .rir-container {
   max-width: 72rem;
   margin-left: auto;
@@ -245,7 +251,7 @@ table.rir-table tbody tr:hover {
   width: 2.25rem;
 }
 .rir-table--stats .rir-col-win {
-  width: 3.75rem;
+  width: 5rem;
 }
 .rir-table--stats .rir-col-rating {
   width: 4.75rem;
@@ -258,7 +264,7 @@ table.rir-table tbody tr:hover {
     width: 2rem;
   }
   .rir-table--stats .rir-col-win {
-    width: 3.25rem;
+    width: 4.75rem;
   }
   .rir-table--stats .rir-col-rating {
     width: 4rem;
