@@ -33,6 +33,26 @@ export interface SiteSettings {
   /** Legacy flat fields (pre per-province). Read as a fallback for `sponsor`. */
   sponsorName?: string;
   sponsorUrl?: string;
+  /** Weekly + end-of-season auto-posting (ported from the WordPress plugin). */
+  autoPost?: AutoPostSettings;
+}
+
+export interface AutoPostSettings {
+  /** Master switch for the weekly post. */
+  enabled: boolean;
+  /** Only publish a weekly post when the ranking has changed since the last one. */
+  onlyWhenChanged: boolean;
+  /** Publish immediately, or save as a draft for review. */
+  status: 'published' | 'draft';
+  /** Publish the end-of-season wrap-up (once per season, after the last fixture). */
+  eosEnabled: boolean;
+  /** Days to wait after the season's final fixture before the EOS post is eligible. */
+  eosDelayDays: number;
+  /** Bookkeeping, written by the generator. */
+  lastRunAt?: string;
+  lastPostId?: string;
+  lastSignature?: string; // change-detection fingerprint of the last posted table
+  eosPublishedSeasons?: string[]; // seasons whose EOS post has been published
 }
 
 /** A ranking naming partner. `label` overrides the "In association with" lead-in;
@@ -88,6 +108,14 @@ const DEFAULTS: SiteSettings = {
   provinceSponsors: {},
   sponsorName: '',
   sponsorUrl: '',
+  autoPost: {
+    enabled: false,
+    onlyWhenChanged: true,
+    status: 'published',
+    eosEnabled: false,
+    eosDelayDays: 3,
+    eosPublishedSeasons: [],
+  },
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

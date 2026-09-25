@@ -157,6 +157,45 @@ export async function saveSeoAction(formData: FormData) {
   redirect('/admin/seo?saved=1');
 }
 
+// ---------------- Auto-post (weekly + end-of-season) ----------------
+
+export async function saveAutoPostAction(formData: FormData) {
+  await assertAdmin();
+  const current = await getSiteSettings();
+  const cur = current.autoPost ?? {
+    enabled: false, onlyWhenChanged: true, status: 'published' as const, eosEnabled: false, eosDelayDays: 3, eosPublishedSeasons: [],
+  };
+  await saveSiteSettings({
+    ...current,
+    autoPost: {
+      ...cur,
+      enabled: str(formData, 'enabled') === 'on',
+      onlyWhenChanged: str(formData, 'onlyWhenChanged') === 'on',
+      status: str(formData, 'status') === 'draft' ? 'draft' : 'published',
+      eosEnabled: str(formData, 'eosEnabled') === 'on',
+      eosDelayDays: num(formData, 'eosDelayDays', cur.eosDelayDays ?? 3),
+    },
+  });
+  revalidatePath('/admin/auto-post');
+  redirect('/admin/auto-post?saved=1');
+}
+
+export async function generateWeeklyPostNowAction() {
+  await assertAdmin();
+  const { generateWeeklyPost } = await import('./generate/weeklyPost');
+  const res = await generateWeeklyPost({ force: true });
+  revalidatePath('/', 'layout');
+  redirect(`/admin/auto-post?ran=${res.created ? `weekly:${encodeURIComponent(res.slug ?? '')}` : `skip:${res.skipped ?? 'none'}`}`);
+}
+
+export async function generateEosPostNowAction() {
+  await assertAdmin();
+  const { maybeEndOfSeasonPost } = await import('./generate/weeklyPost');
+  const res = await maybeEndOfSeasonPost({ force: true });
+  revalidatePath('/', 'layout');
+  redirect(`/admin/auto-post?ran=${res.created ? `final:${encodeURIComponent(res.slug ?? '')}` : `skip:${res.skipped ?? 'none'}`}`);
+}
+
 // ---------------- Rankings refresh ----------------
 
 export async function refreshRankingsAction() {
