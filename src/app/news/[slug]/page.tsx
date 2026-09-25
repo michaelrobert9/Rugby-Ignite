@@ -32,7 +32,7 @@ export default async function PostPage(props: PageProps<'/news/[slug]'>) {
   if (!post) notFound();
 
   return (
-    <div className="rir-container py-8 space-y-4" style={{ maxWidth: '48rem' }}>
+    <div className="rir-container py-8 space-y-4 rir-prose-wide">
       <Link href="/news" className="text-xs hover:underline" style={{ color: 'var(--color-text-muted)' }}>
         ← News
       </Link>

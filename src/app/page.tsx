@@ -71,7 +71,7 @@ export default async function HomePage() {
           First team · All recorded fixtures
         </div>
         <h1 className="text-4xl">South African School Rugby Rankings</h1>
-        <p className="text-sm" style={{ color: 'var(--body-2)', maxWidth: '60ch' }}>
+        <p className="text-sm" style={{ color: 'var(--body-2)' }}>
           Every South African school first team, ranked with a points-exchange
           system modelled on World Rugby&apos;s: schools trade rating points with
           every result — win and you take points off your opponent, lose and you
@@ -97,7 +97,7 @@ export default async function HomePage() {
       <StoriesStrip />
 
       {page?.body && (
-        <div style={{ maxWidth: '52rem' }}>
+        <div className="rir-prose-wide">
           <RichText body={withSeason(page.body, season)} renderShortcode={rankingShortcodes} />
         </div>
       )}

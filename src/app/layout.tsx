@@ -57,7 +57,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/news", label: "News" },
     { href: "/how-it-works", label: "How the Rankings Work" },
-    { href: "/admin", label: "Admin" },
   ];
   return (
     <html lang="en" className={`h-full antialiased ${archivoBlack.variable}`}>
@@ -104,6 +103,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/ranking" className="rir-link" style={{ textDecoration: "underline" }}>The ranking</Link>
               <Link href="/how-it-works" className="rir-link" style={{ textDecoration: "underline" }}>How the rating works</Link>
               <Link href="/corrections" className="rir-link" style={{ textDecoration: "underline" }}>Corrections</Link>
+              <Link href="/admin" className="rir-link" style={{ textDecoration: "underline" }}>Admin</Link>
             </div>
           </div>
         </footer>

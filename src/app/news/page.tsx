@@ -13,6 +13,24 @@ function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+// A longer list preview: prefer a substantial excerpt, otherwise derive one from
+// the body — strip shortcodes, markdown links/images, headings and formatting,
+// then trim to roughly a paragraph on a word boundary.
+function preview(excerpt: string, body: string, max = 360): string {
+  const plain = (body || '')
+    .replace(/\[[^\]]*\]/g, ' ') // shortcodes / md link text
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
+    .replace(/\((https?:[^)]*)\)/g, ' ') // md link urls
+    .replace(/[#>*_`~]/g, ' ') // md formatting marks
+    .replace(/\s+/g, ' ')
+    .trim();
+  const base = excerpt && excerpt.length >= 160 ? excerpt : plain || excerpt || '';
+  if (base.length <= max) return base;
+  const cut = base.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${(lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+}
+
 export default async function NewsPage() {
   const posts = await listPublishedPosts();
 
@@ -38,11 +56,14 @@ export default async function NewsPage() {
                   {p.title}
                 </Link>
               </h2>
-              {p.excerpt && (
-                <p className="text-sm mt-2 leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
-                  {p.excerpt}
-                </p>
-              )}
+              {(() => {
+                const text = preview(p.excerpt, p.body);
+                return text ? (
+                  <p className="text-sm mt-2 leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                    {text}
+                  </p>
+                ) : null;
+              })()}
               <Link href={`/news/${p.slug}`} className="rir-link text-sm mt-3 inline-block hover:underline">
                 Read more →
               </Link>
