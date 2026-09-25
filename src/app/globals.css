@@ -126,10 +126,14 @@ a.rir-link,
   color: var(--color-link);
 }
 
-/* Keep prose paragraphs at a comfortable reading measure even when the page
-   itself is full width (province pages, so their table can span the page). */
+/* Keep prose paragraphs at a comfortable reading measure by default. */
 .rir-prose p {
   max-width: 65ch;
+}
+/* Province pages read full width — their intro text spans the page (and scales
+   down with the screen) just like the ranking table. */
+.rir-prose-wide .rir-prose p {
+  max-width: none;
 }
 
 .rir-container {
