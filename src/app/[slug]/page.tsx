@@ -32,7 +32,7 @@ export default async function CmsPage(props: PageProps<'/[slug]'>) {
 
   return (
     <div className="rir-container py-8">
-      <div className="space-y-5" style={isProvince ? undefined : { maxWidth: '52rem' }}>
+      <div className={`space-y-5${isProvince ? ' rir-prose-wide' : ''}`} style={isProvince ? undefined : { maxWidth: '52rem' }}>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-navy-900)' }}>{withSeason(page.title, season)}</h1>
         <RichText body={withSeason(page.body, season)} renderShortcode={provincePageShortcodes(slug, 'all')} />
         <MatchPulseCTA />
