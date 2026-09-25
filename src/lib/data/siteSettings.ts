@@ -20,6 +20,9 @@ export interface SiteSettings {
   seoKeywords: string;
   /** Google Analytics measurement id (e.g. "G-XXXXXXXXXX"). Empty = analytics off. */
   gaMeasurementId?: string;
+  /** StatCounter project id (digits) and security code. Both required for it to load. */
+  statCounterProject?: string;
+  statCounterSecurity?: string;
   /** Ranking sponsor (main): shown in the band between the page title and the
    *  table, always on the home page. */
   sponsor?: Sponsor;
@@ -33,6 +36,26 @@ export interface SiteSettings {
   /** Legacy flat fields (pre per-province). Read as a fallback for `sponsor`. */
   sponsorName?: string;
   sponsorUrl?: string;
+  /** Weekly + end-of-season auto-posting (ported from the WordPress plugin). */
+  autoPost?: AutoPostSettings;
+}
+
+export interface AutoPostSettings {
+  /** Master switch for the weekly post. */
+  enabled: boolean;
+  /** Only publish a weekly post when the ranking has changed since the last one. */
+  onlyWhenChanged: boolean;
+  /** Publish immediately, or save as a draft for review. */
+  status: 'published' | 'draft';
+  /** Publish the end-of-season wrap-up (once per season, after the last fixture). */
+  eosEnabled: boolean;
+  /** Days to wait after the season's final fixture before the EOS post is eligible. */
+  eosDelayDays: number;
+  /** Bookkeeping, written by the generator. */
+  lastRunAt?: string;
+  lastPostId?: string;
+  lastSignature?: string; // change-detection fingerprint of the last posted table
+  eosPublishedSeasons?: string[]; // seasons whose EOS post has been published
 }
 
 /** A ranking naming partner. `label` overrides the "In association with" lead-in;
@@ -83,11 +106,21 @@ const DEFAULTS: SiteSettings = {
   seoKeywords:
     'school rugby rankings, South African school rugby, first team rankings, schoolboy rugby, rugby rankings {season}, Rugby Ignite',
   gaMeasurementId: '',
+  statCounterProject: '',
+  statCounterSecurity: '',
   sponsor: { name: '', logoUrl: '', url: '', label: '' },
   sponsorEverywhere: true,
   provinceSponsors: {},
   sponsorName: '',
   sponsorUrl: '',
+  autoPost: {
+    enabled: false,
+    onlyWhenChanged: true,
+    status: 'published',
+    eosEnabled: false,
+    eosDelayDays: 3,
+    eosPublishedSeasons: [],
+  },
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

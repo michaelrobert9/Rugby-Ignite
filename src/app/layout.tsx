@@ -10,6 +10,7 @@ import { MATCHPULSE } from "@/lib/matchpulseLinks";
 import type { Page } from "@/lib/types";
 import SiteNav from "@/components/SiteNav";
 import Analytics from "@/components/Analytics";
+import StatCounter from "@/components/StatCounter";
 import Logo from "@/components/Logo";
 
 // Route for a nav page: home -> '/', otherwise its stored slug.
@@ -57,7 +58,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ...primary.map((page) => ({ href: pageHref(page), label: page.navLabel })),
     { href: "/news", label: "News" },
     { href: "/how-it-works", label: "How the Rankings Work" },
-    { href: "/admin", label: "Admin" },
   ];
   return (
     <html lang="en" className={`h-full antialiased ${archivoBlack.variable}`}>
@@ -73,11 +73,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* Google Analytics (GA4) — loads only when a measurement id is set, and
             not in the admin area. */}
         <Analytics id={site.gaMeasurementId ?? ""} />
+        <StatCounter project={site.statCounterProject ?? ""} security={site.statCounterSecurity ?? ""} />
         <header className="relative" style={{ background: "var(--paper)", borderBottom: "1px solid var(--rule)" }}>
           {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
           <div className="rir-container flex items-center py-4">
             <Link href="/" className="shrink-0" aria-label="Rugby Ignite home">
-              <Logo height={78} />
+              <Logo variant="website" height={58} />
             </Link>
           </div>
           <div style={{ borderTop: "1px solid var(--rule)" }}>
@@ -104,6 +105,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/ranking" className="rir-link" style={{ textDecoration: "underline" }}>The ranking</Link>
               <Link href="/how-it-works" className="rir-link" style={{ textDecoration: "underline" }}>How the rating works</Link>
               <Link href="/corrections" className="rir-link" style={{ textDecoration: "underline" }}>Corrections</Link>
+              <Link href="/admin" className="rir-link" style={{ textDecoration: "underline" }}>Admin</Link>
             </div>
           </div>
         </footer>

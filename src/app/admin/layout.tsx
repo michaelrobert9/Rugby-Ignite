@@ -1,12 +1,21 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAdminSession } from '@/lib/adminAuth';
 import AdminLogin from './AdminLogin';
 import LogoutButton from './LogoutButton';
 
+// Keep the whole admin area out of search indexes (belt-and-braces with the
+// robots.txt disallow): every /admin/* page inherits this noindex.
+export const metadata: Metadata = {
+  title: 'Admin — Rugby Ignite',
+  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
+};
+
 const NAV = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/pages', label: 'Pages' },
   { href: '/admin/news', label: 'News' },
+  { href: '/admin/auto-post', label: 'Auto-post' },
   { href: '/admin/settings', label: 'Rankings' },
   { href: '/admin/seo', label: 'SEO' },
   { href: '/admin/ads', label: 'Ads (AdSense)' },
