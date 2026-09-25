@@ -10,8 +10,9 @@
 
 import stacked from '../../public/logo-stacked.png';
 import horizontal from '../../public/logo-horizontal.png';
+import website from '../../public/website-logo.png';
 
-const SOURCES = { stacked, horizontal } as const;
+const SOURCES = { stacked, horizontal, website } as const;
 
 export default function Logo({
   height = 44,
@@ -19,7 +20,7 @@ export default function Logo({
   className,
 }: {
   height?: number;
-  variant?: 'stacked' | 'horizontal';
+  variant?: 'stacked' | 'horizontal' | 'website';
   className?: string;
 }) {
   const logo = SOURCES[variant];

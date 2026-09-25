@@ -76,7 +76,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {/* v8 header — paper ground, the flame-shield lockup, single line, no tagline. */}
           <div className="rir-container flex items-center py-4">
             <Link href="/" className="shrink-0" aria-label="Rugby Ignite home">
-              <Logo height={78} />
+              <Logo variant="website" height={58} />
             </Link>
           </div>
           <div style={{ borderTop: "1px solid var(--rule)" }}>

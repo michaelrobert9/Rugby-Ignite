@@ -11,11 +11,35 @@
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 import { generateWeeklyPost, maybeEndOfSeasonPost } from '@/lib/generate/weeklyPost';
+import { getSiteSettings } from '@/lib/data/siteSettings';
 import { RANKINGS_TAG } from '@/lib/matchpulse/cachedSource';
 import { STORE_TAG } from '@/lib/store/tags';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// A browser GET lands here — this endpoint only DOES anything on POST (from the
+// scheduler), so GET returns a plain status instead of an error, and never posts.
+export async function GET() {
+  const configured = Boolean(process.env.INGEST_SECRET);
+  let autoPost: unknown = null;
+  try {
+    const site = await getSiteSettings();
+    const a = site.autoPost;
+    autoPost = a
+      ? { enabled: a.enabled, onlyWhenChanged: a.onlyWhenChanged, status: a.status, eosEnabled: a.eosEnabled, lastRunAt: a.lastRunAt ?? null }
+      : null;
+  } catch {
+    // ignore — status is best-effort
+  }
+  return NextResponse.json({
+    ok: true,
+    service: 'auto-post',
+    usage: 'Send a POST with header "x-ingest-secret: <INGEST_SECRET>" (e.g. from Google Cloud Scheduler) to run.',
+    secretConfigured: configured,
+    autoPost,
+  });
+}
 
 function authorized(req: Request): boolean {
   const secret = process.env.INGEST_SECRET;
